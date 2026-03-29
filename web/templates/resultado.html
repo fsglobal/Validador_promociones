@@ -234,6 +234,7 @@
                         📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} |
                         📦 <b>Export:</b> {{ r.export_origen | default('-') }}<br>
                         👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} |
+                        🏢 <b>Área responsable:</b> {{ r.promo_info.area_responsable | default('-') }} |
                         ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} |
                         ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }} |
                         🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}
@@ -379,6 +380,7 @@
                         📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} |
                         📦 <b>Export:</b> {{ r.export_origen | default('-') }}<br>
                         👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} |
+                        🏢 <b>Área responsable:</b> {{ r.promo_info.area_responsable | default('-') }} |
                         ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} |
                         ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }} |
                         🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}
@@ -492,6 +494,7 @@ ID GEO: {{ r.id_geo }}
 Excel: {{ r.excel_origen | default('-') }}
 Export: {{ r.export_origen | default('-') }}
 Usuario creador: {{ r.promo_info.creationUser | default('-') }}
+Área responsable: {{ r.promo_info.area_responsable | default('-') }}
 Habilitada: {{ 'Sí' if r.promo_info.enabled else 'No' }}
 Tipo competencia: {{ r.promo_info.__tipo_competencia | default('-') }}
 Tipo descuento: {{ r.promo_info.__tipo_descuento | default('-') }}
@@ -518,6 +521,7 @@ ID GEO: {{ r.id_geo }}
 Excel: {{ r.excel_origen | default('-') }}
 Export: {{ r.export_origen | default('-') }}
 Usuario creador: {{ r.promo_info.creationUser | default('-') }}
+Área responsable: {{ r.promo_info.area_responsable | default('-') }}
 Habilitada: {{ 'Sí' if r.promo_info.enabled else 'No' }}
 Tipo competencia: {{ r.promo_info.__tipo_competencia | default('-') }}
 Tipo descuento: {{ r.promo_info.__tipo_descuento | default('-') }}

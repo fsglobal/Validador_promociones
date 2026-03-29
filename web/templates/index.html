@@ -122,7 +122,7 @@
         input[type="text"],
         input[type="file"] {
             width: 100%;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border: 1px solid #ccc;
             border-radius: 6px;
             margin-top: 5px;
@@ -189,9 +189,88 @@
             transition: width .3s;
         }
 
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        #loadingOverlay.active {
+            display: flex;
+        }
+
+        .loading-box {
+            background: #fff;
+            border-radius: 14px;
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .dots-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto 18px auto;
+        }
+
+        .dots-spinner div {
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        .dots-spinner div:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dots-spinner div:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .loading-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 8px;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .acciones-admin {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
         @media (max-width: 900px) {
             .dashboard {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .acciones-admin .btn {
+                width: 100%;
             }
         }
     </style>
@@ -199,6 +278,16 @@
 <body>
 
 <div id="alerta"></div>
+
+<div id="loadingOverlay" aria-live="polite" aria-hidden="true">
+    <div class="loading-box">
+        <div class="dots-spinner">
+            <div></div><div></div><div></div>
+        </div>
+        <div class="loading-title" id="loadingTitulo">Procesando</div>
+        <div class="loading-text" id="loadingTexto">Espera un momento mientras el sistema trabaja.</div>
+    </div>
+</div>
 
 <div class="contenedor">
     <div class="titulo">Sistema de Promociones</div>
@@ -214,10 +303,14 @@
                 </div>
 
                 <form id="validarForm" action="/procesar" method="POST">
-                    <label>Buscar promociones del usuario:</label>
-                    <input type="text" name="rc" placeholder="Ej: FERNANDO">
+                    <label for="rc"><b>Buscar promociones del usuario:</b></label>
+                    <input type="text" id="rc" name="rc" placeholder="Ej: FERNANDO">
+
                     <br><br>
-                    <button type="submit" class="btn btn-success">Ejecutar Validación</button>
+
+                    <button type="submit" id="btnValidar" class="btn btn-success">
+                        Ejecutar Validación
+                    </button>
                 </form>
             </div>
 
@@ -228,17 +321,19 @@
                 </div>
 
                 <form id="uploadForm" enctype="multipart/form-data">
-                    <label><b>Excel (.xlsx):</b></label>
+                    <label for="excelFiles"><b>Excel (.xlsx):</b></label>
                     <input type="file" name="excel_files" id="excelFiles" multiple accept=".xlsx">
 
                     <br><br>
 
-                    <label><b>Export (.txt):</b></label>
+                    <label for="exportFiles"><b>Export (.txt):</b></label>
                     <input type="file" name="export_files" id="exportFiles" multiple accept=".txt">
 
                     <br><br>
 
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Cargar archivos</button>
+                    <button type="submit" id="btnUpload" class="btn btn-primary" style="width:100%;">
+                        Cargar archivos
+                    </button>
 
                     <div id="progressBar">
                         <div id="progress"></div>
@@ -279,8 +374,10 @@
                     <span>Administrar Archivos</span>
                 </div>
 
-                <button type="button" class="btn btn-danger" onclick="borrar('excel')">Borrar Excel</button>
-                <button type="button" class="btn btn-secondary" onclick="borrar('export')">Borrar Export</button>
+                <div class="acciones-admin">
+                    <button type="button" class="btn btn-danger" onclick="borrar('excel')">Borrar Excel</button>
+                    <button type="button" class="btn btn-secondary" onclick="borrar('export')">Borrar Export</button>
+                </div>
             </div>
         </div>
 
@@ -339,12 +436,35 @@ function mostrarAlerta(msg, tipo) {
     }, 4000);
 }
 
+function mostrarLoading(titulo, texto) {
+    const overlay = document.getElementById("loadingOverlay");
+    const tituloEl = document.getElementById("loadingTitulo");
+    const textoEl = document.getElementById("loadingTexto");
+
+    tituloEl.textContent = titulo || "Procesando";
+    textoEl.textContent = texto || "Espera un momento mientras el sistema trabaja.";
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden", "false");
+}
+
+function ocultarLoading() {
+    const overlay = document.getElementById("loadingOverlay");
+    overlay.classList.remove("active");
+    overlay.setAttribute("aria-hidden", "true");
+}
+
 async function subirArchivos(e) {
     e.preventDefault();
 
     const formData = new FormData();
     const excelFiles = document.getElementById("excelFiles").files;
     const exportFiles = document.getElementById("exportFiles").files;
+    const btnUpload = document.getElementById("btnUpload");
+
+    if (excelFiles.length === 0 && exportFiles.length === 0) {
+        mostrarAlerta("Selecciona al menos un archivo para cargar.", "warn");
+        return;
+    }
 
     for (const f of excelFiles) {
         formData.append("excel_files", f);
@@ -355,6 +475,10 @@ async function subirArchivos(e) {
     }
 
     document.getElementById("progressBar").style.display = "block";
+    document.getElementById("progress").style.width = "35%";
+    btnUpload.disabled = true;
+    btnUpload.textContent = "Cargando archivos...";
+    mostrarLoading("Cargando archivos", "Se están subiendo los archivos seleccionados.");
 
     try {
         const response = await fetch("/upload", {
@@ -375,6 +499,10 @@ async function subirArchivos(e) {
         mostrarAlerta("Excel cargados: " + data.excel + " — Export cargados: " + data.export, "ok");
     } catch (err) {
         mostrarAlerta("Error al subir archivos", "error");
+    } finally {
+        btnUpload.disabled = false;
+        btnUpload.textContent = "Cargar archivos";
+        ocultarLoading();
     }
 }
 
@@ -416,6 +544,16 @@ function actualizarListas(excel, exportList) {
 const uploadForm = document.getElementById("uploadForm");
 if (uploadForm) {
     uploadForm.addEventListener("submit", subirArchivos);
+}
+
+const validarForm = document.getElementById("validarForm");
+if (validarForm) {
+    validarForm.addEventListener("submit", function() {
+        const btnValidar = document.getElementById("btnValidar");
+        btnValidar.disabled = true;
+        btnValidar.textContent = "Procesando...";
+        mostrarLoading("Analizando promociones", "El validador está procesando los archivos. Esto puede tardar unos segundos.");
+    });
 }
 </script>
 

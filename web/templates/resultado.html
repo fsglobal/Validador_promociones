@@ -2,325 +2,639 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultado validación</title>
+    <title>Resultados de la validación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        :root {
-            --bg: #f5f7fb;
-            --card: #ffffff;
-            --text: #1f2937;
-            --muted: #6b7280;
-            --line: #e5e7eb;
-            --ok: #16a34a;
-            --warn: #d97706;
-            --err: #dc2626;
-            --info: #2563eb;
-            --chip: #eef2ff;
-            --chip-text: #3730a3;
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-        }
-        .page {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-        .hero, .toolbar, .dashboard, .section, .promo-card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
-        }
-        .hero {
-            padding: 20px 24px;
-            margin-bottom: 18px;
-        }
-        .hero h1 { margin: 0 0 6px; font-size: 28px; }
-        .hero p { margin: 0; color: var(--muted); }
-        .toolbar {
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-        .toolbar-grid {
-            display: grid;
-            grid-template-columns: 1.3fr .8fr auto;
-            gap: 12px;
-        }
-        .toolbar input, .toolbar select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            font-size: 15px;
-        }
-        .toolbar button {
-            border: 0;
-            background: #111827;
-            color: white;
-            border-radius: 12px;
-            padding: 12px 18px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-        .stat {
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 14px;
-            background: #fafafa;
-        }
-        .stat .label { color: var(--muted); font-size: 13px; }
-        .stat .value { margin-top: 8px; font-size: 28px; font-weight: 800; }
-        .section {
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-        .section h2 { margin: 0 0 16px; }
-        .promo-list {
-            display: grid;
-            gap: 14px;
-        }
+        details { margin-top: 10px; }
+        summary { cursor: pointer; font-weight: bold; color: #004aad; }
+
         .promo-card {
-            overflow: hidden;
+            border-left: 8px solid #ccc;
+            border-radius: 10px;
         }
-        .promo-card.msje-popup {
-            border-left: 5px solid var(--info);
+
+        .promo-ok {
+            border-left-color: #198754 !important;
+            background: #f3fff7;
         }
-        .promo-header {
-            padding: 18px 18px 12px;
-            border-bottom: 1px solid var(--line);
+
+        .promo-warn {
+            border-left-color: #ffc107 !important;
+            background: #fffdf2;
         }
-        .promo-topline {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
+
+        .promo-err {
+            border-left-color: #dc3545 !important;
+            background: #fff5f5;
         }
-        .promo-id {
-            font-size: 30px;
-            font-weight: 800;
-            line-height: 1;
-        }
-        .promo-message {
-            font-weight: 700;
-            font-size: 18px;
-        }
-        .status-ok { color: var(--ok); }
-        .status-warn { color: var(--warn); }
-        .status-err { color: var(--err); }
+
         .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
+            display: inline-block;
+            padding: 4px 10px;
             border-radius: 999px;
-            background: var(--chip);
-            color: var(--chip-text);
-            font-size: 12px;
+            font-size: 0.85rem;
             font-weight: 700;
         }
-        .pill.msje {
-            background: #e0f2fe;
-            color: #075985;
+
+        .pill-ok {
+            background: #d1e7dd;
+            color: #0f5132;
         }
-        .meta-line, .summary-line { color: var(--muted); font-size: 14px; }
-        .summary-line { margin-top: 8px; color: var(--text); }
-        .promo-body {
-            padding: 14px 18px 18px;
+
+        .pill-warn {
+            background: #fff3cd;
+            color: #664d03;
         }
-        .resume-grid {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 10px;
-            margin-bottom: 14px;
+
+        .pill-err {
+            background: #f8d7da;
+            color: #842029;
         }
-        .resume-box {
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 10px;
-            background: #fafafa;
-        }
-        .resume-box .k { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-        .resume-box .v { font-weight: 700; font-size: 14px; }
-        details {
-            border: 1px solid var(--line);
-            border-radius: 12px;
+
+        .resumen-box {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
             padding: 12px;
-            background: #fbfdff;
+            margin-top: 12px;
+            margin-bottom: 12px;
         }
-        summary {
-            cursor: pointer;
+
+        .resumen-item {
+            margin-bottom: 6px;
+        }
+
+        .resumen-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .sub-aviso {
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .estado-ok { color: #198754; font-weight: 700; }
+        .estado-warn { color: #b58100; font-weight: 700; }
+        .estado-err { color: #dc3545; font-weight: 700; }
+
+        .mini-label {
             font-weight: 700;
+            color: #495057;
         }
-        .detail-list {
-            margin: 12px 0 0;
-            padding-left: 18px;
+
+        .detalle-inline {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.92rem;
+            color: #495057;
+            font-weight: 600;
         }
-        .detail-list li { margin-bottom: 8px; }
-        .text-blue { color: var(--info); font-weight: 700; }
-        .hidden { display: none !important; }
-        .empty-state {
-            padding: 18px;
-            border: 1px dashed var(--line);
-            border-radius: 14px;
-            color: var(--muted);
-            text-align: center;
-            background: #fff;
+
+        .dashboard-card {
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-        @media (max-width: 980px) {
-            .toolbar-grid, .dashboard, .resume-grid { grid-template-columns: 1fr; }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.12) !important;
+        }
+
+        .dashboard-card.active-filter {
+            outline: 3px solid #0d6efd;
+            outline-offset: 2px;
+        }
+
+        .filtro-info {
+            display: none;
+        }
+
+        .text-info-custom {
+            color: #5c6770 !important;
         }
     </style>
 </head>
-<body>
-    <main class="page">
-        <section class="hero">
-            <h1>Resultado de validación</h1>
-            <p>Usuario filtrado: <strong>{{ rc if rc else '-' }}</strong></p>
-        </section>
+<body class="bg-light">
 
-        <section class="toolbar">
-            <div class="toolbar-grid">
-                <input id="buscadorPromos" type="text" placeholder="Buscar campaña por número. Ej: 508350, 512434">
-                <select id="filtroEstado">
-                    <option value="todos">Todos los estados</option>
-                    <option value="ok">Solo OK</option>
-                    <option value="warn">Solo advertencias</option>
-                    <option value="err">Solo errores</option>
-                    <option value="msje">Solo MSJE / POPUP</option>
-                </select>
-                <form action="/descargar_resultados" method="post">
-                    <input type="hidden" name="rc" value="{{ rc }}">
-                    <input type="hidden" name="tradicional_data" value='{{ tradicional_data|default("[]")|safe }}'>
-                    <input type="hidden" name="completar_data" value='{{ completar_data|default("[]")|safe }}'>
-                    <button type="submit">Descargar TXT</button>
-                </form>
+<div class="container my-4">
+
+    <h1 class="fw-bold text-primary mb-3">Validación de archivos de Promociones</h1>
+
+    <div class="alert alert-light border shadow-sm mb-4">
+        <div class="fw-bold mb-2">Interpretación del resultado</div>
+
+        <div class="d-flex flex-wrap gap-3 mb-3">
+            <div>
+                <span style="font-size:20px">🟢</span>
+                <b>Coinciden</b> → Promoción validada correctamente
             </div>
-        </section>
 
-        <section class="dashboard">
-            <div class="stat"><div class="label">Total promociones</div><div class="value">{{ total_promos }}</div></div>
-            <div class="stat"><div class="label">OK</div><div class="value">{{ total_ok }}</div></div>
-            <div class="stat"><div class="label">Advertencias</div><div class="value">{{ total_warn }}</div></div>
-            <div class="stat"><div class="label">Errores</div><div class="value">{{ total_err }}</div></div>
-        </section>
-
-        <section class="section">
-            <h2>Validación completa</h2>
-            <div id="listaPromos" class="promo-list">
-                {% set todo = (resultados_tradicional or []) + (resultados_completar or []) %}
-                {% if todo %}
-                    {% for r in todo %}
-                        {% set estado = 'ok' if r.mensaje == 'Coinciden' and not (r.aviso_principal and not r.es_msje_popup) else ('warn' if r.aviso_principal or r.estado_condicion == 'Advertencia' or r.estado_applier == 'Advertencia' else 'err') %}
-                        <article
-                            class="promo-card promo-item {% if r.es_msje_popup %}msje-popup{% endif %}"
-                            data-id="{{ r.id_geo }}"
-                            data-parent="{{ r.id_padre or '' }}"
-                            data-search="{{ (r.busqueda_ids or '') ~ ' ' ~ (r.id_geo or '') ~ ' ' ~ (r.id_padre or '') ~ ' ' ~ (r.tipo_promocion or '') ~ ' ' ~ ((r.promo_info or {}).get('__area_responsable', '')) }}"
-                            data-status="{{ estado }}"
-                            data-msje="{{ 'si' if r.es_msje_popup else 'no' }}"
-                        >
-                            <div class="promo-header">
-                                <div class="promo-topline">
-                                    <span class="promo-id {% if estado == 'ok' %}status-ok{% elif estado == 'warn' %}status-warn{% else %}status-err{% endif %}">
-                                        {% if r.es_msje_popup %}💬 {% endif %}{{ r.id_geo }}
-                                    </span>
-                                    <span class="promo-message {% if estado == 'ok' %}status-ok{% elif estado == 'warn' %}status-warn{% else %}status-err{% endif %}">
-                                        {{ r.mensaje }}
-                                    </span>
-                                    {% if r.aviso_principal %}
-                                        <span class="pill">{{ r.aviso_principal }}</span>
-                                    {% endif %}
-                                    {% if r.es_msje_popup %}
-                                        <span class="pill msje">MSJE / POPUP</span>
-                                        {% if r.id_padre %}<span class="pill">Asociado a #{{ r.id_padre }}</span>{% endif %}
-                                    {% endif %}
-                                </div>
-                                <div class="meta-line">
-                                    📄 Excel: {{ r.excel_origen }} | 📦 Export: {{ r.export_origen }}
-                                </div>
-                                <div class="meta-line" style="margin-top:6px;">
-                                    👤 Usuario creador: {{ (r.promo_info or {}).get('creationUser', '-') }} |
-                                    🏢 Área responsable: {{ (r.promo_info or {}).get('__area_responsable', '-') }} |
-                                    ✅ Habilitada: {{ 'Sí' if (r.promo_info or {}).get('enabled') else 'No' }} |
-                                    ⚔️ Tipo competencia: {{ (r.promo_info or {}).get('__tipo_competencia', '-') }} |
-                                    🏷️ Tipo descuento: {{ r.tipo_promocion }}
-                                </div>
-                                <div class="summary-line">Tipo: {{ r.tipo_promocion }}</div>
-                                <div class="summary-line">Condición: {{ r.resumen_condicion }}</div>
-                                <div class="summary-line">Aplicador: {{ r.resumen_aplicador }}</div>
-                            </div>
-                            <div class="promo-body">
-                                <div class="resume-grid">
-                                    <div class="resume-box"><div class="k">ID</div><div class="v">{{ r.estado_id }}</div></div>
-                                    <div class="resume-box"><div class="k">Facturar</div><div class="v">{{ r.estado_facturar }}</div></div>
-                                    <div class="resume-box"><div class="k">Fechas</div><div class="v">{{ r.estado_fechas }}</div></div>
-                                    <div class="resume-box"><div class="k">Condición</div><div class="v">{{ r.estado_condicion }}</div></div>
-                                    <div class="resume-box"><div class="k">Aplicador</div><div class="v">{{ r.estado_applier }}</div></div>
-                                </div>
-                                <details>
-                                    <summary>Ver explicación técnica</summary>
-                                    <ul class="detail-list">
-                                        {% for d in r.detalle %}
-                                            <li>{{ d.msg|safe }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </details>
-                            </div>
-                        </article>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">No hay resultados para mostrar.</div>
-                {% endif %}
+            <div>
+                <span style="font-size:20px">🟡</span>
+                <b>Atención</b> → Coincide pero requiere revisión (ej: extensión de fecha)
             </div>
-            <div id="sinCoincidencias" class="empty-state hidden">No se encontraron promociones con ese criterio.</div>
-        </section>
-    </main>
 
-    <script>
-        const buscador = document.getElementById('buscadorPromos');
-        const filtroEstado = document.getElementById('filtroEstado');
-        const items = Array.from(document.querySelectorAll('.promo-item'));
-        const sinCoincidencias = document.getElementById('sinCoincidencias');
+            <div>
+                <span style="font-size:20px">🔴</span>
+                <b>No coinciden</b> → Error real en la promoción
+            </div>
+        </div>
 
-        function aplicarFiltros() {
-            const texto = (buscador.value || '').trim().toLowerCase();
-            const estado = filtroEstado.value;
-            let visibles = 0;
+        <div class="row g-3 text-center">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-secondary dashboard-card" data-filter="all">
+                    <div class="card-body">
+                        <div class="fw-bold text-secondary">Total</div>
+                        <div style="font-size: 1.6rem;">{{ total_promos | default(0) }}</div>
+                    </div>
+                </div>
+            </div>
 
-            items.forEach(item => {
-                const search = (item.dataset.search || '').toLowerCase();
-                const itemStatus = item.dataset.status || 'todos';
-                const esMsje = item.dataset.msje === 'si';
+            <div class="col-md-3">
+                <div class="card shadow-sm border-success dashboard-card" data-filter="ok">
+                    <div class="card-body">
+                        <div class="fw-bold text-success">🟢 OK</div>
+                        <div style="font-size: 1.6rem;">{{ total_ok | default(0) }}</div>
+                    </div>
+                </div>
+            </div>
 
-                const matchTexto = !texto || search.includes(texto);
-                let matchEstado = estado === 'todos' || itemStatus === estado;
-                if (estado === 'msje') {
-                    matchEstado = esMsje;
-                }
+            <div class="col-md-3">
+                <div class="card shadow-sm border-warning dashboard-card" data-filter="warn">
+                    <div class="card-body">
+                        <div class="fw-bold text-warning">🟡 Atención</div>
+                        <div style="font-size: 1.6rem;">{{ total_warn | default(0) }}</div>
+                    </div>
+                </div>
+            </div>
 
-                const visible = matchTexto && matchEstado;
-                item.classList.toggle('hidden', !visible);
-                if (visible) visibles += 1;
-            });
+            <div class="col-md-3">
+                <div class="card shadow-sm border-danger dashboard-card" data-filter="err">
+                    <div class="card-body">
+                        <div class="fw-bold text-danger">🔴 Error</div>
+                        <div style="font-size: 1.6rem;">{{ total_err | default(0) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            sinCoincidencias.classList.toggle('hidden', visibles !== 0);
+    <div id="filtro-actual" class="alert alert-info shadow-sm filtro-info">
+    <span id="texto-filtro">Mostrando resultados filtrados</span>
+    <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="filtrarPromos('all')">
+        Ver todo
+    </button>
+</div>
+
+    {% if rc %}
+        <h3 class="text-secondary mb-4">USUARIO FILTRADO: {{ rc }}</h3>
+    {% endif %}
+
+    <!-- RESULTADOS TRADICIONAL -->
+    <h2 class="fw-bold text-info mb-3">Promociones del usuario ingresado en Excel con RC</h2>
+
+    {% if resultados_tradicional|length == 0 %}
+        <div class="alert alert-warning">No se ingresó ningún usuario o no se encontraron promociones.</div>
+    {% else %}
+        {% for r in resultados_tradicional %}
+            {% set card_class = 'promo-err' %}
+            {% set pill_class = 'pill-err' %}
+            {% set icono = '🔴' %}
+            {% set estado_card = 'err' %}
+
+            {% if r.mensaje == 'Coinciden' and r.aviso_principal %}
+                {% set card_class = 'promo-warn' %}
+                {% set pill_class = 'pill-warn' %}
+                {% set icono = '🟡' %}
+                {% set estado_card = 'warn' %}
+            {% elif r.mensaje == 'Coinciden' %}
+                {% set card_class = 'promo-ok' %}
+                {% set pill_class = 'pill-ok' %}
+                {% set icono = '🟢' %}
+                {% set estado_card = 'ok' %}
+            {% endif %}
+
+            <div class="card shadow-sm mb-3 promo-card {{ card_class }} promo-item"
+                 data-estado="{{ estado_card }}">
+                <div class="card-body">
+                    <h5 class="card-title d-flex align-items-center gap-2 flex-wrap">
+                        <span>{{ icono }}</span>
+                        <span>{{ r.id_geo }} —</span>
+                        <span class="pill {{ pill_class }}">{{ r.mensaje }}</span>
+                    </h5>
+
+                    {% if r.aviso_principal %}
+                        <div class="sub-aviso text-warning">
+                            ⚠ {{ r.aviso_principal }}
+                        </div>
+                    {% endif %}
+
+                    <div class="origen mb-2 mt-2">
+                        📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} |
+                        📦 <b>Export:</b> {{ r.export_origen | default('-') }}<br>
+                        👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} |
+                        🏢 <b>Área responsable:</b> {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }} |
+                        ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} |
+                        ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }} |
+                        🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}
+                        {% if r.msje_popup_hay %}
+                        | 💬 <b>ID MSJE -</b> {{ r.msje_popup_id }} <b>Fecha inicio</b> {{ r.msje_popup_fecha_inicio or '-' }} <b>Fecha fin</b> {{ r.msje_popup_fecha_fin or '-' }}
+                        {% endif %}
+                    </div>
+
+                    <div class="resumen-box">
+                        <div class="resumen-item"><span class="mini-label">Tipo:</span> {{ r.tipo_promocion | default('-') }}</div>
+                        <div class="resumen-item"><span class="mini-label">Condición:</span> {{ r.resumen_condicion | default('-') }}</div>
+                        <div class="resumen-item"><span class="mini-label">Aplicador:</span> {{ r.resumen_aplicador | default('-') }}</div>
+                    </div>
+
+                    <details>
+                        <summary>Ver validaciones resumidas</summary>
+                        <table class="table table-sm table-bordered mt-2">
+                            <tr>
+                                <th>ID</th>
+                                <td class="{% if r.estado_id == 'Coinciden' %}estado-ok{% elif r.estado_id == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_id }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Facturar</th>
+                                <td class="{% if r.estado_facturar == 'Coinciden' %}estado-ok{% elif r.estado_facturar == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_facturar }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Fechas</th>
+                                <td class="{% if r.estado_fechas == 'OK' %}estado-ok{% elif r.estado_fechas == 'Posible Extensión' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_fechas }}
+                                    <br>
+                                    <small>
+                                        Inicio
+                                        {% if r.fecha_inicio_ok is sameas true %}
+                                            <span class="text-success">✅</span>
+                                        {% elif r.fecha_inicio_ok is sameas false %}
+                                            <span class="text-danger">❌</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                        |
+                                        Fin
+                                        {% if r.fecha_fin_ok is sameas true %}
+                                            <span class="text-success">✅</span>
+                                        {% elif r.fecha_fin_ok is sameas false %}
+                                            <span class="text-danger">❌</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Condición SKU</th>
+                                <td class="{% if r.estado_condicion == 'Coinciden' %}estado-ok{% elif r.estado_condicion == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_condicion }}
+                                    <span class="detalle-inline">
+                                        {% if r.resumen_condicion %}
+                                            {{ r.resumen_condicion
+                                                | replace('SKU Lista =', 'Lista:')
+                                                | replace('SKU Lista=', 'Lista:')
+                                            }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Aplicador</th>
+                                <td class="{% if r.estado_applier == 'Coinciden' %}estado-ok{% elif r.estado_applier == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_applier }}
+                                    <span class="detalle-inline">
+                                        {% if r.resumen_aplicador %}
+                                            {{ r.resumen_aplicador
+                                                | replace('SKU Lista =', 'Lista:')
+                                                | replace('SKU Lista=', 'Lista:')
+                                            }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <details>
+                            <summary>Ver explicación técnica</summary>
+                            <ul class="mt-2">
+                                {% for d in r.detalle %}
+                                    <li class="{% if d.tipo == 'OK' %}text-success{% elif d.tipo == 'ERR' %}text-danger{% elif d.tipo == 'WARN' %}text-warning{% else %}text-info-custom{% endif %}">
+                                        {{ d.msg | safe }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    </details>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- RESULTADOS COMPLETAR -->
+    <h2 class="fw-bold text-info mb-3">Excel de Promociones en Hoja COMPLETAR</h2>
+
+    {% if resultados_completar|length == 0 %}
+        <div class="alert alert-warning">No se encontraron promociones en la hoja COMPLETAR.</div>
+    {% else %}
+        {% for r in resultados_completar %}
+            {% set card_class = 'promo-err' %}
+            {% set pill_class = 'pill-err' %}
+            {% set icono = '🔴' %}
+            {% set estado_card = 'err' %}
+
+            {% if r.mensaje == 'Coinciden' and r.aviso_principal %}
+                {% set card_class = 'promo-warn' %}
+                {% set pill_class = 'pill-warn' %}
+                {% set icono = '🟡' %}
+                {% set estado_card = 'warn' %}
+            {% elif r.mensaje == 'Coinciden' %}
+                {% set card_class = 'promo-ok' %}
+                {% set pill_class = 'pill-ok' %}
+                {% set icono = '🟢' %}
+                {% set estado_card = 'ok' %}
+            {% endif %}
+
+            <div class="card shadow-sm mb-3 promo-card {{ card_class }} promo-item"
+                 data-estado="{{ estado_card }}">
+                <div class="card-body">
+                    <h5 class="card-title d-flex align-items-center gap-2 flex-wrap">
+                        <span>{{ icono }}</span>
+                        <span>{{ r.id_geo }} —</span>
+                        <span class="pill {{ pill_class }}">{{ r.mensaje }}</span>
+                    </h5>
+
+                    {% if r.aviso_principal %}
+                        <div class="sub-aviso text-warning">
+                            ⚠ {{ r.aviso_principal }}
+                        </div>
+                    {% endif %}
+
+                    <div class="origen mb-2 mt-2">
+                        📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} |
+                        📦 <b>Export:</b> {{ r.export_origen | default('-') }}<br>
+                        👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} |
+                        🏢 <b>Área responsable:</b> {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }} |
+                        ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} |
+                        ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }} |
+                        🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}
+                        {% if r.msje_popup_hay %}
+                        | 💬 <b>ID MSJE -</b> {{ r.msje_popup_id }} <b>Fecha inicio</b> {{ r.msje_popup_fecha_inicio or '-' }} <b>Fecha fin</b> {{ r.msje_popup_fecha_fin or '-' }}
+                        {% endif %}
+                    </div>
+
+                    <div class="resumen-box">
+                        <div class="resumen-item"><span class="mini-label">Tipo:</span> {{ r.tipo_promocion | default('-') }}</div>
+                        <div class="resumen-item"><span class="mini-label">Condición:</span> {{ r.resumen_condicion | default('-') }}</div>
+                        <div class="resumen-item"><span class="mini-label">Aplicador:</span> {{ r.resumen_aplicador | default('-') }}</div>
+                    </div>
+
+                    <details>
+                        <summary>Ver validaciones resumidas</summary>
+                        <table class="table table-sm table-bordered mt-2">
+                            <tr>
+                                <th>ID</th>
+                                <td class="{% if r.estado_id == 'Coinciden' %}estado-ok{% elif r.estado_id == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_id }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Facturar</th>
+                                <td class="{% if r.estado_facturar == 'Coinciden' %}estado-ok{% elif r.estado_facturar == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_facturar }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Fechas</th>
+                                <td class="{% if r.estado_fechas == 'OK' %}estado-ok{% elif r.estado_fechas == 'Posible Extensión' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_fechas }}
+                                    <br>
+                                    <small>
+                                        Inicio
+                                        {% if r.fecha_inicio_ok is sameas true %}
+                                            <span class="text-success">✅</span>
+                                        {% elif r.fecha_inicio_ok is sameas false %}
+                                            <span class="text-danger">❌</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                        |
+                                        Fin
+                                        {% if r.fecha_fin_ok is sameas true %}
+                                            <span class="text-success">✅</span>
+                                        {% elif r.fecha_fin_ok is sameas false %}
+                                            <span class="text-danger">❌</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Condición SKU</th>
+                                <td class="{% if r.estado_condicion == 'Coinciden' %}estado-ok{% elif r.estado_condicion == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_condicion }}
+                                    <span class="detalle-inline">
+                                        {% if r.resumen_condicion %}
+                                            {{ r.resumen_condicion
+                                                | replace('SKU Lista =', 'Lista:')
+                                                | replace('SKU Lista=', 'Lista:')
+                                            }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Aplicador</th>
+                                <td class="{% if r.estado_applier == 'Coinciden' %}estado-ok{% elif r.estado_applier == 'Advertencia' %}estado-warn{% else %}estado-err{% endif %}">
+                                    {{ r.estado_applier }}
+                                    <span class="detalle-inline">
+                                        {% if r.resumen_aplicador %}
+                                            {{ r.resumen_aplicador
+                                                | replace('SKU Lista =', 'Lista:')
+                                                | replace('SKU Lista=', 'Lista:')
+                                            }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <details>
+                            <summary>Ver explicación técnica</summary>
+                            <ul class="mt-2">
+                                {% for d in r.detalle %}
+                                    <li class="{% if d.tipo == 'OK' %}text-success{% elif d.tipo == 'ERR' %}text-danger{% elif d.tipo == 'WARN' %}text-warning{% else %}text-info-custom{% endif %}">
+                                        {{ d.msg | safe }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    </details>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- BOTONES -->
+    <div class="text-center mt-4">
+        <form action="/descargar_resultados" method="POST">
+            <input type="hidden" name="rc" value="{{ rc }}">
+
+            <textarea name="tradicional_data" style="display:none;">
+{% for r in resultados_tradicional %}
+ID GEO: {{ r.id_geo }}
+Excel: {{ r.excel_origen | default('-') }}
+Export: {{ r.export_origen | default('-') }}
+Usuario creador: {{ r.promo_info.creationUser | default('-') }}
+Área responsable: {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }}
+Habilitada: {{ 'Sí' if r.promo_info.enabled else 'No' }}
+Tipo competencia: {{ r.promo_info.__tipo_competencia | default('-') }}
+Tipo descuento: {{ r.promo_info.__tipo_descuento | default('-') }}
+Resultado: {{ r.mensaje }}
+Aviso: {{ r.aviso_principal | default('-') }}
+Estado ID: {{ r.estado_id | default('-') }}
+Estado Facturar: {{ r.estado_facturar | default('-') }}
+Estado Fechas: {{ r.estado_fechas | default('-') }}
+Estado Condición: {{ r.estado_condicion | default('-') }}
+Estado Aplicador: {{ r.estado_applier | default('-') }}
+Tipo limpio: {{ r.tipo_promocion | default('-') }}
+Condición limpia: {{ r.resumen_condicion | default('-') }}
+Aplicador limpio: {{ r.resumen_aplicador | default('-') }}
+{% for d in r.detalle %}
+ - {{ d.tipo }}: {{ d.msg | safe }}
+{% endfor %}
+-----------------------------------------
+{% endfor %}
+            </textarea>
+
+            <textarea name="completar_data" style="display:none;">
+{% for r in resultados_completar %}
+ID GEO: {{ r.id_geo }}
+Excel: {{ r.excel_origen | default('-') }}
+Export: {{ r.export_origen | default('-') }}
+Usuario creador: {{ r.promo_info.creationUser | default('-') }}
+Área responsable: {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }}
+Habilitada: {{ 'Sí' if r.promo_info.enabled else 'No' }}
+Tipo competencia: {{ r.promo_info.__tipo_competencia | default('-') }}
+Tipo descuento: {{ r.promo_info.__tipo_descuento | default('-') }}
+Resultado: {{ r.mensaje }}
+Aviso: {{ r.aviso_principal | default('-') }}
+Estado ID: {{ r.estado_id | default('-') }}
+Estado Facturar: {{ r.estado_facturar | default('-') }}
+Estado Fechas: {{ r.estado_fechas | default('-') }}
+Estado Condición: {{ r.estado_condicion | default('-') }}
+Estado Aplicador: {{ r.estado_applier | default('-') }}
+Tipo limpio: {{ r.tipo_promocion | default('-') }}
+Condición limpia: {{ r.resumen_condicion | default('-') }}
+Aplicador limpio: {{ r.resumen_aplicador | default('-') }}
+{% for d in r.detalle %}
+ - {{ d.tipo }}: {{ d.msg | safe }}
+{% endfor %}
+-----------------------------------------
+{% endfor %}
+            </textarea>
+
+            <button type="submit" class="btn btn-primary me-2">Descargar resultados</button>
+
+<a href="/nueva_validacion" class="btn btn-warning me-2">
+🔄 Nueva validación
+</a>
+
+<a href="/reset" class="btn btn-outline-secondary">
+Volver
+</a>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    function filtrarPromos(estado) {
+        const cards = document.querySelectorAll('.promo-item');
+        const dashboardCards = document.querySelectorAll('.dashboard-card');
+        const filtroInfo = document.getElementById('filtro-actual');
+        const textoFiltro = document.getElementById('texto-filtro');
+
+        dashboardCards.forEach(card => card.classList.remove('active-filter'));
+
+        const activeCard = document.querySelector(`.dashboard-card[data-filter="${estado}"]`);
+        if (activeCard) {
+            activeCard.classList.add('active-filter');
         }
 
-        buscador.addEventListener('input', aplicarFiltros);
-        filtroEstado.addEventListener('change', aplicarFiltros);
-    </script>
+        let visibles = [];
+
+        cards.forEach(card => {
+            const estadoCard = card.dataset.estado;
+
+            if (estado === 'all' || estadoCard === estado) {
+                card.style.display = '';
+                visibles.push(card);
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (estado === 'all') {
+            filtroInfo.style.display = 'none';
+            if (textoFiltro) {
+                textoFiltro.innerHTML = 'Mostrando resultados filtrados';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        filtroInfo.style.display = 'block';
+
+        const cantidad = visibles.length;
+
+        if (textoFiltro) {
+            if (estado === 'ok') {
+                textoFiltro.innerHTML = `Mostrando promociones OK (${cantidad})`;
+            } else if (estado === 'warn') {
+                textoFiltro.innerHTML = `Mostrando promociones con ATENCIÓN (${cantidad})`;
+            } else if (estado === 'err') {
+                textoFiltro.innerHTML = `Mostrando promociones con ERROR (${cantidad})`;
+            } else {
+                textoFiltro.innerHTML = 'Mostrando resultados filtrados';
+            }
+        }
+
+        if (visibles.length > 0) {
+            visibles[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dashboardCards = document.querySelectorAll('.dashboard-card');
+
+        dashboardCards.forEach(card => {
+            card.addEventListener('click', function () {
+                const estado = this.dataset.filter;
+                filtrarPromos(estado);
+            });
+        });
+
+        const totalCard = document.querySelector('.dashboard-card[data-filter="all"]');
+        if (totalCard) {
+            totalCard.classList.add('active-filter');
+        }
+    });
+</script>
+
 </body>
 </html>

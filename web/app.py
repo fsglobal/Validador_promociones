@@ -479,7 +479,23 @@ def extraer_msje_popup_desde_detalles(detalles):
     return resultado
 
 
-def construir_resultado_web(id_geo, excel_origen, export_origen, promo_info, detalles, analisis, es_msje_popup=False, id_padre=""):
+def construir_resultado_web(id_geo, excel_origen, export_origen, promo_info, detalles, analisis, es_msje_popup=False, id_padre="", msje_popup=None):
+    msje_popup = msje_popup or {}
+    msje_popup_hay = bool(msje_popup.get("hay"))
+    msje_popup_id = str(msje_popup.get("id_msje") or "")
+    msje_popup_id_padre = str(msje_popup.get("id_padre") or id_geo or "")
+    msje_popup_mensaje = msje_popup.get("mensaje") or ("No hay" if not msje_popup_hay else "-")
+    msje_popup_salida = msje_popup.get("salida") or "-"
+    msje_popup_texto = msje_popup.get("texto") or "-"
+    msje_popup_resumen = msje_popup.get("resumen_aplicador") or msje_popup.get("resumen") or "-"
+    msje_popup_condicion = msje_popup.get("resumen_condicion") or "-"
+    msje_popup_fecha_inicio = msje_popup.get("fecha_inicio") or ""
+    msje_popup_fecha_fin = msje_popup.get("fecha_fin") or ""
+
+    busqueda_ids = " ".join(
+        p for p in [str(id_geo or "").strip(), str(id_padre or "").strip(), msje_popup_id] if p
+    ).strip()
+
     return {
         "id_geo": str(id_geo),
         "mensaje": analisis["mensaje_principal"],
@@ -500,7 +516,17 @@ def construir_resultado_web(id_geo, excel_origen, export_origen, promo_info, det
         "resumen_aplicador": analisis["resumen_aplicador"],
         "es_msje_popup": es_msje_popup,
         "id_padre": str(id_padre or ""),
-        "busqueda_ids": f"{id_geo} {id_padre}".strip(),
+        "msje_popup_hay": msje_popup_hay,
+        "msje_popup_id": msje_popup_id,
+        "msje_popup_id_padre": msje_popup_id_padre,
+        "msje_popup_mensaje": msje_popup_mensaje,
+        "msje_popup_salida": msje_popup_salida,
+        "msje_popup_texto": msje_popup_texto,
+        "msje_popup_resumen": msje_popup_resumen,
+        "msje_popup_condicion": msje_popup_condicion,
+        "msje_popup_fecha_inicio": msje_popup_fecha_inicio,
+        "msje_popup_fecha_fin": msje_popup_fecha_fin,
+        "busqueda_ids": busqueda_ids,
     }
 
 
@@ -738,13 +764,14 @@ def procesar():
                 resultados_completar.append(construir_resultado_web(id_geo, excel_origen, "-", {}, [{"tipo": "ERR", "msg": "No encontrada en export"}], analisis))
                 continue
 
-            _, detalles = validar_promocion_completar(
+            _, detalles, msje_popup = validar_promocion_completar(
                 id_geo,
                 grupo,
                 promo,
                 listas_productos_export,
                 mapa_area_responsable=mapa_area_responsable,
                 promos_por_id=promos_por_id,
+                retornar_msje_data=True,
             )
             analisis = analizar_detalles(detalles)
             info["__tipo_descuento"] = analisis["tipo_promocion"] or promo.get("__tipo_descuento", "-")
@@ -757,44 +784,9 @@ def procesar():
                 info,
                 detalles,
                 analisis,
+                msje_popup=msje_popup,
             )
             resultados_completar.append(resultado_principal)
-
-            msje_popup = extraer_msje_popup_desde_detalles(detalles)
-            if msje_popup["hay"]:
-                promo_msje = promos_por_id.get(normalizar_local(msje_popup["id_msje"]), {})
-                info_msje = {
-                    "creationUser": promo_msje.get("creationUser", info.get("creationUser", "-")),
-                    "enabled": promo_msje.get("enabled", False),
-                    "__tipo_competencia": promo_msje.get("__tipo_competencia", "Comp. X Producto"),
-                    "__area_responsable": promo_msje.get("area_name", info.get("__area_responsable", "-")),
-                    "__export_origen": promo_msje.get("__export_origen", info.get("__export_origen", "-")),
-                    "__tipo_descuento": "MSJE / POPUP",
-                }
-                analisis_msje = {
-                    "mensaje_principal": "Coinciden",
-                    "aviso_principal": f"Asociado a promoción #{msje_popup['id_padre']}",
-                    "estado_id": "Coinciden",
-                    "estado_facturar": "No hay",
-                    "estado_fechas": "No hay",
-                    "estado_condicion": "Coinciden",
-                    "estado_applier": "Coinciden",
-                    "fecha_inicio_ok": True,
-                    "fecha_fin_ok": True,
-                    "tipo_promocion": "MSJE / POPUP",
-                    "resumen_condicion": msje_popup["resumen_condicion"] if msje_popup["resumen_condicion"] != "-" else "MSJE / POPUP",
-                    "resumen_aplicador": msje_popup["resumen_aplicador"] if msje_popup["resumen_aplicador"] != "-" else msje_popup["mensaje"],
-                }
-                resultados_completar.append(construir_resultado_web(
-                    msje_popup["id_msje"],
-                    excel_origen,
-                    info_msje.get("__export_origen", "-"),
-                    info_msje,
-                    msje_popup["detalle"],
-                    analisis_msje,
-                    es_msje_popup=True,
-                    id_padre=msje_popup["id_padre"],
-                ))
 
     todos_los_resultados = resultados_tradicional + resultados_completar
     total_promos = len(todos_los_resultados)

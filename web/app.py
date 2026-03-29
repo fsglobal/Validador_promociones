@@ -22,6 +22,17 @@ LOG_PATH = os.path.join(BASE_PATH, "logs")
 os.makedirs(LOG_PATH, exist_ok=True)
 sys.path.append(MODULOS_PATH)
 
+# Limpieza automática al iniciar el servidor
+for carpeta in [EXCEL_PATH, EXPORT_PATH]:
+    try:
+        os.makedirs(carpeta, exist_ok=True)
+        for archivo in os.listdir(carpeta):
+            ruta = os.path.join(carpeta, archivo)
+            if os.path.isfile(ruta):
+                os.remove(ruta)
+    except Exception:
+        pass
+
 
 # ============================================================
 # IMPORTACIÓN DE MÓDULOS DEL PROYECTO
@@ -104,6 +115,23 @@ def _extraer_entre_parentesis(texto, etiqueta):
     patron = rf"{re.escape(etiqueta)}\s*:\s*\((.*?)\)"
     m = re.search(patron, texto)
     return m.group(1).strip() if m else ""
+
+def _extraer_area_desde_detalles(detalles):
+    """
+    Toma el AreaResponsable detectada por el validador desde los detalles técnicos.
+    La fuente válida es Excel/IMPUT, no el Export.
+    """
+    for d in detalles:
+        if isinstance(d, tuple):
+            _, msg = d
+        else:
+            msg = d.get("msg", "")
+        msg_plain = _strip_html(msg)
+        if msg_plain.startswith("[ÁREA]") and "AreaResponsable detectada" in msg_plain:
+            area = _extraer_entre_parentesis(msg_plain, "AreaResponsable detectada")
+            if area:
+                return area
+    return "-"
 
 
 def _normalizar_lista_valores(valor):
@@ -585,7 +613,7 @@ def analizar_detalles(detalles):
 # ============================================================
 
 @app.route("/")
-@app.route("/validPromotion/")
+@app.route("/validPromotion/")                            
 def inicio():
     excel, export = listar_archivos()
     return render_template("index.html", excel_files=excel, export_files=export)
@@ -713,6 +741,7 @@ def procesar():
             promo_info_por_id[pid] = {
                 "creationUser": p.get("creationUser", "-"),
                 "enabled": p.get("enabled", False),
+                "area_responsable": "-",
                 "__tipo_competencia": p.get("__tipo_competencia", "-"),
                 "__export_origen": p.get("__export_origen", "-"),
                 "__tipo_descuento": "-"
@@ -817,6 +846,7 @@ def procesar():
                 )
 
                 analisis = analizar_detalles(detalles)
+                info["area_responsable"] = _extraer_area_desde_detalles(detalles)
 
                 resultados_tradicional.append({
                     "id_geo": id_geo,
@@ -891,6 +921,7 @@ def procesar():
 
             analisis = analizar_detalles(detalles)
 
+            info["area_responsable"] = _extraer_area_desde_detalles(detalles)
             info["__tipo_descuento"] = analisis["tipo_promocion"] or promo.get("__tipo_descuento", "-")
 
             resultados_completar.append({
@@ -989,6 +1020,8 @@ def descargar_resultados():
                     datos["export"] = ln.replace("Export:", "").strip()
                 elif ln.startswith("Usuario creador:"):
                     datos["usuario"] = ln.replace("Usuario creador:", "").strip()
+                elif ln.startswith("Área responsable:"):
+                    datos["area"] = ln.replace("Área responsable:", "").strip()
                 elif ln.startswith("Tipo descuento:"):
                     datos["tipo"] = ln.replace("Tipo descuento:", "").strip()
                 elif ln.startswith("Resultado:"):
@@ -1023,6 +1056,7 @@ def descargar_resultados():
             salida.append("")
             salida.append(f"Archivo Excel: {datos.get('excel', '-')}")
             salida.append(f"Archivo Export: {datos.get('export', '-')}")
+            salida.append(f"Área responsable: {datos.get('area', '-')}")
             salida.append("")
             salida.append(f"Estado final: {estado_final}  |  Tipo promoción: {datos.get('tipo', '-')}")
             salida.append("")

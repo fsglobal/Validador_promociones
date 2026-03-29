@@ -12,6 +12,7 @@
         .promo-card {
             border-left: 8px solid #ccc;
             border-radius: 10px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease, outline 0.2s ease;
         }
 
         .promo-ok {
@@ -27,6 +28,13 @@
         .promo-err {
             border-left-color: #dc3545 !important;
             background: #fff5f5;
+        }
+
+        .promo-highlight {
+            outline: 3px solid #0d6efd;
+            outline-offset: 2px;
+            box-shadow: 0 0.75rem 1.5rem rgba(13, 110, 253, 0.18) !important;
+            transform: translateY(-2px);
         }
 
         .pill {
@@ -113,6 +121,44 @@
         .text-info-custom {
             color: #5c6770 !important;
         }
+
+        .busqueda-box {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+            margin-bottom: 20px;
+        }
+
+        .busqueda-grid {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .busqueda-field {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .busqueda-acciones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .busqueda-info {
+            display: none;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .busqueda-acciones .btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -180,12 +226,40 @@
         </div>
     </div>
 
+    <div class="busqueda-box">
+        <div class="fw-bold text-primary mb-2">Buscar promoción por ID dentro de este resultado</div>
+
+        <div class="busqueda-grid">
+            <div class="busqueda-field">
+                <label for="buscarPromoId" class="form-label mb-1"><b>ID de promoción</b></label>
+                <input
+                    type="text"
+                    id="buscarPromoId"
+                    class="form-control"
+                    placeholder="Ej: 516540"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="busqueda-acciones">
+                <button type="button" class="btn btn-primary" onclick="buscarPromoPorId()">
+                    Buscar
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="limpiarBusquedaPromo()">
+                    Limpiar búsqueda
+                </button>
+            </div>
+        </div>
+
+        <div id="busquedaInfo" class="alert alert-info busqueda-info mb-0"></div>
+    </div>
+
     <div id="filtro-actual" class="alert alert-info shadow-sm filtro-info">
-    <span id="texto-filtro">Mostrando resultados filtrados</span>
-    <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="filtrarPromos('all')">
-        Ver todo
-    </button>
-</div>
+        <span id="texto-filtro">Mostrando resultados filtrados</span>
+        <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="filtrarPromos('all')">
+            Ver todo
+        </button>
+    </div>
 
     {% if rc %}
         <h3 class="text-secondary mb-4">USUARIO FILTRADO: {{ rc }}</h3>
@@ -215,8 +289,9 @@
                 {% set estado_card = 'ok' %}
             {% endif %}
 
-            <div class="card shadow-sm mb-3 promo-card {{ card_class }} promo-item"
-                 data-estado="{{ estado_card }}">
+            <div class="card shadow-sm mb-3 promo-card promo-item {{ card_class }}"
+                 data-estado="{{ estado_card }}"
+                 data-id="{{ r.id_geo | default('') }}">
                 <div class="card-body">
                     <h5 class="card-title d-flex align-items-center gap-2 flex-wrap">
                         <span>{{ icono }}</span>
@@ -364,8 +439,9 @@
                 {% set estado_card = 'ok' %}
             {% endif %}
 
-            <div class="card shadow-sm mb-3 promo-card {{ card_class }} promo-item"
-                 data-estado="{{ estado_card }}">
+            <div class="card shadow-sm mb-3 promo-card promo-item {{ card_class }}"
+                 data-estado="{{ estado_card }}"
+                 data-id="{{ r.id_geo | default('') }}">
                 <div class="card-body">
                     <h5 class="card-title d-flex align-items-center gap-2 flex-wrap">
                         <span>{{ icono }}</span>
@@ -550,25 +626,116 @@ Aplicador limpio: {{ r.resumen_aplicador | default('-') }}
 
             <button type="submit" class="btn btn-primary me-2">Descargar resultados</button>
 
-<a href="/nueva_validacion" class="btn btn-warning me-2">
-🔄 Nueva validación
-</a>
+            <a href="/nueva_validacion" class="btn btn-warning me-2">
+                🔄 Nueva validación
+            </a>
 
-<a href="/reset" class="btn btn-outline-secondary">
-Volver
-</a>
+            <a href="/" class="btn btn-outline-secondary">
+                Volver
+            </a>
         </form>
     </div>
 
 </div>
 
 <script>
+    function mostrarInfoBusqueda(mensaje, tipo) {
+        const box = document.getElementById('busquedaInfo');
+        box.style.display = 'block';
+        box.className = 'alert busqueda-info mb-0';
+
+        if (tipo === 'ok') {
+            box.classList.add('alert-success');
+        } else if (tipo === 'warn') {
+            box.classList.add('alert-warning');
+        } else {
+            box.classList.add('alert-info');
+        }
+
+        box.textContent = mensaje;
+    }
+
+    function limpiarResaltadoPromos() {
+        const cards = document.querySelectorAll('.promo-item');
+        cards.forEach(card => card.classList.remove('promo-highlight'));
+    }
+
+    function buscarPromoPorId() {
+        const input = document.getElementById('buscarPromoId');
+        const valor = input.value.trim();
+        const cards = document.querySelectorAll('.promo-item');
+
+        limpiarResaltadoPromos();
+
+        if (!valor) {
+            mostrarInfoBusqueda('Ingresa un ID de promoción para buscar.', 'warn');
+            input.focus();
+            return;
+        }
+
+        let encontrada = null;
+
+        cards.forEach(card => {
+            const idPromo = (card.dataset.id || '').trim();
+
+            if (idPromo === valor) {
+                encontrada = card;
+            }
+        });
+
+        if (!encontrada) {
+            mostrarInfoBusqueda('No se encontró ninguna promoción con ese ID dentro de este resultado.', 'warn');
+            return;
+        }
+
+        filtrarSoloPromo(encontrada);
+        encontrada.classList.add('promo-highlight');
+        encontrada.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        mostrarInfoBusqueda('Promoción encontrada: ' + valor, 'ok');
+
+        setTimeout(() => {
+            encontrada.classList.remove('promo-highlight');
+        }, 5000);
+    }
+
+    function filtrarSoloPromo(cardObjetivo) {
+        const cards = document.querySelectorAll('.promo-item');
+        const dashboardCards = document.querySelectorAll('.dashboard-card');
+        const filtroInfo = document.getElementById('filtro-actual');
+        const textoFiltro = document.getElementById('texto-filtro');
+
+        dashboardCards.forEach(card => card.classList.remove('active-filter'));
+
+        cards.forEach(card => {
+            if (card === cardObjetivo) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        filtroInfo.style.display = 'block';
+        textoFiltro.innerHTML = 'Mostrando 1 promoción encontrada por ID';
+    }
+
+    function limpiarBusquedaPromo() {
+        const input = document.getElementById('buscarPromoId');
+        const busquedaInfo = document.getElementById('busquedaInfo');
+        input.value = '';
+        busquedaInfo.style.display = 'none';
+        limpiarResaltadoPromos();
+        filtrarPromos('all');
+        input.focus();
+    }
+
     function filtrarPromos(estado) {
         const cards = document.querySelectorAll('.promo-item');
         const dashboardCards = document.querySelectorAll('.dashboard-card');
         const filtroInfo = document.getElementById('filtro-actual');
         const textoFiltro = document.getElementById('texto-filtro');
 
+        limpiarResaltadoPromos();
         dashboardCards.forEach(card => card.classList.remove('active-filter'));
 
         const activeCard = document.querySelector(`.dashboard-card[data-filter="${estado}"]`);
@@ -621,6 +788,7 @@ Volver
 
     document.addEventListener('DOMContentLoaded', function () {
         const dashboardCards = document.querySelectorAll('.dashboard-card');
+        const inputBusqueda = document.getElementById('buscarPromoId');
 
         dashboardCards.forEach(card => {
             card.addEventListener('click', function () {
@@ -628,6 +796,15 @@ Volver
                 filtrarPromos(estado);
             });
         });
+
+        if (inputBusqueda) {
+            inputBusqueda.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    buscarPromoPorId();
+                }
+            });
+        }
 
         const totalCard = document.querySelector('.dashboard-card[data-filter="all"]');
         if (totalCard) {

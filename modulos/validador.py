@@ -1804,6 +1804,7 @@ def validar_promocion_completar(id_geo, grupo, promo, listas_productos_export, m
     elif tipo_desc == "2DA":
         esperado_pct_comercial = porcentaje_excel
         esperado_qty = cantidad_excel
+        area_2da_sin_division = area_responsable in {"BYCP", "FIDELIZACION"}
 
         actual_pct_nodo = promo.get("applier_percentage")
         actual_qty_cond = promo.get("condition_quantity")
@@ -1817,7 +1818,7 @@ def validar_promocion_completar(id_geo, grupo, promo, listas_productos_export, m
         esperado_pct_nodo = None
         if esperado_pct_comercial is not None:
             try:
-                if area_responsable == "BYCP":
+                if area_2da_sin_division:
                     esperado_pct_nodo = float(esperado_pct_comercial)
                 elif esperado_qty not in {None, 0}:
                     esperado_pct_nodo = float(esperado_pct_comercial) / float(esperado_qty)
@@ -1899,7 +1900,7 @@ def validar_promocion_completar(id_geo, grupo, promo, listas_productos_export, m
         qty_applier_ok = False
         if esperado_qty is not None and actual_qty_applier is not None:
             qty_applier_int = int(float(actual_qty_applier))
-            if area_responsable == "BYCP":
+            if area_2da_sin_division:
                 qty_applier_ok = qty_applier_int in {1, int(esperado_qty)}
             else:
                 qty_applier_ok = qty_applier_int == int(esperado_qty)

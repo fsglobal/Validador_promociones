@@ -6,71 +6,170 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        details { margin-top: 10px; }
-        summary { cursor: pointer; font-weight: bold; color: #004aad; }
+        :root {
+            --bg-page: #eceff3;
+            --bg-card: #f7f8fa;
+            --bg-soft: #eef1f4;
+            --text-main: #2f3a45;
+            --text-muted: #66727f;
+            --title-main: #1f4f82;
+            --title-section: #2e7da8;
+            --border-soft: #d9e0e7;
+            --shadow-soft: 0 6px 18px rgba(31, 41, 55, 0.08);
+            --shadow-hover: 0 10px 22px rgba(31, 41, 55, 0.12);
+
+            --ok: #198754;
+            --ok-bg: #dcefe5;
+            --ok-text: #115c39;
+
+            --warn: #d1a300;
+            --warn-bg: #fff2c9;
+            --warn-text: #7a5b00;
+
+            --err: #dc3545;
+            --err-bg: #f7d9dc;
+            --err-text: #8d2430;
+
+            --primary-btn-1: #1f5f99;
+            --primary-btn-2: #2f7bbb;
+        }
+
+        body {
+            font-size: 0.95rem;
+            background: var(--bg-page) !important;
+            color: var(--text-main);
+        }
+
+        details { margin-top: 8px; }
+
+        summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--title-main);
+            font-size: 0.94rem;
+        }
+
+        @keyframes fadeInSoft {
+            0% { opacity: 0; transform: translateY(18px) scale(0.985); }
+            60% { opacity: 1; transform: translateY(-2px) scale(1.005); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .container.my-4 {
+            max-width: 1180px;
+            margin-top: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        h1 {
+            font-size: 1.95rem;
+            margin-bottom: 1rem !important;
+            color: var(--title-main) !important;
+        }
+
+        h2 {
+            font-size: 1.22rem;
+            margin-bottom: 0.85rem !important;
+            color: var(--title-section) !important;
+        }
+
+        h3 {
+            font-size: 1.02rem;
+        }
+
+        .alert {
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+        }
+
+        .alert-light.border.shadow-sm.mb-4 {
+            background: var(--bg-card);
+            border: 1px solid var(--border-soft) !important;
+            box-shadow: var(--shadow-soft) !important;
+        }
 
         .promo-card {
-            border-left: 8px solid #ccc;
-            border-radius: 10px;
-            transition: box-shadow 0.2s ease, transform 0.2s ease, outline 0.2s ease;
+            border-left: 6px solid #bcc6d1;
+            border-radius: 12px;
+            transition: box-shadow 0.22s ease, transform 0.22s ease, outline 0.22s ease;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-soft);
+            border-right: 1px solid var(--border-soft);
+            border-bottom: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            opacity: 0;
+            animation: fadeInSoft 0.5s forwards;
+        }
+
+        .promo-item:nth-of-type(1) { animation-delay: 0.03s; }
+        .promo-item:nth-of-type(2) { animation-delay: 0.06s; }
+        .promo-item:nth-of-type(3) { animation-delay: 0.09s; }
+        .promo-item:nth-of-type(4) { animation-delay: 0.12s; }
+        .promo-item:nth-of-type(5) { animation-delay: 0.15s; }
+        .promo-item:nth-of-type(6) { animation-delay: 0.18s; }
+
+        .promo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
         }
 
         .promo-ok {
-            border-left-color: #198754 !important;
-            background: #f3fff7;
+            border-left-color: var(--ok) !important;
         }
 
         .promo-warn {
-            border-left-color: #ffc107 !important;
-            background: #fffdf2;
+            border-left-color: var(--warn) !important;
         }
 
         .promo-err {
-            border-left-color: #dc3545 !important;
-            background: #fff5f5;
+            border-left-color: var(--err) !important;
         }
 
         .promo-highlight {
-            outline: 3px solid #0d6efd;
+            outline: 3px solid #5a9bd8;
             outline-offset: 2px;
-            box-shadow: 0 0.75rem 1.5rem rgba(13, 110, 253, 0.18) !important;
-            transform: translateY(-2px);
+            box-shadow: 0 0.65rem 1.2rem rgba(90, 155, 216, 0.18) !important;
+            transform: translateY(-1px);
         }
 
         .pill {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 3px 10px;
             border-radius: 999px;
-            font-size: 0.85rem;
+            font-size: 0.77rem;
             font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0.1px;
         }
 
         .pill-ok {
-            background: #d1e7dd;
-            color: #0f5132;
+            background: var(--ok-bg);
+            color: var(--ok-text);
         }
 
         .pill-warn {
-            background: #fff3cd;
-            color: #664d03;
+            background: var(--warn-bg);
+            color: var(--warn-text);
         }
 
         .pill-err {
-            background: #f8d7da;
-            color: #842029;
+            background: var(--err-bg);
+            color: var(--err-text);
         }
 
         .resumen-box {
-            background: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
-            margin-bottom: 12px;
+            background: var(--bg-soft);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .resumen-item {
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            font-size: 0.92rem;
         }
 
         .resumen-item:last-child {
@@ -78,40 +177,56 @@
         }
 
         .sub-aviso {
-            margin-top: 6px;
+            margin-top: 5px;
             font-weight: 600;
+            font-size: 0.91rem;
         }
 
-        .estado-ok { color: #198754; font-weight: 700; }
-        .estado-warn { color: #b58100; font-weight: 700; }
-        .estado-err { color: #dc3545; font-weight: 700; }
+        .estado-ok { color: var(--ok); font-weight: 700; }
+        .estado-warn { color: #9c7700; font-weight: 700; }
+        .estado-err { color: var(--err); font-weight: 700; }
 
         .mini-label {
             font-weight: 700;
-            color: #495057;
+            color: #42515f;
         }
 
         .detalle-inline {
             display: block;
-            margin-top: 4px;
-            font-size: 0.92rem;
-            color: #495057;
+            margin-top: 3px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
             font-weight: 600;
         }
 
         .dashboard-card {
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border-width: 1px !important;
+            box-shadow: var(--shadow-soft);
+            opacity: 0;
+            animation: fadeInSoft 0.55s forwards;
         }
+
+        .dashboard-card:nth-child(1) { animation-delay: 0.03s; }
+        .dashboard-card:nth-child(2) { animation-delay: 0.08s; }
+        .dashboard-card:nth-child(3) { animation-delay: 0.13s; }
+        .dashboard-card:nth-child(4) { animation-delay: 0.18s; }
 
         .dashboard-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.12) !important;
+            box-shadow: var(--shadow-hover) !important;
         }
 
         .dashboard-card.active-filter {
-            outline: 3px solid #0d6efd;
+            outline: 3px solid #7fb0df;
             outline-offset: 2px;
+        }
+
+        .dashboard-card .card-body {
+            padding: 0.95rem 0.85rem;
         }
 
         .filtro-info {
@@ -119,21 +234,22 @@
         }
 
         .text-info-custom {
-            color: #5c6770 !important;
+            color: var(--text-muted) !important;
         }
 
         .busqueda-box {
-            background: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 16px;
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
-            margin-bottom: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 18px;
+            animation: fadeInSoft 0.55s forwards;
         }
 
         .busqueda-grid {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: end;
             flex-wrap: wrap;
         }
@@ -143,83 +259,224 @@
             min-width: 240px;
         }
 
+        .busqueda-field label {
+            margin-bottom: 4px;
+            font-size: 0.92rem;
+            color: #44515e;
+        }
+
         .busqueda-acciones {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .busqueda-info {
             display: none;
-            margin-top: 12px;
+            margin-top: 10px;
+        }
+
+        .origen {
+            font-size: 0.91rem;
+            line-height: 1.45;
+            color: #4d5a67;
+        }
+
+        .card-title {
+            font-size: 1.01rem;
+            margin-bottom: 0.4rem;
+            color: #25313d;
+        }
+
+        .card-body {
+            padding: 0.95rem 1rem;
+        }
+
+        .table.table-sm {
+            background: #fbfbfc;
+            border-color: var(--border-soft);
+            margin-bottom: 0.4rem;
+        }
+
+        .table.table-sm th,
+        .table.table-sm td {
+            padding: 0.44rem 0.55rem;
+            font-size: 0.89rem;
+            background: transparent;
+        }
+
+        ul.mt-2 {
+            margin-top: 0.65rem !important;
+            margin-bottom: 0;
+            padding-left: 1.1rem;
+            font-size: 0.9rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.1rem !important;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.85rem !important;
+        }
+
+        .mt-4 {
+            margin-top: 1.1rem !important;
+        }
+
+        .me-2 {
+            margin-right: 0.45rem !important;
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(31, 41, 55, 0.14);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-btn-1), var(--primary-btn-2));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1c568d, #2a71ad);
+        }
+
+        .btn-warning {
+            color: #523f00;
+            font-weight: 700;
+        }
+
+        .btn-outline-secondary {
+            border-color: #aeb9c5;
+            color: #4d5a67;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #e6eaef;
+            color: #2f3a45;
+            border-color: #aeb9c5;
+        }
+
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 90%;
+            height: 100%;
+            background: rgba(255,255,255,0.22);
+            transform: skewX(-20deg);
+        }
+
+        .btn-glow:hover::after {
+            left: 130%;
+            transition: left 0.55s ease;
+        }
+
+        .form-control,
+        .form-control-sm {
+            border-radius: 10px;
+            border: 1px solid #cfd7df;
+            background: #f9fafb;
+        }
+
+        .form-control:focus,
+        .form-control-sm:focus {
+            border-color: #7fb0df;
+            box-shadow: 0 0 0 0.18rem rgba(127, 176, 223, 0.18);
+            background: #fcfcfd;
         }
 
         @media (max-width: 768px) {
             .busqueda-acciones .btn {
                 width: 100%;
             }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            h2 {
+                font-size: 1.12rem;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
 <div class="container my-4">
 
-    <h1 class="fw-bold text-primary mb-3">Validación de archivos de Promociones</h1>
+    <h1 class="fw-bold mb-3">Validación de archivos de Promociones</h1>
 
     <div class="alert alert-light border shadow-sm mb-4">
         <div class="fw-bold mb-2">Interpretación del resultado</div>
 
-        <div class="d-flex flex-wrap gap-3 mb-3">
+        <div class="d-flex flex-wrap gap-3 mb-3" style="font-size:0.94rem;">
             <div>
-                <span style="font-size:20px">🟢</span>
+                <span style="font-size:18px">🟢</span>
                 <b>Coinciden</b> → Promoción validada correctamente
             </div>
 
             <div>
-                <span style="font-size:20px">🟡</span>
-                <b>Atención</b> → Coincide pero requiere revisión (ej: extensión de fecha)
+                <span style="font-size:18px">🟡</span>
+                <b>Atención</b> → Coincide pero requiere revisión
             </div>
 
             <div>
-                <span style="font-size:20px">🔴</span>
+                <span style="font-size:18px">🔴</span>
                 <b>No coinciden</b> → Error real en la promoción
             </div>
         </div>
 
         <div class="row g-3 text-center">
             <div class="col-md-3">
-                <div class="card shadow-sm border-secondary dashboard-card" data-filter="all">
+                <div class="card border-secondary dashboard-card" data-filter="all">
                     <div class="card-body">
-                        <div class="fw-bold text-secondary">Total</div>
-                        <div style="font-size: 1.6rem;">{{ total_promos | default(0) }}</div>
+                        <div class="fw-bold text-secondary" style="font-size:0.94rem;">Total</div>
+                        <div style="font-size: 1.12rem;">{{ total_promos | default(0) }}</div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="card shadow-sm border-success dashboard-card" data-filter="ok">
+                <div class="card border-success dashboard-card" data-filter="ok">
                     <div class="card-body">
-                        <div class="fw-bold text-success">🟢 OK</div>
-                        <div style="font-size: 1.6rem;">{{ total_ok | default(0) }}</div>
+                        <div class="fw-bold text-success" style="font-size:0.94rem;">🟢 OK</div>
+                        <div style="font-size: 1.12rem;">{{ total_ok | default(0) }}</div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="card shadow-sm border-warning dashboard-card" data-filter="warn">
+                <div class="card border-warning dashboard-card" data-filter="warn">
                     <div class="card-body">
-                        <div class="fw-bold text-warning">🟡 Atención</div>
-                        <div style="font-size: 1.6rem;">{{ total_warn | default(0) }}</div>
+                        <div class="fw-bold text-warning" style="font-size:0.94rem;">🟡 Atención</div>
+                        <div style="font-size: 1.12rem;">{{ total_warn | default(0) }}</div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="card shadow-sm border-danger dashboard-card" data-filter="err">
+                <div class="card border-danger dashboard-card" data-filter="err">
                     <div class="card-body">
-                        <div class="fw-bold text-danger">🔴 Error</div>
-                        <div style="font-size: 1.6rem;">{{ total_err | default(0) }}</div>
+                        <div class="fw-bold text-danger" style="font-size:0.94rem;">🔴 Error</div>
+                        <div style="font-size: 1.12rem;">{{ total_err | default(0) }}</div>
                     </div>
                 </div>
             </div>
@@ -227,25 +484,25 @@
     </div>
 
     <div class="busqueda-box">
-        <div class="fw-bold text-primary mb-2">Buscar promoción por ID dentro de este resultado</div>
+        <div class="fw-bold mb-2" style="font-size:1rem; color: var(--title-main);">Buscar promoción por ID dentro de este resultado</div>
 
         <div class="busqueda-grid">
             <div class="busqueda-field">
-                <label for="buscarPromoId" class="form-label mb-1"><b>ID de promoción</b></label>
+                <label for="buscarPromoId" class="form-label"><b>ID de promoción</b></label>
                 <input
                     type="text"
                     id="buscarPromoId"
-                    class="form-control"
+                    class="form-control form-control-sm"
                     placeholder="Ej: 516540"
                     autocomplete="off"
                 >
             </div>
 
             <div class="busqueda-acciones">
-                <button type="button" class="btn btn-primary" onclick="buscarPromoPorId()">
+                <button type="button" class="btn btn-primary btn-sm btn-glow px-3" onclick="buscarPromoPorId()">
                     Buscar
                 </button>
-                <button type="button" class="btn btn-outline-secondary" onclick="limpiarBusquedaPromo()">
+                <button type="button" class="btn btn-outline-secondary btn-sm px-3" onclick="limpiarBusquedaPromo()">
                     Limpiar búsqueda
                 </button>
             </div>
@@ -265,8 +522,7 @@
         <h3 class="text-secondary mb-4">USUARIO FILTRADO: {{ rc }}</h3>
     {% endif %}
 
-    <!-- RESULTADOS TRADICIONAL -->
-    <h2 class="fw-bold text-info mb-3">Promociones del usuario ingresado en Excel con RC</h2>
+    <h2 class="fw-bold mb-3">Promociones del usuario ingresado en Excel con RC</h2>
 
     {% if resultados_tradicional|length == 0 %}
         <div class="alert alert-warning">No se ingresó ningún usuario o no se encontraron promociones.</div>
@@ -289,7 +545,7 @@
                 {% set estado_card = 'ok' %}
             {% endif %}
 
-            <div class="card shadow-sm mb-3 promo-card promo-item {{ card_class }}"
+            <div class="card mb-3 promo-card promo-item {{ card_class }}"
                  data-estado="{{ estado_card }}"
                  data-id="{{ r.id_geo | default('') }}">
                 <div class="card-body">
@@ -415,8 +671,7 @@
         {% endfor %}
     {% endif %}
 
-    <!-- RESULTADOS COMPLETAR -->
-    <h2 class="fw-bold text-info mb-3">Excel de Promociones en Hoja COMPLETAR</h2>
+    <h2 class="fw-bold mb-3">Excel de Promociones en Hoja COMPLETAR</h2>
 
     {% if resultados_completar|length == 0 %}
         <div class="alert alert-warning">No se encontraron promociones en la hoja COMPLETAR.</div>
@@ -439,7 +694,7 @@
                 {% set estado_card = 'ok' %}
             {% endif %}
 
-            <div class="card shadow-sm mb-3 promo-card promo-item {{ card_class }}"
+            <div class="card mb-3 promo-card promo-item {{ card_class }}"
                  data-estado="{{ estado_card }}"
                  data-id="{{ r.id_geo | default('') }}">
                 <div class="card-body">
@@ -565,7 +820,6 @@
         {% endfor %}
     {% endif %}
 
-    <!-- BOTONES -->
     <div class="text-center mt-4">
         <form action="/descargar_resultados" method="POST">
             <input type="hidden" name="rc" value="{{ rc }}">
@@ -624,13 +878,13 @@ Aplicador limpio: {{ r.resumen_aplicador | default('-') }}
 {% endfor %}
             </textarea>
 
-            <button type="submit" class="btn btn-primary me-2">Descargar resultados</button>
+            <button type="submit" class="btn btn-primary btn-sm btn-glow me-2">Descargar resultados</button>
 
-            <a href="/nueva_validacion" class="btn btn-warning me-2">
+            <a href="/nueva_validacion" class="btn btn-warning btn-sm me-2">
                 🔄 Nueva validación
             </a>
 
-            <a href="/" class="btn btn-outline-secondary">
+            <a href="/" class="btn btn-outline-secondary btn-sm">
                 Volver
             </a>
         </form>

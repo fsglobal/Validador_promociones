@@ -7,89 +7,157 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg-page: #eceff3;
+            --bg-card: #f7f8fa;
+            --bg-soft: #eef1f4;
+            --text-main: #2f3a45;
+            --text-muted: #66727f;
+            --title-main: #1f4f82;
+            --title-section: #2e7da8;
+            --border-soft: #d9e0e7;
+            --shadow-soft: 0 6px 18px rgba(31, 41, 55, 0.08);
+            --shadow-hover: 0 10px 22px rgba(31, 41, 55, 0.12);
+
+            --ok: #198754;
+            --ok-bg: #dcefe5;
+            --ok-text: #115c39;
+
+            --warn: #d1a300;
+            --warn-bg: #fff2c9;
+            --warn-text: #7a5b00;
+
+            --err: #dc3545;
+            --err-bg: #f7d9dc;
+            --err-text: #8d2430;
+
+            --primary-btn-1: #1f5f99;
+            --primary-btn-2: #2f7bbb;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
-            background: #f4f6f9;
+            background: var(--bg-page);
             margin: 0;
             padding: 0;
-            color: #333;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        @keyframes fadeInSoft {
+            0% { opacity: 0; transform: translateY(18px) scale(0.985); }
+            60% { opacity: 1; transform: translateY(-2px) scale(1.005); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
         }
 
         .contenedor {
-            max-width: 1200px;
-            margin: 30px auto;
+            max-width: 1180px;
+            margin: 28px auto;
             padding: 0 20px;
         }
 
         .titulo {
-            font-size: 28px;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 5px;
-            color: #003366;
+            margin-bottom: 4px;
+            color: var(--title-main);
         }
 
         .subtitulo {
-            color: #666;
-            margin-bottom: 30px;
+            color: var(--text-muted);
+            margin-bottom: 26px;
+            font-size: 1rem;
         }
 
         .dashboard {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            gap: 24px;
         }
 
         .panel-lateral {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 18px;
         }
 
         .card {
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-            padding: 20px;
-            margin-bottom: 20px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-soft);
+            padding: 18px;
+            margin-bottom: 18px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            opacity: 0;
+            animation: fadeInSoft 0.55s forwards;
         }
 
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .dashboard > div > .card:nth-child(1) { animation-delay: 0.03s; }
+        .dashboard > div > .card:nth-child(2) { animation-delay: 0.08s; }
+        .dashboard > div > .card:nth-child(3) { animation-delay: 0.13s; }
+        .dashboard > div > .card:nth-child(4) { animation-delay: 0.18s; }
+        .panel-lateral .card:nth-child(1) { animation-delay: 0.08s; }
+        .panel-lateral .card:nth-child(2) { animation-delay: 0.13s; }
+
         .card-header {
-            font-weight: 600;
-            margin-bottom: 15px;
+            font-weight: 700;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #003366;
+            color: var(--title-main);
+            font-size: 1rem;
         }
 
         .btn {
             display: inline-block;
             padding: 10px 18px;
-            border-radius: 6px;
+            border-radius: 10px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             border: none;
             font-size: 14px;
-            transition: .2s;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(31, 41, 55, 0.14);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-primary {
-            background: #003366;
+            background: linear-gradient(135deg, var(--primary-btn-1), var(--primary-btn-2));
             color: #fff;
+            border: none;
         }
 
         .btn-primary:hover {
-            background: #002244;
+            background: linear-gradient(135deg, #1c568d, #2a71ad);
         }
 
         .btn-success {
-            background: #28a745;
+            background: linear-gradient(135deg, #1f8b55, #29a765);
             color: #fff;
         }
 
         .btn-success:hover {
-            background: #1e7e34;
+            background: linear-gradient(135deg, #197447, #239158);
         }
 
         .btn-danger {
@@ -98,43 +166,79 @@
         }
 
         .btn-danger:hover {
-            background: #a71d2a;
+            background: #bd2836;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #79848f;
             color: #fff;
         }
 
         .btn-secondary:hover {
-            background: #545b62;
+            background: #68737d;
         }
 
         .btn-dark {
-            background: #212529;
+            background: #27313b;
             color: #fff;
         }
 
         .btn-dark:hover {
-            background: #101214;
+            background: #1f2730;
         }
 
-        input[type="text"],
-        input[type="file"] {
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 90%;
+            height: 100%;
+            background: rgba(255,255,255,0.22);
+            transform: skewX(-20deg);
+        }
+
+        .btn-glow:hover::after {
+            left: 130%;
+            transition: left 0.55s ease;
+        }
+
+        input[type="text"] {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            border: 1px solid #cfd7df;
+            border-radius: 10px;
             margin-top: 5px;
             font-size: 14px;
             box-sizing: border-box;
+            background: #f9fafb;
+            color: var(--text-main);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #7fb0df;
+            box-shadow: 0 0 0 0.18rem rgba(127, 176, 223, 0.18);
+            background: #fcfcfd;
         }
 
         .file-list {
-            background: #f8f9fa;
+            background: var(--bg-soft);
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .file-list h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: var(--title-main);
         }
 
         .file-list ul {
@@ -145,54 +249,135 @@
         .file-list li {
             list-style: none;
             padding: 5px 0;
-            font-size: 14px;
+            font-size: 0.92rem;
+            color: #44515e;
+            line-height: 1.35;
+        }
+
+        .file-input-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .file-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            background: #f9fafb;
+            border: 1px solid #cfd7df;
+            border-radius: 10px;
+            padding: 8px 10px;
+            box-sizing: border-box;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .file-picker:focus-within {
+            border-color: #7fb0df;
+            box-shadow: 0 0 0 0.18rem rgba(127, 176, 223, 0.18);
+            background: #fcfcfd;
+        }
+
+        .file-picker-btn {
+            flex: 0 0 auto;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-btn-1), var(--primary-btn-2));
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-picker-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 90%;
+            height: 100%;
+            background: rgba(255,255,255,0.22);
+            transform: skewX(-20deg);
+        }
+
+        .file-picker-btn:hover::after {
+            left: 130%;
+            transition: left 0.55s ease;
+        }
+
+        .file-picker-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(31, 41, 55, 0.14);
+        }
+
+        .file-picker-text {
+            flex: 1;
+            min-width: 0;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         #alerta {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #28a745;
+            background: var(--ok);
             color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 12px 18px;
+            border-radius: 10px;
             font-size: 14px;
             display: none;
             opacity: 0;
             transition: opacity .5s ease-in-out;
             z-index: 9999;
+            box-shadow: var(--shadow-hover);
         }
 
         #alerta.error {
-            background: #dc3545;
+            background: var(--err);
         }
 
         #alerta.warn {
-            background: #ffc107;
-            color: #000;
+            background: var(--warn-bg);
+            color: #5f4a00;
         }
 
         #progressBar {
             width: 100%;
             height: 8px;
-            background: #ddd;
-            border-radius: 6px;
-            margin-top: 10px;
+            background: #d7dee6;
+            border-radius: 999px;
+            margin-top: 12px;
             display: none;
+            overflow: hidden;
         }
 
         #progress {
             width: 0%;
             height: 100%;
-            background: linear-gradient(45deg, #003366, #0056b3);
-            border-radius: 6px;
+            background: linear-gradient(45deg, var(--primary-btn-1), var(--primary-btn-2));
+            border-radius: 999px;
             transition: width .3s;
         }
 
         #loadingOverlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(30, 38, 46, 0.45);
             display: none;
             align-items: center;
             justify-content: center;
@@ -205,13 +390,14 @@
         }
 
         .loading-box {
-            background: #fff;
-            border-radius: 14px;
-            padding: 28px 24px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 26px 22px;
             width: 100%;
             max-width: 360px;
             text-align: center;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+            border: 1px solid var(--border-soft);
         }
 
         .dots-spinner {
@@ -219,13 +405,13 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            margin: 0 auto 18px auto;
+            margin: 0 auto 16px auto;
         }
 
         .dots-spinner div {
             width: 12px;
             height: 12px;
-            background: #28a745;
+            background: #2b8f5c;
             border-radius: 50%;
             animation: bounce 0.6s infinite alternate;
         }
@@ -241,13 +427,13 @@
         .loading-title {
             font-size: 18px;
             font-weight: 700;
-            color: #003366;
+            color: var(--title-main);
             margin-bottom: 8px;
         }
 
         .loading-text {
             font-size: 14px;
-            color: #666;
+            color: var(--text-muted);
             line-height: 1.5;
         }
 
@@ -257,9 +443,15 @@
             flex-wrap: wrap;
         }
 
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
+        .card-accent {
+            border-left: 5px solid var(--ok);
+        }
+
+        .card p {
+            color: #43515e;
+            line-height: 1.45;
+            margin-top: 0;
+            margin-bottom: 14px;
         }
 
         @media (max-width: 900px) {
@@ -271,6 +463,24 @@
         @media (max-width: 640px) {
             .acciones-admin .btn {
                 width: 100%;
+            }
+
+            .file-picker {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .file-picker-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .titulo {
+                font-size: 1.7rem;
+            }
+
+            .subtitulo {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -296,7 +506,7 @@
     <div class="dashboard">
 
         <div>
-            <div class="card">
+            <div class="card card-accent">
                 <div class="card-header">
                     <i class="fas fa-check-circle"></i>
                     <span>Validar Promociones</span>
@@ -308,7 +518,7 @@
 
                     <br><br>
 
-                    <button type="submit" id="btnValidar" class="btn btn-success">
+                    <button type="submit" id="btnValidar" class="btn btn-success btn-glow">
                         Ejecutar Validación
                     </button>
                 </form>
@@ -322,16 +532,24 @@
 
                 <form id="uploadForm" enctype="multipart/form-data">
                     <label for="excelFiles"><b>Excel (.xlsx):</b></label>
-                    <input type="file" name="excel_files" id="excelFiles" multiple accept=".xlsx">
+                    <div class="file-picker">
+                        <input type="file" name="excel_files" id="excelFiles" class="file-input-hidden" multiple accept=".xlsx">
+                        <label for="excelFiles" class="file-picker-btn">Seleccionar Excel</label>
+                        <div id="excelFilesText" class="file-picker-text">Ningún archivo seleccionado</div>
+                    </div>
 
                     <br><br>
 
                     <label for="exportFiles"><b>Export (.txt):</b></label>
-                    <input type="file" name="export_files" id="exportFiles" multiple accept=".txt">
+                    <div class="file-picker">
+                        <input type="file" name="export_files" id="exportFiles" class="file-input-hidden" multiple accept=".txt">
+                        <label for="exportFiles" class="file-picker-btn">Seleccionar Export</label>
+                        <div id="exportFilesText" class="file-picker-text">Ningún archivo seleccionado</div>
+                    </div>
 
                     <br><br>
 
-                    <button type="submit" id="btnUpload" class="btn btn-primary" style="width:100%;">
+                    <button type="submit" id="btnUpload" class="btn btn-primary btn-glow" style="width:100%;">
                         Cargar archivos
                     </button>
 
@@ -347,7 +565,7 @@
                     <span>Archivos cargados</span>
                 </div>
 
-                <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="display:flex; gap:18px; flex-wrap:wrap;">
                     <div class="file-list" style="flex:1; min-width:280px;">
                         <h3>Excel</h3>
                         <ul id="listaExcel">
@@ -453,6 +671,27 @@ function ocultarLoading() {
     overlay.setAttribute("aria-hidden", "true");
 }
 
+function actualizarTextoArchivos(inputId, textId, singular) {
+    const input = document.getElementById(inputId);
+    const text = document.getElementById(textId);
+
+    if (!input || !text) return;
+
+    const total = input.files.length;
+
+    if (total === 0) {
+        text.textContent = "Ningún archivo seleccionado";
+        return;
+    }
+
+    if (total === 1) {
+        text.textContent = input.files[0].name;
+        return;
+    }
+
+    text.textContent = total + " archivos seleccionados de " + singular;
+}
+
 async function subirArchivos(e) {
     e.preventDefault();
 
@@ -553,6 +792,20 @@ if (validarForm) {
         btnValidar.disabled = true;
         btnValidar.textContent = "Procesando...";
         mostrarLoading("Analizando promociones", "El validador está procesando los archivos. Esto puede tardar unos segundos.");
+    });
+}
+
+const excelFilesInput = document.getElementById("excelFiles");
+if (excelFilesInput) {
+    excelFilesInput.addEventListener("change", function() {
+        actualizarTextoArchivos("excelFiles", "excelFilesText", "Excel");
+    });
+}
+
+const exportFilesInput = document.getElementById("exportFiles");
+if (exportFilesInput) {
+    exportFilesInput.addEventListener("change", function() {
+        actualizarTextoArchivos("exportFiles", "exportFilesText", "Export");
     });
 }
 </script>

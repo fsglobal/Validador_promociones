@@ -825,11 +825,7 @@
     <div class="text-center mt-4">
         <form action="/descargar_resultados" method="POST">
             <input type="hidden" name="rc" value="{{ rc }}">
-
-            <input type="hidden" name="tradicional_data" value='{{ tradicional_data | tojson | safe }}'>
-            <input type="hidden" name="completar_data" value='{{ completar_data | tojson | safe }}'>
-
-            <button type="submit" class="btn btn-primary btn-sm btn-glow me-2">Descargar resultados</button>
+<button type="submit" class="btn btn-primary btn-sm btn-glow me-2">Descargar resultados</button>
 
             <a href="/" class="btn btn-warning btn-sm me-2">
                 🔄 Nueva validación

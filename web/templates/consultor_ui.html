@@ -559,14 +559,14 @@ function actualizarCamposVisibles() {
         const tipoDescuento = document.getElementById('tipoDescuento');
         if (tipoDescuento) {
             tipoDescuento.value = 'PORCENTUAL';
-            tipoDescuento.disabled = true;
+            tipoDescuento.readOnly = true;
         }
 
         // Unidades pack SIEMPRE 1
         const unidadesPack = document.getElementById('unidadesPack');
         if (unidadesPack) {
             unidadesPack.value = 1;
-            unidadesPack.disabled = true;
+            unidadesPack.readOnly = true;
         }
 
         // Descuento porcentual visible y editable
@@ -579,8 +579,9 @@ function actualizarCamposVisibles() {
         const tipoDescuento = document.getElementById('tipoDescuento');
         const unidadesPack = document.getElementById('unidadesPack');
 
-        if (tipoDescuento) tipoDescuento.disabled = false;
-        if (unidadesPack) unidadesPack.disabled = false;
+    if (tipoDescuento) tipoDescuento.readOnly = false;
+    if (unidadesPack) unidadesPack.readOnly = false;
+
     }
 
 }

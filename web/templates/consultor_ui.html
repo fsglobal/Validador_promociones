@@ -22,6 +22,12 @@
             --warn-text: #7a5b00;
             --primary-btn-1: #1f5f99;
             --primary-btn-2: #2f7bbb;
+            --legacy-green-1: #d8ead3;
+            --legacy-green-2: #b9d4b7;
+            --legacy-green-3: #8db98b;
+            --legacy-line: #cfe2cf;
+            --legacy-text: #006f73;
+            --legacy-bg: #efefef;
         }
 
         body {
@@ -63,6 +69,12 @@
             display: grid;
             grid-template-columns: 1fr 0.92fr;
             gap: 24px;
+            align-items: start;
+        }
+
+        .left-column {
+            display: grid;
+            gap: 18px;
             align-items: start;
         }
 
@@ -341,6 +353,424 @@
             margin-bottom: 8px;
         }
 
+        /* ============================================================
+           BLOQUE NUEVO: VISTA PREVIA DEL SISTEMA
+           ============================================================ */
+        .preview-card {
+            padding-bottom: 16px;
+        }
+
+        .preview-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .preview-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .preview-tab {
+            padding: 8px 14px;
+            border: 1px solid #b9c6d4;
+            border-radius: 9px;
+            background: #f7fbff;
+            color: #365679;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .preview-tab.active {
+            background: linear-gradient(180deg, #d8ead3, #bad6b8);
+            color: #0d5c5d;
+            border-color: #9fb89f;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .preview-shell {
+            background: #eef1f4;
+            border: 1px solid #d7dde4;
+            border-radius: 12px;
+            padding: 14px;
+            overflow-x: auto;
+        }
+
+        .legacy-screen {
+            background: var(--legacy-bg);
+            border: 1px solid #bfbfbf;
+            min-height: 360px;
+            min-width: 740px;
+            color: var(--legacy-text);
+            font-family: Arial, Helvetica, sans-serif;
+            padding-bottom: 14px;
+        }
+
+        .legacy-top-tabs,
+        .legacy-inner-tabs,
+        .legacy-app-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: 0 10px;
+        }
+
+        .legacy-top-tabs {
+            padding-top: 4px;
+        }
+
+        .legacy-tab,
+        .legacy-subtab {
+            font-size: 12px;
+            color: #006f73;
+            padding: 8px 16px 7px;
+            border: 1px solid #b9c7b9;
+            background: linear-gradient(180deg, #f3fbf1, #c8ddc6 55%, #b5cfb2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+            line-height: 1.1;
+        }
+
+        .legacy-tab.active,
+        .legacy-subtab.active {
+            background: linear-gradient(180deg, #eaf7e7, #d0e6ce 52%, #c3dbbf);
+            font-weight: 700;
+        }
+
+        .legacy-pane {
+            margin: 6px 10px 0;
+            border: 1px solid #bfbfbf;
+            background: #efefef;
+            padding: 12px;
+        }
+
+        .legacy-basic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 34px;
+            padding: 24px 20px 8px;
+        }
+
+        .legacy-basic-col {
+            display: grid;
+            gap: 12px;
+        }
+
+        .legacy-row {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+        }
+
+        .legacy-row .fieldbox,
+        .legacy-row .textarea,
+        .legacy-row .selectbox,
+        .legacy-row .smallbox {
+            border: 1px solid #9fa7bb;
+            background: #f7f7f7;
+            min-height: 24px;
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+            box-sizing: border-box;
+            color: #006f73;
+        }
+
+        .legacy-row .textarea {
+            min-height: 80px;
+            align-items: flex-start;
+            padding-top: 8px;
+        }
+
+        .legacy-row .smallbox {
+            width: 74px;
+        }
+
+        .legacy-row .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #6b8db8;
+            background: #1366d1;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .legacy-row .checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 3px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .legacy-period-box {
+            margin: 16px 18px 0;
+            padding: 24px 28px 16px;
+            border: 1px solid #bfbfbf;
+            min-height: 250px;
+            position: relative;
+        }
+
+        .legacy-floating-title {
+            position: absolute;
+            top: -14px;
+            left: 12px;
+            border: 1px solid #b9c7b9;
+            background: linear-gradient(180deg, #f3fbf1, #c8ddc6 55%, #b5cfb2);
+            padding: 6px 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .legacy-time-row {
+            display: grid;
+            grid-template-columns: 110px 120px;
+            gap: 14px;
+            align-items: center;
+            margin: 14px 0;
+            font-size: 11px;
+        }
+
+        .legacy-date {
+            border: 1px solid #9fa7bb;
+            background: #fff;
+            padding: 4px 8px;
+            min-height: 20px;
+        }
+
+        .legacy-days {
+            margin-top: 54px;
+            border: 1px solid #bfbfbf;
+            min-height: 74px;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 11px;
+        }
+
+        .legacy-day {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tiny-check {
+            width: 14px;
+            height: 14px;
+            border: 1px solid #6b8db8;
+            background: #1366d1;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .legacy-conditions-pane {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 14px;
+            min-height: 300px;
+        }
+
+        .legacy-left-tree {
+            padding: 16px 10px 8px;
+            font-size: 11px;
+        }
+
+        .legacy-tree-item {
+            margin: 7px 0;
+        }
+
+        .legacy-tree-sub {
+            margin-left: 24px;
+        }
+
+        .legacy-main-area {
+            padding: 10px 10px 0 0;
+            font-size: 11px;
+        }
+
+        .legacy-filter-bar {
+            display: grid;
+            grid-template-columns: 90px 32px 220px 140px 140px 120px 152px;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .legacy-input, .legacy-button, .legacy-inline-box {
+            border: 1px solid #9fa7bb;
+            background: #f8f8f8;
+            min-height: 26px;
+            box-sizing: border-box;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .legacy-button {
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .legacy-conditions-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .legacy-cond-row {
+            display: grid;
+            grid-template-columns: 140px 110px 70px 1fr 30px;
+            gap: 10px;
+            align-items: center;
+            color: #006f73;
+        }
+
+        .legacy-delete {
+            font-size: 20px;
+            text-align: center;
+            color: #444;
+        }
+
+        .legacy-folder-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .legacy-app-pane {
+            margin: 4px 10px 0;
+            border: 1px solid #bfbfbf;
+            background: #efefef;
+            padding: 0 0 10px;
+        }
+
+        .legacy-app-body {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 18px;
+            padding: 14px;
+        }
+
+        .legacy-app-left {
+            min-height: 250px;
+        }
+
+        .legacy-app-left .legacy-rowline {
+            display: grid;
+            grid-template-columns: 88px 100px;
+            gap: 16px;
+            margin: 10px 0;
+            align-items: center;
+            font-size: 11px;
+        }
+
+        .legacy-box {
+            border: 1px solid #bfbfbf;
+            padding: 10px 12px;
+            min-height: 88px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .legacy-box .box-row {
+            display: grid;
+            grid-template-columns: 90px 22px 1fr;
+            gap: 8px;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .legacy-bottom-filter {
+            display: grid;
+            grid-template-columns: 68px 26px 180px 70px 120px 118px;
+            gap: 8px;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 11px;
+        }
+
+        .legacy-selected-product {
+            margin-top: 16px;
+            display: grid;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .legacy-camino {
+            padding: 0 0 10px;
+        }
+
+        .legacy-camino-header {
+            text-align: center;
+            font-weight: 700;
+            color: #006f73;
+            border-top: 2px solid #9f9f9f;
+            border-bottom: 1px solid #c8c8c8;
+            padding: 10px 0 8px;
+            background: #f5f5f5;
+            margin-bottom: 22px;
+        }
+
+        .legacy-camino-section {
+            margin: 0 56px 18px;
+            background: #efefef;
+        }
+
+        .legacy-camino-title {
+            text-align: center;
+            font-weight: 700;
+            background: #dbdbdb;
+            padding: 6px 0;
+            margin-bottom: 8px;
+        }
+
+        .legacy-camino-group {
+            margin: 10px 0 18px;
+            padding: 0 16px;
+        }
+
+        .legacy-camino-link {
+            color: #38a62f;
+            text-decoration: underline;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .legacy-camino-row {
+            display: grid;
+            grid-template-columns: 110px 80px 1fr;
+            gap: 12px;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        .preview-empty {
+            color: #54687e;
+            font-size: 13px;
+            padding: 14px;
+            border: 1px dashed #c9d5e0;
+            border-radius: 10px;
+            background: #f9fbfd;
+        }
+
+        @media (max-width: 1180px) {
+            .legacy-screen {
+                min-width: 680px;
+            }
+
+            .legacy-filter-bar {
+                grid-template-columns: 78px 28px 180px 116px 116px 110px 136px;
+            }
+        }
+
         @media (max-width: 960px) {
             .consultor-grid,
             .consultor-bottom {
@@ -373,79 +803,101 @@
     <div class="subtitulo">Usa esta pantalla como apoyo para saber cómo configurar una promoción antes de crearla. Arriba tienes el flujo principal y abajo los recordatorios operativos.</div>
 
     <section class="consultor-grid">
-        <div class="card card-accent">
-            <div class="card-header">Datos de la solicitud</div>
+        <div class="left-column">
+            <div class="card card-accent">
+                <div class="card-header">Datos de la solicitud</div>
 
-            <div class="form-grid">
-                <div class="field">
-                    <label for="modalidad">Modalidad</label>
-                    <select id="modalidad" onchange="actualizarCamposVisibles()">
-                        <option value="">Seleccionar</option>
-                        <option value="CLUB">CLUB</option>
-                        <option value="EVENTOS">EVENTOS</option>
-                    </select>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="modalidad">Modalidad</label>
+                        <select id="modalidad" onchange="actualizarCamposVisibles()">
+                            <option value="">Seleccionar</option>
+                            <option value="CLUB">CLUB</option>
+                            <option value="EVENTOS">EVENTOS</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="areaResponsable">Área responsable</label>
+                        <select id="areaResponsable">
+                            <option value="">Seleccionar</option>
+                            <option value="BYCP">BYCP</option>
+                            <option value="FARMA">Farma</option>
+                            <option value="BIENESTAR">Bienestar</option>
+                            <option value="MSJE">MSJE</option>
+                            <option value="DERMO">Dermo</option>
+                            <option value="FIDELIZACION">FIDELIZACION</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="tipoDescuento">Tipo de descuento</label>
+                        <select id="tipoDescuento" onchange="actualizarCamposVisibles()">
+                            <option value="">Seleccionar</option>
+                            <option value="NOMINAL">Nominal</option>
+                            <option value="PACK_NOMINAL">Pack nominal</option>
+                            <option value="PORCENTUAL">Porcentual</option>
+                            <option value="PACK">Pack</option>
+                            <option value="SEGUNDA_UNIDAD">2da unidad</option>
+                            <option value="MSJE">Mensaje</option>
+                        </select>
+                    </div>
+
+                    <div class="field" id="fieldUnidadesPack">
+                        <label for="unidadesPack">#Unidades Pack</label>
+                        <input id="unidadesPack" type="number" min="1" step="1" placeholder="Ej: 1, 2, 3">
+                    </div>
+
+                    <div class="field" id="fieldPvpOferta">
+                        <label for="pvpOfertaPack">PVP Oferta Pack</label>
+                        <input id="pvpOfertaPack" type="number" min="0" step="0.01" placeholder="Ej: 8990 o 2490">
+                        <div class="help">Usa el valor comercial visible en el Excel cuando corresponda.</div>
+                    </div>
+
+                    <div class="field hidden" id="fieldDescuentoPorcentual">
+                        <label for="descuentoPorcentual">Descuento porcentual</label>
+                        <input id="descuentoPorcentual" type="text" placeholder="Ej: 30%">
+                    </div>
+
+                    <div class="field" id="fieldDescuentoNominal">
+                        <label for="descuentoNominal">Descuento nominal</label>
+                        <input id="descuentoNominal" type="number" min="0" step="0.01" placeholder="Ej: 4000, 1980, 890">
+                    </div>
+
+                    <div class="field full">
+                        <label for="detalleSolicitud">Detalle / observación de la solicitud</label>
+                        <textarea id="detalleSolicitud" placeholder="Pega aquí notas del correo o cualquier detalle relevante de la promoción."></textarea>
+                    </div>
                 </div>
 
-                <div class="field">
-                    <label for="areaResponsable">Área responsable</label>
-                    <select id="areaResponsable">
-                        <option value="">Seleccionar</option>
-                        <option value="BYCP">BYCP</option>
-                        <option value="FARMA">Farma</option>
-                        <option value="BIENESTAR">Bienestar</option>
-                        <option value="MSJE">MSJE</option>
-                        <option value="DERMO">Dermo</option>
-                        <option value="FIDELIZACION">FIDELIZACION</option>
-                    </select>
+                <div class="actions">
+                    <button class="btn btn-primary" type="button" onclick="generarGuia()">Generar guía de carga</button>
+                    <button class="btn btn-secondary" type="button" onclick="limpiarFormulario()">Limpiar</button>
                 </div>
 
-                <div class="field">
-                    <label for="tipoDescuento">Tipo de descuento</label>
-                    <select id="tipoDescuento" onchange="actualizarCamposVisibles()">
-                        <option value="">Seleccionar</option>
-                        <option value="NOMINAL">Nominal</option>
-                        <option value="PACK_NOMINAL">Pack nominal</option>
-                        <option value="PORCENTUAL">Porcentual</option>
-                        <option value="PACK">Pack</option>
-                        <option value="SEGUNDA_UNIDAD">2da unidad</option>
-                        <option value="MSJE">Mensaje</option>
-                    </select>
-                </div>
-
-                <div class="field" id="fieldUnidadesPack">
-                    <label for="unidadesPack">#Unidades Pack</label>
-                    <input id="unidadesPack" type="number" min="1" step="1" placeholder="Ej: 1, 2, 3">
-                </div>
-
-                <div class="field" id="fieldPvpOferta">
-                    <label for="pvpOfertaPack">PVP Oferta Pack</label>
-                    <input id="pvpOfertaPack" type="number" min="0" step="0.01" placeholder="Ej: 8990 o 2490">
-                    <div class="help">Usa el valor comercial visible en el Excel cuando corresponda.</div>
-                </div>
-
-                <div class="field hidden" id="fieldDescuentoPorcentual">
-                    <label for="descuentoPorcentual">Descuento porcentual</label>
-                    <input id="descuentoPorcentual" type="text" placeholder="Ej: 30%">
-                </div>
-
-                <div class="field" id="fieldDescuentoNominal">
-                    <label for="descuentoNominal">Descuento nominal</label>
-                    <input id="descuentoNominal" type="number" min="0" step="0.01" placeholder="Ej: 4000, 1980, 890">
-                </div>
-
-                <div class="field full">
-                    <label for="detalleSolicitud">Detalle / observación de la solicitud</label>
-                    <textarea id="detalleSolicitud" placeholder="Pega aquí notas del correo o cualquier detalle relevante de la promoción."></textarea>
+                <div class="soft-box">
+                    Esta versión ya contempla una lógica base para <strong>CLUB</strong> y <strong>EVENTOS</strong>, manteniendo abierta la selección del tipo de descuento para futuras variantes.
                 </div>
             </div>
 
-            <div class="actions">
-                <button class="btn btn-primary" type="button" onclick="generarGuia()">Generar guía de carga</button>
-                <button class="btn btn-secondary" type="button" onclick="limpiarFormulario()">Limpiar</button>
-            </div>
+            <!-- ============================================================
+                 BLOQUE NUEVO: VISTA PREVIA DEL SISTEMA
+                 ============================================================ -->
+            <div class="card preview-card">
+                <div class="card-header">Vista previa del sistema</div>
+                <div class="preview-subtitle">Referencia visual según la configuración seleccionada. Este bloque es adicional y no reemplaza la guía textual.</div>
 
-            <div class="soft-box">
-                Esta versión ya contempla una lógica base para <strong>CLUB</strong> y <strong>EVENTOS</strong>, manteniendo abierta la selección del tipo de descuento para futuras variantes.
+                <div class="preview-tabs">
+                    <button class="preview-tab active" type="button" data-preview="basico" onclick="cambiarVistaPreview('basico')">Básico</button>
+                    <button class="preview-tab" type="button" data-preview="tiempo" onclick="cambiarVistaPreview('tiempo')">Tiempo</button>
+                    <button class="preview-tab" type="button" data-preview="condiciones" onclick="cambiarVistaPreview('condiciones')">Condiciones</button>
+                    <button class="preview-tab" type="button" data-preview="aplicadores" onclick="cambiarVistaPreview('aplicadores')">Aplicadores</button>
+                    <button class="preview-tab" type="button" data-preview="camino" onclick="cambiarVistaPreview('camino')">Camino</button>
+                </div>
+
+                <div class="preview-shell">
+                    <div id="previewRender" class="preview-empty">Completa los datos de la izquierda y presiona “Generar guía de carga”.</div>
+                </div>
             </div>
         </div>
 
@@ -521,6 +973,9 @@
 </div>
 
 <script>
+let previewActual = 'basico';
+let ultimaConfigPreview = null;
+
 function actualizarCamposVisibles() {
     const tipo = document.getElementById('tipoDescuento').value;
     const fieldUnidadesPack = document.getElementById('fieldUnidadesPack');
@@ -562,21 +1017,106 @@ function setHTML(id, html) {
     document.getElementById(id).innerHTML = html;
 }
 
-function normalizarPorcentaje(valor) {
-    if (!valor) return '';
-    const texto = String(valor).trim();
-    return texto.includes('%') ? texto : `${texto}%`;
+function escaparHTML(valor) {
+    return String(valor || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function recolectarContexto() {
+    const modalidad = document.getElementById('modalidad').value || 'NORMAL';
+    const tipo = document.getElementById('tipoDescuento').value || '';
+    const unidades = Number(document.getElementById('unidadesPack').value || 0);
+    const pvpOferta = document.getElementById('pvpOfertaPack').value || '';
+    const descuentoPct = document.getElementById('descuentoPorcentual').value || '';
+    const descuentoNom = document.getElementById('descuentoNominal').value || '';
+    const detalle = document.getElementById('detalleSolicitud').value || '';
+
+    let area = document.getElementById('areaResponsable').value || '-';
+    if (modalidad === 'CLUB') area = 'FIDELIZACION';
+
+    let competencia = 'Revisar';
+    if (modalidad === 'CLUB' || modalidad === 'EVENTOS') competencia = 'Compite por producto';
+    else if (area === 'BYCP') competencia = 'Compite por promoción';
+    else if (area === 'FARMA' || area === 'BIENESTAR' || area === 'FIDELIZACION' || area === 'DERMO') competencia = 'Compite por producto';
+    else if (area === 'MSJE') competencia = 'Revisar según mensaje';
+
+    let aplicadorTab = 'Revisar';
+    if (tipo === 'PORCENTUAL' || tipo === 'SEGUNDA_UNIDAD') aplicadorTab = 'Porcentaje a producto';
+    else if (tipo === 'PACK_NOMINAL') aplicadorTab = 'Monto a producto';
+    else if (tipo === 'NOMINAL' && unidades <= 1) aplicadorTab = 'Precio fijo a producto';
+    else if (tipo === 'NOMINAL') aplicadorTab = 'Monto a producto';
+    else if (tipo === 'PACK') aplicadorTab = 'Monto a producto';
+    else if (tipo === 'MSJE') aplicadorTab = 'Mensaje';
+    else if (modalidad === 'EVENTOS') aplicadorTab = 'Porcentaje a producto';
+
+    let porcentajeVisible = descuentoPct || (modalidad === 'EVENTOS' ? '25.0' : '20.0');
+    let montoVisible = descuentoNom || pvpOferta || '10890.0';
+    let cantidadAplicador = '0.0';
+    let porUnidad = false;
+    let estrategia = 'Menor';
+
+    if (tipo === 'PACK_NOMINAL') {
+        cantidadAplicador = '1.0';
+        porUnidad = true;
+    } else if (tipo === 'NOMINAL' && unidades <= 1) {
+        cantidadAplicador = '1.0';
+        porUnidad = true;
+    } else if (tipo === 'PORCENTUAL' || modalidad === 'EVENTOS' || tipo === 'SEGUNDA_UNIDAD') {
+        cantidadAplicador = '0.0';
+    }
+
+    const usaLista = detalle.toUpperCase().includes('LISTA') || modalidad === 'CLUB' || modalidad === 'EVENTOS';
+    const productoCampo = usaLista ? 'Lista' : 'EAN Principal';
+    const productoValor = usaLista
+        ? (modalidad === 'CLUB' ? 'FS-CLUB P-W01' : modalidad === 'EVENTOS' ? 'FS-AVENE04' : 'LISTA_SEGUN_SOLICITUD')
+        : '550490';
+
+    const documentoBase = [{ campo: 'Tipo', operador: '=', valor: 'Boleta' }];
+    if (modalidad === 'CLUB') {
+        documentoBase.push({ campo: 'No Convenio seleccionado', operador: 'mayor', valor: '0' });
+        documentoBase.push({ campo: 'No Lista Locales', operador: '=', valor: 'EXC_LOCALES' });
+    } else if (modalidad === 'EVENTOS') {
+        documentoBase.push({ campo: 'Local', operador: '=', valor: '9999' });
+        documentoBase.push({ campo: 'Local', operador: '=', valor: '1191' });
+    } else {
+        documentoBase.push({ campo: 'No Lista Locales', operador: '=', valor: 'EXC_LOCALES' });
+    }
+
+    const condicionesExtra = [];
+    if (modalidad === 'CLUB') {
+        condicionesExtra.push({ grupo: 'Cliente', campo: 'Inscripto', operador: '=', valor: 'true' });
+    }
+
+    return {
+        modalidad,
+        area,
+        tipo,
+        unidades,
+        pvpOferta,
+        descuentoPct,
+        descuentoNom,
+        detalle,
+        competencia,
+        aplicadorTab,
+        porcentajeVisible,
+        montoVisible,
+        cantidadAplicador,
+        porUnidad,
+        estrategia,
+        productoCampo,
+        productoValor,
+        documentoBase,
+        condicionesExtra
+    };
 }
 
 function generarGuia() {
-    const modalidad = document.getElementById('modalidad').value;
-    const areaIngresada = document.getElementById('areaResponsable').value;
-    const tipo = document.getElementById('tipoDescuento').value;
-    const unidades = Number(document.getElementById('unidadesPack').value || 0);
-    const pvpOferta = document.getElementById('pvpOfertaPack').value;
-    const descuentoPct = normalizarPorcentaje(document.getElementById('descuentoPorcentual').value);
-    const descuentoNom = document.getElementById('descuentoNominal').value;
-    const detalle = document.getElementById('detalleSolicitud').value.trim();
+    const cfg = recolectarContexto();
+    ultimaConfigPreview = cfg;
 
     let estadoClase = 'status ok';
     let estadoTexto = 'Guía generada';
@@ -587,205 +1127,83 @@ function generarGuia() {
     let camino = '';
     let checklist = [];
 
-    if (!tipo) {
+    if (cfg.area === '-' || !cfg.tipo) {
         estadoClase = 'status warning';
-        estadoTexto = 'Falta tipo de descuento';
-        observaciones += notaCompacta('Debes indicar al menos el Tipo de descuento para generar una guía confiable.');
+        estadoTexto = 'Faltan datos clave';
+        observaciones += notaCompacta('Debes indicar al menos Área responsable y Tipo de descuento.');
     }
 
-    let areaFinal = areaIngresada || '-';
-    let competencia = 'Revisar';
-    let tipoPromocion = '1000 - Venta';
-    let habilitada = 'Sí';
+    basico += filaMini('Modalidad', cfg.modalidad === 'NORMAL' ? 'Normal' : cfg.modalidad);
+    basico += filaMini('Área', cfg.area);
+    basico += filaMini('Tipo promoción', '1000 - Venta');
+    basico += filaMini('Competencia', cfg.competencia);
+    basico += filaMini('Habilitada', 'Sí');
 
-    if (modalidad === 'CLUB') {
-        areaFinal = 'FIDELIZACION';
-        competencia = 'Compite por producto';
-    } else if (modalidad === 'EVENTOS') {
-        areaFinal = areaIngresada || 'Revisar solicitud';
-        competencia = 'Revisar según solicitud';
-    } else if (areaIngresada === 'BYCP') {
-        competencia = 'Compite por promoción';
-    } else if (areaIngresada === 'FARMA') {
-        competencia = 'Compite por producto';
-    } else if (areaIngresada === 'BIENESTAR') {
-        competencia = 'Compite por producto';
-    } else if (areaIngresada === 'MSJE') {
-        competencia = 'Revisar según mensaje';
-    } else if (areaIngresada === 'DERMO') {
-        competencia = 'Revisar según caso';
-    } else if (areaIngresada === 'FIDELIZACION') {
-        competencia = 'Compite por producto';
+    condiciones += filaMini('Tipo', 'Boleta');
+    if (cfg.modalidad === 'EVENTOS') {
+        condiciones += filaMini('Locales', 'Asignados según solicitud');
+    } else {
+        condiciones += filaMini('Lista locales', 'No EXC_LOCALES');
     }
-
-    basico += filaMini('Modalidad', modalidad || 'Normal');
-    basico += filaMini('Área', areaFinal);
-    basico += filaMini('Tipo promoción', tipoPromocion);
-    basico += filaMini('Competencia', competencia);
-    basico += filaMini('Habilitada', habilitada);
-
-    if (modalidad === 'CLUB') {
-        condiciones += filaMini('Documento', 'Tipo = Boleta');
-        condiciones += filaMini('Exclusión', '! Lista Locales = EXC_LOCALES');
-        condiciones += filaMini('Negación', '! Convenio seleccionado > 0');
+    if (cfg.modalidad === 'CLUB') {
         condiciones += filaMini('Cliente', 'Inscripto = true');
-        condiciones += filaMini('Producto', 'SKU o Lista, igual que en aplicador');
+        condiciones += filaMini('Convenio', 'No Convenio seleccionado > 0');
+    }
+    condiciones += filaMini(cfg.productoCampo, cfg.productoValor);
+    if (cfg.unidades > 0) condiciones += filaMini('Cantidad', 'cada ' + cfg.unidades);
 
-        if (tipo === 'PORCENTUAL') {
-            aplicadores += filaMini('Pestaña', 'Porcentaje a producto');
-            aplicadores += filaMini('Porcentaje', descuentoPct || '-');
-            aplicadores += filaMini('Cantidad', '1');
-            aplicadores += filaMini('Estrategia', 'Menor');
-            camino += notaCompacta(`CLUB porcentual: aplicar descuento a producto con ${descuentoPct || '-'}, cantidad 1 y estrategia Menor.`);
-        } else if (tipo === 'NOMINAL') {
-            aplicadores += filaMini('Pestaña', 'Monto a producto o Precio fijo');
-            aplicadores += filaMini('Monto / Precio', descuentoNom || pvpOferta || '-');
-            aplicadores += filaMini('Cantidad', '1');
-            aplicadores += filaMini('Estrategia', 'Menor');
-            camino += notaCompacta(`CLUB nominal: cargar el producto o lista en condición y repetir exactamente el mismo alcance en el aplicador con cantidad 1 y estrategia Menor.`);
-        } else {
-            aplicadores += filaMini('Pestaña', 'Revisar según descuento');
-            aplicadores += filaMini('Cantidad', '1');
-            aplicadores += filaMini('Estrategia', 'Menor');
-            camino += notaCompacta('CLUB: mantener misma lógica de producto o lista entre condición y aplicador.');
-        }
-
-        observaciones += notaCompacta('La promo padre lleva id e id alternativo con el mismo número.');
-        observaciones += notaCompacta('El clon CNV lleva su propio id y en id alternativo el id de la promo padre.');
-        observaciones += notaCompacta('ID a Facturar usa el mismo ID Geocom e Id Lista Cliente usa el ID del clon.');
-        observaciones += notaCompacta('Revisar siempre los días de aplicación de la solicitud: puede aplicar todos los días o en tramos como L-J.');
-
-        checklist.push('Básico > Área = FIDELIZACION, Tipo promoción = 1000 - Venta, Habilitada = Sí.');
-        checklist.push('Competencia = Compite por producto.');
-        checklist.push('Documento > Tipo = Boleta.');
-        checklist.push('Documento > ! Lista Locales = EXC_LOCALES.');
-        checklist.push('Documento > ! Convenio seleccionado mayor 0.');
-        checklist.push('Cliente > Inscripto = true.');
-        checklist.push('Agregar producto o lista en condición.');
-        checklist.push('Aplicador con el mismo producto o lista, cantidad 1 y estrategia Menor.');
-    } else if (modalidad === 'EVENTOS') {
-        condiciones += filaMini('Documento', 'Tipo = Boleta');
-        condiciones += filaMini('Locales', 'Locales específicos según solicitud');
-        condiciones += filaMini('Días', 'Revisar días específicos');
-        condiciones += filaMini('Producto', 'SKU o Lista, igual que en aplicador');
-
-        if (tipo === 'PORCENTUAL') {
-            aplicadores += filaMini('Pestaña', 'Porcentaje a producto');
-            aplicadores += filaMini('Porcentaje', descuentoPct || '-');
-            aplicadores += filaMini('Cobertura', 'A todos los productos del filtro');
-            aplicadores += filaMini('Producto', 'Mismo SKU o Lista que la condición');
-            camino += notaCompacta(`EVENTOS porcentual: descuento a todos los productos por porcentaje ${descuentoPct || '-'} en los locales y días definidos.`);
-        } else if (tipo === 'NOMINAL') {
-            aplicadores += filaMini('Pestaña', 'Monto a producto o Precio fijo');
-            aplicadores += filaMini('Monto / Precio', descuentoNom || pvpOferta || '-');
-            aplicadores += filaMini('Producto', 'Mismo SKU o Lista que la condición');
-            camino += notaCompacta('EVENTOS nominal: mantener locales y días específicos definidos en la solicitud y replicar el mismo alcance de producto o lista en el aplicador.');
-        } else {
-            aplicadores += filaMini('Pestaña', 'Revisar según descuento');
-            aplicadores += filaMini('Producto', 'Mismo SKU o Lista que la condición');
-            camino += notaCompacta('EVENTOS: la modalidad queda abierta a otros descuentos futuros, pero siempre revisando locales y días específicos.');
-        }
-
-        observaciones += notaCompacta('Los eventos suelen ir a locales específicos y con días específicos de aplicación.');
-        observaciones += notaCompacta('El producto o lista de productos de la condición debe coincidir exactamente con el aplicador.');
-        observaciones += notaCompacta('En porcentual, la referencia base es “descuento a todos los productos por porcentaje” en el aplicador.');
-
-        checklist.push('Básico > verificar Área, Tipo promoción y Habilitada según solicitud.');
-        checklist.push('Tiempo > cargar fecha inicio, fecha fin y días específicos.');
-        checklist.push('Documento > Tipo = Boleta.');
-        checklist.push('Documento > cargar locales específicos.');
-        checklist.push('Condición > agregar producto o lista.');
-        checklist.push('Aplicador > usar la pestaña correspondiente al descuento.');
-        checklist.push('Aplicador > repetir el mismo producto o lista de la condición.');
-    } else if (tipo === 'NOMINAL' && unidades === 1) {
-        condiciones += filaMini('Tipo', 'Boleta');
-        condiciones += filaMini('Cantidad', 'No tratar como pack real');
-
-        aplicadores += filaMini('Pestaña', 'Precio fijo');
-        aplicadores += filaMini('Monto', pvpOferta || '-');
-        aplicadores += filaMini('Por unidad', 'Sí');
-        aplicadores += filaMini('Cantidad', 'Vacía / 0');
-        aplicadores += filaMini('Estrategia', 'Menor');
-
-        camino += notaCompacta(`Fija precio a cada producto, monto = ${pvpOferta || '-'}.`);
-        observaciones += notaCompacta('Caso identificado como nominal unitario.');
-        observaciones += notaCompacta('La referencia principal para el aplicador es el PVP Oferta Pack.');
-
-        checklist.push('Nueva promoción > seleccionar Área y Tipo de promoción 1000 - Venta.');
-        checklist.push('Seleccionar Competencia y verificar Habilitada.');
-        checklist.push('Pestaña Condiciones > Tipo = Boleta.');
-        checklist.push('Agregar producto por EAN o Lista según solicitud.');
-        checklist.push('Aplicadores > Descuento > Precio fijo.');
-    } else if (tipo === 'PACK_NOMINAL' && unidades > 1) {
-        condiciones += filaMini('Tipo', 'Boleta');
-        condiciones += filaMini('Cantidad', 'cada ' + unidades);
-
-        aplicadores += filaMini('Pestaña', 'Monto a producto');
-        aplicadores += filaMini('Monto', descuentoNom || '-');
-        aplicadores += filaMini('Por unidad', 'Sí');
-        aplicadores += filaMini('Cantidad', '1');
-        aplicadores += filaMini('Estrategia', 'Menor');
-
-        camino += notaCompacta(`Descuento a cada producto por monto = ${descuentoNom || '-'}, cantidad 1, estrategia Menor.`);
-        observaciones += notaCompacta('Caso identificado como PACK NOMINAL.');
-        observaciones += notaCompacta('Los productos o lista de la condición deben coincidir con los del aplicador.');
-
-        checklist.push('Nueva promoción > seleccionar Área y Tipo de promoción 1000 - Venta.');
-        checklist.push('Seleccionar Competencia y verificar Habilitada.');
-        checklist.push('Pestaña Condiciones > Tipo = Boleta.');
-        checklist.push('Agregar condición con cantidad cada = ' + unidades + '.');
-        checklist.push('Aplicadores > Descuento > Monto a producto.');
-        checklist.push('Marcar Por unidad, Cantidad = 1 y Estrategia = Menor.');
-    } else if (tipo === 'PORCENTUAL') {
-        condiciones += filaMini('Tipo', 'Boleta');
-        condiciones += filaMini('Cantidad', unidades > 0 ? 'cada ' + unidades : 'Según solicitud');
-
-        aplicadores += filaMini('Pestaña', 'Porcentaje a producto');
-        aplicadores += filaMini('Porcentaje', descuentoPct || '-');
-        aplicadores += filaMini('Cantidad', 'Según promoción');
-        aplicadores += filaMini('Estrategia', 'Según promoción');
-
-        camino += notaCompacta(`Aplicador porcentual esperado con porcentaje = ${descuentoPct || '-'}.`);
-        observaciones += notaCompacta('Orientación preliminar para descuento porcentual.');
-        checklist.push('Aplicadores > Descuento > Porcentaje a producto.');
-    } else if (tipo === 'PACK') {
-        condiciones += filaMini('Tipo', 'Boleta');
-        condiciones += filaMini('Cantidad', unidades > 0 ? 'cada ' + unidades : 'Según pack');
-
-        aplicadores += filaMini('Pestaña', 'Revisar según promo');
-        aplicadores += filaMini('Monto', pvpOferta || '-');
-
-        camino += notaCompacta('Caso pack: orientación preliminar.');
-        observaciones += notaCompacta('El tipo PACK todavía no está modelado con regla cerrada en esta versión.');
-    } else if (tipo === 'SEGUNDA_UNIDAD') {
-        condiciones += filaMini('Tipo', 'Boleta');
-        condiciones += filaMini('Cantidad', unidades > 0 ? 'cada ' + unidades : '2 si corresponde');
-
-        aplicadores += filaMini('Pestaña', 'Porcentaje a producto');
-        aplicadores += filaMini('Porcentaje', descuentoPct || '-');
-
-        camino += notaCompacta('Caso 2da unidad: orientación preliminar.');
-        observaciones += notaCompacta('La segunda unidad requiere una regla más precisa en una siguiente versión.');
-    } else if (tipo === 'MSJE') {
-        condiciones += filaMini('Tipo', 'Boleta');
+    if (cfg.aplicadorTab === 'Porcentaje a producto') {
+        aplicadores += filaMini('Pestaña', cfg.aplicadorTab);
+        aplicadores += filaMini('Porcentaje', cfg.porcentajeVisible || '-');
+        aplicadores += filaMini('Cantidad', cfg.cantidadAplicador);
+        aplicadores += filaMini('Estrategia', cfg.estrategia);
+        camino += notaCompacta(`Aplicador porcentual esperado con porcentaje = ${cfg.porcentajeVisible || '-'}.`);
+    } else if (cfg.aplicadorTab === 'Precio fijo a producto') {
+        aplicadores += filaMini('Pestaña', cfg.aplicadorTab);
+        aplicadores += filaMini('Monto', cfg.montoVisible || '-');
+        aplicadores += filaMini('Por unidad', cfg.porUnidad ? 'Sí' : 'No');
+        aplicadores += filaMini('Cantidad', cfg.cantidadAplicador);
+        aplicadores += filaMini('Estrategia', cfg.estrategia);
+        camino += notaCompacta(`Fija precio a cada producto, monto = ${cfg.montoVisible || '-'}.`);
+    } else if (cfg.aplicadorTab === 'Monto a producto') {
+        aplicadores += filaMini('Pestaña', cfg.aplicadorTab);
+        aplicadores += filaMini('Monto', cfg.montoVisible || '-');
+        aplicadores += filaMini('Por unidad', cfg.porUnidad ? 'Sí' : 'No');
+        aplicadores += filaMini('Cantidad', cfg.cantidadAplicador);
+        aplicadores += filaMini('Estrategia', cfg.estrategia);
+        camino += notaCompacta(`Aplicador por monto esperado = ${cfg.montoVisible || '-'}.`);
+    } else if (cfg.aplicadorTab === 'Mensaje') {
         aplicadores += filaMini('Pestaña', 'Mensaje');
         aplicadores += filaMini('Salida', 'SCREEN');
         camino += notaCompacta('Mensaje esperado en pantalla.');
-        observaciones += notaCompacta('Caso MSJE orientativo.');
     } else {
-        condiciones += filaMini('Tipo', 'Boleta');
         aplicadores += filaMini('Pestaña', 'Revisar');
-        camino += notaCompacta('Sin regla específica definida para esta combinación.');
-        observaciones += notaCompacta('No hay una regla específica armada para esta combinación todavía.');
+        camino += notaCompacta('No hay una regla cerrada para esta combinación todavía.');
     }
 
+    if (cfg.modalidad === 'CLUB') {
+        observaciones += notaCompacta('CLUB: considerar promo asociada CNV, clon y revisión de días de aplicación.');
+        checklist.push('Básico > Área = FIDELIZACION, Tipo de promoción = 1000 - Venta, Competencia = Compite por producto.');
+        checklist.push('Condiciones > Tipo = Boleta, No Convenio seleccionado > 0 y No Lista Locales = EXC_LOCALES.');
+        checklist.push('Condiciones > Cliente > Inscripto = true.');
+        checklist.push('Producto o lista del aplicador debe coincidir exactamente con condición.');
+        checklist.push('Aplicador > Cantidad = 1 y Estrategia = Menor cuando corresponda.');
+    } else if (cfg.modalidad === 'EVENTOS') {
+        observaciones += notaCompacta('EVENTOS: revisar locales asignados, fechas y días de aplicación.');
+        checklist.push('Tiempo > definir fecha inicio, fecha fin y días específicos.');
+        checklist.push('Condiciones > Tipo = Boleta y cargar locales asignados en Documento.');
+        checklist.push('Producto o lista del aplicador debe coincidir exactamente con condición.');
+        checklist.push('Aplicador > usar la pestaña según el descuento, usualmente Porcentaje a producto.');
+    } else {
+        checklist.push('Básico > seleccionar Área, Tipo de promoción 1000 - Venta y Competencia.');
+        checklist.push('Condiciones > Tipo = Boleta y No Lista Locales = EXC_LOCALES.');
+        checklist.push('Aplicadores > usar la pestaña según el tipo de descuento.');
+        checklist.push('Revisar que producto o lista coincidan entre condición y aplicador.');
+    }
+
+    observaciones += notaCompacta('Los productos o lista de productos de la condición deben coincidir con los del aplicador.');
     observaciones += notaCompacta('Verificar fecha inicio y fecha fin al momento de la carga.');
-    if (!modalidad || (modalidad !== 'CLUB' && modalidad !== 'EVENTOS')) {
-        observaciones += notaCompacta('Los productos o lista de productos de la condición deben coincidir con los del aplicador.');
-    }
-    if (detalle) {
-        observaciones += notaCompacta('Existe detalle adicional en la solicitud que conviene revisar antes de cargar.');
-    }
+    if (cfg.detalle) observaciones += notaCompacta('Existe detalle adicional en la solicitud que conviene revisar antes de cargar.');
 
     document.getElementById('estadoGeneral').className = estadoClase;
     document.getElementById('estadoGeneral').textContent = estadoTexto;
@@ -795,12 +1213,260 @@ function generarGuia() {
     setHTML('bloqueAplicadores', aplicadores);
     setHTML('bloqueCamino', camino);
     setHTML('bloqueObservaciones', observaciones);
+    document.getElementById('checklistResumen').innerHTML = checklist.length ? checklist.map(x => `<li>${x}</li>`).join('') : '<li>Sin checklist generado.</li>';
 
-    const checklistHTML = checklist.length
-        ? checklist.map(x => `<li>${x}</li>`).join('')
-        : '<li>Sin checklist generado.</li>';
+    renderPreview();
+}
 
-    document.getElementById('checklistResumen').innerHTML = checklistHTML;
+function cambiarVistaPreview(vista) {
+    previewActual = vista;
+    document.querySelectorAll('.preview-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.preview === vista);
+    });
+    renderPreview();
+}
+
+function renderPreview() {
+    const contenedor = document.getElementById('previewRender');
+    if (!ultimaConfigPreview) {
+        contenedor.className = 'preview-empty';
+        contenedor.innerHTML = 'Completa los datos de la izquierda y presiona “Generar guía de carga”.';
+        return;
+    }
+
+    contenedor.className = '';
+    if (previewActual === 'basico') contenedor.innerHTML = renderBasicoPreview(ultimaConfigPreview);
+    else if (previewActual === 'tiempo') contenedor.innerHTML = renderTiempoPreview(ultimaConfigPreview);
+    else if (previewActual === 'condiciones') contenedor.innerHTML = renderCondicionesPreview(ultimaConfigPreview);
+    else if (previewActual === 'aplicadores') contenedor.innerHTML = renderAplicadoresPreview(ultimaConfigPreview);
+    else contenedor.innerHTML = renderCaminoPreview(ultimaConfigPreview);
+}
+
+function tabsSuperiores(activa) {
+    const tabs = [
+        { key: 'basico', label: 'Básico' },
+        { key: 'tiempo', label: 'Tiempo' },
+        { key: 'documentos', label: 'Documentos' },
+        { key: 'condiciones', label: 'Condiciones' },
+        { key: 'aplicadores', label: 'Aplicadores' },
+        { key: 'liquidaciones', label: 'Liquidaciones' },
+        { key: 'caminos', label: 'Caminos' },
+        { key: 'topes', label: 'Topes' }
+    ];
+    return `<div class="legacy-top-tabs">${tabs.map(t => `<div class="legacy-tab ${t.key === activa ? 'active' : ''}">${t.label}</div>`).join('')}</div>`;
+}
+
+function renderBasicoPreview(cfg) {
+    const grupo = cfg.modalidad === 'CLUB' ? 'CLUB_NECESIDAD' : '-- Seleccione --';
+    const descripcion = cfg.modalidad === 'CLUB'
+        ? '20% DCTO EN PROD. SELECCIONADOS'
+        : cfg.modalidad === 'EVENTOS'
+            ? 'PROMO EVENTO SEGÚN SOLICITUD'
+            : 'PROMOCIÓN SEGÚN CONFIGURACIÓN';
+
+    return `
+        <div class="legacy-screen">
+            ${tabsSuperiores('básico')}
+            <div class="legacy-pane">
+                <div class="legacy-basic-grid">
+                    <div class="legacy-basic-col">
+                        <div class="legacy-row"><div>Id:</div><div class="fieldbox">${cfg.modalidad === 'EVENTOS' ? '516849' : '517288'}</div></div>
+                        <div class="legacy-row"><div>Nombre:</div><div class="fieldbox">${cfg.modalidad === 'CLUB' ? 'CLUB PLAN W L-J' : 'PROMO CONSULTOR'}</div></div>
+                        <div class="legacy-row"><div>Nombre general:</div><div class="fieldbox">${cfg.modalidad === 'CLUB' ? 'DCTO EXCLUSIVO CLUB' : 'DESCUENTO CARGA'}</div></div>
+                        <div class="legacy-row"><div>Prioridad:</div><div class="fieldbox">0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 999999</div></div>
+                        <div class="legacy-row"><div>Área:</div><div class="selectbox">${escaparHTML(cfg.area)}</div></div>
+                        <div class="legacy-row"><div>Category:</div><div class="selectbox">${cfg.modalidad === 'CLUB' ? 'IVAN QUEZADA' : 'SEGÚN SOLICITUD'}</div></div>
+                        <div class="legacy-row"><div>Competencia:</div><div class="selectbox">${escaparHTML(cfg.competencia)}</div></div>
+                        <div class="legacy-row"><div>Usuario creador:</div><div>FERNANDO</div></div>
+                        <div class="legacy-row"><div>Promoción Top:</div><div></div></div>
+                        <div class="legacy-row"><div>Ignora bloqueo de convenios.</div><div></div></div>
+                        <div class="legacy-row"><div>Grupos:</div><div class="selectbox">${grupo}</div></div>
+                    </div>
+                    <div class="legacy-basic-col">
+                        <div class="legacy-row"><div>Id alternativo:</div><div class="fieldbox">${cfg.modalidad === 'CLUB' ? '517288' : cfg.modalidad === 'EVENTOS' ? '516849' : 'SIN DEFINIR'}</div></div>
+                        <div class="legacy-row"><div>Descripción:</div><div class="textarea">${descripcion}</div></div>
+                        <div class="legacy-row"><div>Tipo de promoción:</div><div class="selectbox">1000-Venta</div></div>
+                        <div class="legacy-row"><div>Campaña:</div><div class="fieldbox"></div></div>
+                        <div class="legacy-row"><div>Habilitada:</div><div class="checkbox"></div></div>
+                        <div class="legacy-row"><div>Usuario modificación:</div><div></div></div>
+                        <div class="legacy-row"><div>Descuento explícito:</div><div class="checkbox"></div></div>
+                        <div class="legacy-row"><div>Mostrar imagen:</div><div class="checkbox"></div></div>
+                        <div class="legacy-row"><div>Imagen:</div><div class="fieldbox"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+function renderTiempoPreview(cfg) {
+    const mostrarCompleto = cfg.modalidad === 'EVENTOS';
+    return `
+        <div class="legacy-screen">
+            ${tabsSuperiores('tiempo')}
+            <div class="legacy-period-box">
+                <div class="legacy-floating-title">Período</div>
+                <div class="legacy-time-row"><div>Tipo de período</div><div class="legacy-input">Fijo</div></div>
+                <div class="legacy-time-row"><div>Ingrese Fecha Comienzo</div><div class="legacy-date">01/04/2026</div></div>
+                <div class="legacy-time-row"><div>Ingrese Fecha Fin</div><div class="legacy-date">01/04/2026</div></div>
+                <div class="legacy-days">
+                    ${mostrarCompleto ? `
+                        <div class="legacy-day">L <span class="tiny-check"></span></div>
+                        <div class="legacy-day">M <span class="tiny-check"></span></div>
+                        <div class="legacy-day">M <span class="tiny-check"></span></div>
+                        <div class="legacy-day">J <span class="tiny-check"></span></div>
+                        <div class="legacy-day">V <span class="tiny-check"></span></div>
+                        <div class="legacy-day">S <span class="tiny-check"></span></div>
+                        <div class="legacy-day">D <span class="tiny-check"></span></div>
+                        <div class="legacy-button" style="width:auto;">Quitar todos los Días</div>
+                    ` : 'La pestaña Tiempo se vuelve especialmente crítica en EVENTOS. En promos normales o CLUB sirve como referencia visual.'}
+                </div>
+            </div>
+        </div>`;
+}
+
+function renderCondicionesPreview(cfg) {
+    const filas = [...cfg.documentoBase.map(item => ({ ...item, grupo: 'Documento' })), ...cfg.condicionesExtra, { grupo: 'Producto', campo: cfg.productoCampo, operador: '=', valor: cfg.productoValor }];
+
+    return `
+        <div class="legacy-screen">
+            ${tabsSuperiores('condiciones')}
+            <div class="legacy-pane legacy-conditions-pane">
+                <div class="legacy-left-tree">
+                    <div class="legacy-folder-head">📂 <strong>Documento</strong></div>
+                    <div class="legacy-tree-sub">
+                        ${cfg.modalidad === 'CLUB' ? '<div class="legacy-tree-item">📄 Cliente</div>' : ''}
+                        <div class="legacy-tree-item">📄 Producto</div>
+                        <div class="legacy-tree-item">📄 Pago</div>
+                        <div class="legacy-tree-item">📄 Acceso</div>
+                        ${cfg.modalidad === 'CLUB' ? '<div class="legacy-tree-item">📄 Convenios Cliente</div>' : ''}
+                    </div>
+                </div>
+                <div class="legacy-main-area">
+                    <div class="legacy-filter-bar">
+                        <div>Negación</div>
+                        <div class="legacy-inline-box"></div>
+                        <div class="legacy-input">${cfg.modalidad === 'EVENTOS' ? 'Pos' : cfg.modalidad === 'CLUB' ? 'Pos' : 'EAN Principal'}</div>
+                        <div class="legacy-input">=</div>
+                        <div class="legacy-input"></div>
+                        <div class="legacy-button">Agregar Filtro</div>
+                        <div class="legacy-button">Agregar Condición</div>
+                    </div>
+                    <div class="legacy-conditions-list">
+                        ${filas.map(f => `
+                            <div class="legacy-cond-row">
+                                <div>${f.grupo}</div>
+                                <div>${f.campo}</div>
+                                <div>${f.operador}</div>
+                                <div>${f.valor}</div>
+                                <div class="legacy-delete">🗑️</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+function renderAplicadoresPreview(cfg) {
+    const subtabs = ['Monto a producto', 'Porcentaje a producto', 'Precio fijo a producto', 'Monto a Forma de Pago', 'Porcentaje a Forma de Pago', 'Precio Fijo a Forma de Pago'];
+    const subtabsHTML = `<div class="legacy-app-tabs">${subtabs.map(t => `<div class="legacy-subtab ${t === cfg.aplicadorTab ? 'active' : ''}">${t}</div>`).join('')}</div>`;
+
+    const valorLabel = cfg.aplicadorTab === 'Porcentaje a producto' ? 'Porcentaje:' : 'Monto';
+    const valorMostrado = cfg.aplicadorTab === 'Porcentaje a producto' ? cfg.porcentajeVisible : cfg.montoVisible;
+    const porUnidadBloque = cfg.aplicadorTab === 'Porcentaje a producto' ? '' : `
+        <div class="legacy-rowline">
+            <div>Por Unidad</div>
+            <div class="checkbox" style="background:${cfg.porUnidad ? '#1366d1' : '#fff'}; border-color:#6b8db8;">${cfg.porUnidad ? '' : ''}</div>
+        </div>`;
+
+    return `
+        <div class="legacy-screen">
+            ${tabsSuperiores('aplicadores')}
+            <div class="legacy-inner-tabs">
+                ${['Descuento', 'Descuentos de packs', 'Mensaje', 'Puntos', 'Sorteo', 'Autoliquidables', 'Volante', 'Inscripción', 'Decisiones de campaña', 'Inscripción a Grupo de Loyalty', 'Prog. de Salud', 'Mensaje en Login']
+                    .map(t => `<div class="legacy-subtab ${t === 'Descuento' || (cfg.aplicadorTab === 'Mensaje' && t === 'Mensaje') ? 'active' : ''}">${t}</div>`).join('')}
+            </div>
+            <div class="legacy-app-pane">
+                ${subtabsHTML}
+                <div class="legacy-app-body">
+                    <div class="legacy-app-left">
+                        <div class="legacy-rowline"><div>${valorLabel}</div><div class="legacy-input">${escaparHTML(valorMostrado || '')}</div></div>
+                        ${porUnidadBloque}
+
+                        <div class="legacy-bottom-filter">
+                            <div>Negación</div>
+                            <div class="legacy-inline-box"></div>
+                            <div class="legacy-input">${cfg.productoCampo}</div>
+                            <div class="legacy-input">=</div>
+                            <div class="legacy-input"></div>
+                            <div class="legacy-button">Agregar Filtro</div>
+                        </div>
+
+                        <div class="legacy-selected-product">
+                            <div><strong>Producto</strong></div>
+                            <div>${cfg.productoCampo} &nbsp;&nbsp;&nbsp; = &nbsp;&nbsp;&nbsp; ${escaparHTML(cfg.productoValor)}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="legacy-box">
+                            <div class="box-row"><div>Cantidad:</div><div class="legacy-inline-box"></div><div class="legacy-input">${cfg.cantidadAplicador}</div></div>
+                            <div class="box-row"><div>Estrategia:</div><div></div><div class="legacy-input">${cfg.estrategia}</div></div>
+                        </div>
+                        <div class="legacy-box">
+                            <div class="box-row"><div>Cant. a cada producto</div><div class="legacy-inline-box"></div><div></div></div>
+                            <div class="box-row"><div>Cant. mínima</div><div></div><div class="legacy-input">0.0</div></div>
+                            <div class="box-row"><div>Cant. Beneficio</div><div></div><div class="legacy-input">0.0</div></div>
+                        </div>
+                        <div class="legacy-button">Agregar Aplicador</div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+function renderCaminoPreview(cfg) {
+    const documentoHTML = cfg.documentoBase.map(item => `
+        <div class="legacy-camino-row">
+            <div>${item.campo}</div>
+            <div>${item.operador}</div>
+            <div>${item.valor}</div>
+        </div>
+    `).join('');
+
+    const extraClub = cfg.modalidad === 'CLUB' ? `
+        <div class="legacy-camino-group">
+            <div class="legacy-camino-link">Cliente</div>
+            <div class="legacy-camino-row"><div>Inscripto</div><div>=</div><div>true</div></div>
+        </div>` : '';
+
+    const aplicadorTitulo = cfg.aplicadorTab === 'Porcentaje a producto'
+        ? `Descuento a todos los productos por porcentaje = ${cfg.porcentajeVisible} %.`
+        : cfg.aplicadorTab === 'Precio fijo a producto'
+            ? `Fija precio a cada producto, monto = ${cfg.montoVisible}.`
+            : `Descuento a todos los productos por monto = ${cfg.montoVisible}.`;
+
+    return `
+        <div class="legacy-screen legacy-camino">
+            <div class="legacy-camino-header">Camino por defecto</div>
+            <div class="legacy-camino-section">
+                <div class="legacy-camino-title">Condiciones</div>
+                <div class="legacy-camino-group">
+                    <div class="legacy-camino-link">Documento</div>
+                    ${documentoHTML}
+                </div>
+                ${extraClub}
+                <div class="legacy-camino-group">
+                    <div class="legacy-camino-link">Producto</div>
+                    <div class="legacy-camino-row"><div>${cfg.productoCampo}</div><div>=</div><div>${escaparHTML(cfg.productoValor)}</div></div>
+                </div>
+                <div class="legacy-camino-title">Aplicadores</div>
+                <div class="legacy-camino-group">
+                    <div class="legacy-camino-link">${aplicadorTitulo}</div>
+                    <div class="legacy-camino-row"><div>${cfg.productoCampo}</div><div>=</div><div>${escaparHTML(cfg.productoValor)}</div></div>
+                </div>
+            </div>
+        </div>`;
 }
 
 function limpiarFormulario() {
@@ -823,6 +1489,8 @@ function limpiarFormulario() {
     setHTML('bloqueObservaciones', '');
     document.getElementById('checklistResumen').innerHTML = '<li>Completa los datos de la izquierda y presiona “Generar guía de carga”.</li>';
 
+    ultimaConfigPreview = null;
+    cambiarVistaPreview('basico');
     actualizarCamposVisibles();
 }
 

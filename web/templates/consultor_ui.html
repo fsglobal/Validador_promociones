@@ -308,6 +308,7 @@
             color: #44515e;
             line-height: 1.4;
             font-size: 13px;
+            margin-bottom: 6px;
         }
 
         .checklist-box,
@@ -377,6 +378,15 @@
 
             <div class="form-grid">
                 <div class="field">
+                    <label for="modalidad">Modalidad</label>
+                    <select id="modalidad" onchange="actualizarCamposVisibles()">
+                        <option value="">Seleccionar</option>
+                        <option value="CLUB">CLUB</option>
+                        <option value="EVENTOS">EVENTOS</option>
+                    </select>
+                </div>
+
+                <div class="field">
                     <label for="areaResponsable">Área responsable</label>
                     <select id="areaResponsable">
                         <option value="">Seleccionar</option>
@@ -385,6 +395,7 @@
                         <option value="BIENESTAR">Bienestar</option>
                         <option value="MSJE">MSJE</option>
                         <option value="DERMO">Dermo</option>
+                        <option value="FIDELIZACION">FIDELIZACION</option>
                     </select>
                 </div>
 
@@ -434,7 +445,7 @@
             </div>
 
             <div class="soft-box">
-                En esta versión están mejor modelados los casos de <strong>NOMINAL unitario</strong> y <strong>PACK NOMINAL</strong>. El resto todavía entrega orientación preliminar.
+                Esta versión ya contempla una lógica base para <strong>CLUB</strong> y <strong>EVENTOS</strong>, manteniendo abierta la selección del tipo de descuento para futuras variantes.
             </div>
         </div>
 
@@ -486,8 +497,8 @@
                 <ul>
                     <li>Los productos o la lista de productos de la <strong>condición</strong> deben coincidir con los del <strong>aplicador</strong>.</li>
                     <li>Verificar <strong>fecha inicio</strong> y <strong>fecha fin</strong> al momento de la carga.</li>
-                    <li>Si existe una lista de locales específica para la promoción, se debe seleccionar.</li>
-                    <li>Si no hay lista de locales para la promo y queda solo la exclusión <strong>! EXC_LOCALES</strong>, eso indica que la promoción va a <strong>todos los locales</strong> excepto los excluidos.</li>
+                    <li>En <strong>EVENTOS</strong> revisar siempre los <strong>locales</strong> y los <strong>días específicos</strong> de aplicación.</li>
+                    <li>En <strong>CLUB</strong> revisar si la solicitud aplica todos los días o en un tramo específico, por ejemplo <strong>L-J</strong>.</li>
                 </ul>
             </div>
         </div>
@@ -496,13 +507,13 @@
             <div class="card-header">Guía de carga</div>
             <div class="reminder-box">
                 <ol>
-                    <li><strong>Nueva promoción</strong> &gt; seleccionar <strong>Área</strong> y <strong>Tipo de promoción</strong> (la más común es <strong>1000 - Venta</strong>) &gt; seleccionar <strong>Category</strong> &gt; seleccionar <strong>Competencia</strong> &gt; verificar el check en <strong>Habilitada</strong>.</li>
-                    <li><strong>Pestaña Tiempo</strong> &gt; seleccionar <strong>fecha inicio</strong> y <strong>fecha fin</strong> &gt; marcar días en caso de ser necesario.</li>
-                    <li><strong>Pestaña Condiciones</strong> &gt; seleccionar <strong>Tipo = Boleta</strong> &gt; seleccionar <strong>Lista de locales</strong> solo si la promoción tiene una lista específica &gt; mantener la exclusión <strong>! EXC_LOCALES</strong>.</li>
-                    <li>Seleccionar <strong>Productos</strong> en la cascada y agregar los productos en <strong>EAN =</strong> o bien seleccionar <strong>Lista de productos</strong> &gt; agregar la condición.</li>
-                    <li><strong>Aplicadores</strong> &gt; seleccionar la pestaña según el descuento: <strong>Monto a producto</strong> cuando el descuento es por monto, <strong>Porcentaje a producto</strong> cuando es porcentual, <strong>Precio fijo</strong> cuando es precio fijo. Marcar el check <strong>Por unidad</strong> si el descuento aplica a cada producto.</li>
-                    <li><strong>Cantidad</strong> y <strong>Estrategia</strong> se seleccionan según la promoción.</li>
-                    <li>En el campo <strong>Producto</strong> agregar el producto o la lista &gt; agregar <strong>Filtro de producto</strong> &gt; agregar <strong>Aplicador</strong>.</li>
+                    <li><strong>Nueva promoción</strong> &gt; seleccionar <strong>Área</strong>, <strong>Tipo de promoción</strong> y <strong>Competencia</strong> &gt; verificar el check en <strong>Habilitada</strong>.</li>
+                    <li><strong>Pestaña Tiempo</strong> &gt; seleccionar <strong>fecha inicio</strong>, <strong>fecha fin</strong> y días cuando la solicitud lo requiera.</li>
+                    <li><strong>Pestaña Condiciones</strong> &gt; seleccionar <strong>Tipo = Boleta</strong> y agregar filtros de documento según la lógica de la modalidad.</li>
+                    <li>Agregar <strong>producto</strong> o <strong>lista de productos</strong> en condición.</li>
+                    <li><strong>Aplicadores</strong> &gt; seleccionar la pestaña según el descuento: <strong>Monto a producto</strong>, <strong>Porcentaje a producto</strong> o <strong>Precio fijo a producto</strong>.</li>
+                    <li>Revisar que el <strong>producto o lista</strong> del aplicador coincida exactamente con la condición.</li>
+                    <li>Definir <strong>cantidad</strong> y <strong>estrategia</strong> según la mecánica esperada.</li>
                 </ol>
             </div>
         </div>
@@ -551,14 +562,21 @@ function setHTML(id, html) {
     document.getElementById(id).innerHTML = html;
 }
 
+function normalizarPorcentaje(valor) {
+    if (!valor) return '';
+    const texto = String(valor).trim();
+    return texto.includes('%') ? texto : `${texto}%`;
+}
+
 function generarGuia() {
-    const area = document.getElementById('areaResponsable').value;
+    const modalidad = document.getElementById('modalidad').value;
+    const areaIngresada = document.getElementById('areaResponsable').value;
     const tipo = document.getElementById('tipoDescuento').value;
     const unidades = Number(document.getElementById('unidadesPack').value || 0);
     const pvpOferta = document.getElementById('pvpOfertaPack').value;
-    const descuentoPct = document.getElementById('descuentoPorcentual').value;
+    const descuentoPct = normalizarPorcentaje(document.getElementById('descuentoPorcentual').value);
     const descuentoNom = document.getElementById('descuentoNominal').value;
-    const detalle = document.getElementById('detalleSolicitud').value;
+    const detalle = document.getElementById('detalleSolicitud').value.trim();
 
     let estadoClase = 'status ok';
     let estadoTexto = 'Guía generada';
@@ -569,26 +587,117 @@ function generarGuia() {
     let camino = '';
     let checklist = [];
 
-    if (!area || !tipo) {
+    if (!tipo) {
         estadoClase = 'status warning';
-        estadoTexto = 'Faltan datos clave';
-        observaciones += notaCompacta('Debes indicar al menos Área responsable y Tipo de descuento.');
+        estadoTexto = 'Falta tipo de descuento';
+        observaciones += notaCompacta('Debes indicar al menos el Tipo de descuento para generar una guía confiable.');
     }
 
+    let areaFinal = areaIngresada || '-';
     let competencia = 'Revisar';
     let tipoPromocion = '1000 - Venta';
+    let habilitada = 'Sí';
 
-    if (area === 'BYCP') competencia = 'Compite por promoción';
-    else if (area === 'FARMA') competencia = 'Compite por producto';
-    else if (area === 'BIENESTAR') competencia = 'Compite por producto';
-    else if (area === 'MSJE') competencia = 'Revisar según mensaje';
-    else if (area === 'DERMO') competencia = 'Revisar según caso';
+    if (modalidad === 'CLUB') {
+        areaFinal = 'FIDELIZACION';
+        competencia = 'Compite por producto';
+    } else if (modalidad === 'EVENTOS') {
+        areaFinal = areaIngresada || 'Revisar solicitud';
+        competencia = 'Revisar según solicitud';
+    } else if (areaIngresada === 'BYCP') {
+        competencia = 'Compite por promoción';
+    } else if (areaIngresada === 'FARMA') {
+        competencia = 'Compite por producto';
+    } else if (areaIngresada === 'BIENESTAR') {
+        competencia = 'Compite por producto';
+    } else if (areaIngresada === 'MSJE') {
+        competencia = 'Revisar según mensaje';
+    } else if (areaIngresada === 'DERMO') {
+        competencia = 'Revisar según caso';
+    } else if (areaIngresada === 'FIDELIZACION') {
+        competencia = 'Compite por producto';
+    }
 
-    basico += filaMini('Área', area || '-');
+    basico += filaMini('Modalidad', modalidad || 'Normal');
+    basico += filaMini('Área', areaFinal);
     basico += filaMini('Tipo promoción', tipoPromocion);
     basico += filaMini('Competencia', competencia);
+    basico += filaMini('Habilitada', habilitada);
 
-    if (tipo === 'NOMINAL' && unidades === 1) {
+    if (modalidad === 'CLUB') {
+        condiciones += filaMini('Documento', 'Tipo = Boleta');
+        condiciones += filaMini('Exclusión', '! Lista Locales = EXC_LOCALES');
+        condiciones += filaMini('Negación', '! Convenio seleccionado > 0');
+        condiciones += filaMini('Cliente', 'Inscripto = true');
+        condiciones += filaMini('Producto', 'SKU o Lista, igual que en aplicador');
+
+        if (tipo === 'PORCENTUAL') {
+            aplicadores += filaMini('Pestaña', 'Porcentaje a producto');
+            aplicadores += filaMini('Porcentaje', descuentoPct || '-');
+            aplicadores += filaMini('Cantidad', '1');
+            aplicadores += filaMini('Estrategia', 'Menor');
+            camino += notaCompacta(`CLUB porcentual: aplicar descuento a producto con ${descuentoPct || '-'}, cantidad 1 y estrategia Menor.`);
+        } else if (tipo === 'NOMINAL') {
+            aplicadores += filaMini('Pestaña', 'Monto a producto o Precio fijo');
+            aplicadores += filaMini('Monto / Precio', descuentoNom || pvpOferta || '-');
+            aplicadores += filaMini('Cantidad', '1');
+            aplicadores += filaMini('Estrategia', 'Menor');
+            camino += notaCompacta(`CLUB nominal: cargar el producto o lista en condición y repetir exactamente el mismo alcance en el aplicador con cantidad 1 y estrategia Menor.`);
+        } else {
+            aplicadores += filaMini('Pestaña', 'Revisar según descuento');
+            aplicadores += filaMini('Cantidad', '1');
+            aplicadores += filaMini('Estrategia', 'Menor');
+            camino += notaCompacta('CLUB: mantener misma lógica de producto o lista entre condición y aplicador.');
+        }
+
+        observaciones += notaCompacta('La promo padre lleva id e id alternativo con el mismo número.');
+        observaciones += notaCompacta('El clon CNV lleva su propio id y en id alternativo el id de la promo padre.');
+        observaciones += notaCompacta('ID a Facturar usa el mismo ID Geocom e Id Lista Cliente usa el ID del clon.');
+        observaciones += notaCompacta('Revisar siempre los días de aplicación de la solicitud: puede aplicar todos los días o en tramos como L-J.');
+
+        checklist.push('Básico > Área = FIDELIZACION, Tipo promoción = 1000 - Venta, Habilitada = Sí.');
+        checklist.push('Competencia = Compite por producto.');
+        checklist.push('Documento > Tipo = Boleta.');
+        checklist.push('Documento > ! Lista Locales = EXC_LOCALES.');
+        checklist.push('Documento > ! Convenio seleccionado mayor 0.');
+        checklist.push('Cliente > Inscripto = true.');
+        checklist.push('Agregar producto o lista en condición.');
+        checklist.push('Aplicador con el mismo producto o lista, cantidad 1 y estrategia Menor.');
+    } else if (modalidad === 'EVENTOS') {
+        condiciones += filaMini('Documento', 'Tipo = Boleta');
+        condiciones += filaMini('Locales', 'Locales específicos según solicitud');
+        condiciones += filaMini('Días', 'Revisar días específicos');
+        condiciones += filaMini('Producto', 'SKU o Lista, igual que en aplicador');
+
+        if (tipo === 'PORCENTUAL') {
+            aplicadores += filaMini('Pestaña', 'Porcentaje a producto');
+            aplicadores += filaMini('Porcentaje', descuentoPct || '-');
+            aplicadores += filaMini('Cobertura', 'A todos los productos del filtro');
+            aplicadores += filaMini('Producto', 'Mismo SKU o Lista que la condición');
+            camino += notaCompacta(`EVENTOS porcentual: descuento a todos los productos por porcentaje ${descuentoPct || '-'} en los locales y días definidos.`);
+        } else if (tipo === 'NOMINAL') {
+            aplicadores += filaMini('Pestaña', 'Monto a producto o Precio fijo');
+            aplicadores += filaMini('Monto / Precio', descuentoNom || pvpOferta || '-');
+            aplicadores += filaMini('Producto', 'Mismo SKU o Lista que la condición');
+            camino += notaCompacta('EVENTOS nominal: mantener locales y días específicos definidos en la solicitud y replicar el mismo alcance de producto o lista en el aplicador.');
+        } else {
+            aplicadores += filaMini('Pestaña', 'Revisar según descuento');
+            aplicadores += filaMini('Producto', 'Mismo SKU o Lista que la condición');
+            camino += notaCompacta('EVENTOS: la modalidad queda abierta a otros descuentos futuros, pero siempre revisando locales y días específicos.');
+        }
+
+        observaciones += notaCompacta('Los eventos suelen ir a locales específicos y con días específicos de aplicación.');
+        observaciones += notaCompacta('El producto o lista de productos de la condición debe coincidir exactamente con el aplicador.');
+        observaciones += notaCompacta('En porcentual, la referencia base es “descuento a todos los productos por porcentaje” en el aplicador.');
+
+        checklist.push('Básico > verificar Área, Tipo promoción y Habilitada según solicitud.');
+        checklist.push('Tiempo > cargar fecha inicio, fecha fin y días específicos.');
+        checklist.push('Documento > Tipo = Boleta.');
+        checklist.push('Documento > cargar locales específicos.');
+        checklist.push('Condición > agregar producto o lista.');
+        checklist.push('Aplicador > usar la pestaña correspondiente al descuento.');
+        checklist.push('Aplicador > repetir el mismo producto o lista de la condición.');
+    } else if (tipo === 'NOMINAL' && unidades === 1) {
         condiciones += filaMini('Tipo', 'Boleta');
         condiciones += filaMini('Cantidad', 'No tratar como pack real');
 
@@ -599,7 +708,6 @@ function generarGuia() {
         aplicadores += filaMini('Estrategia', 'Menor');
 
         camino += notaCompacta(`Fija precio a cada producto, monto = ${pvpOferta || '-'}.`);
-
         observaciones += notaCompacta('Caso identificado como nominal unitario.');
         observaciones += notaCompacta('La referencia principal para el aplicador es el PVP Oferta Pack.');
 
@@ -619,7 +727,6 @@ function generarGuia() {
         aplicadores += filaMini('Estrategia', 'Menor');
 
         camino += notaCompacta(`Descuento a cada producto por monto = ${descuentoNom || '-'}, cantidad 1, estrategia Menor.`);
-
         observaciones += notaCompacta('Caso identificado como PACK NOMINAL.');
         observaciones += notaCompacta('Los productos o lista de la condición deben coincidir con los del aplicador.');
 
@@ -672,9 +779,13 @@ function generarGuia() {
         observaciones += notaCompacta('No hay una regla específica armada para esta combinación todavía.');
     }
 
-    observaciones += notaCompacta('Los productos o lista de productos de la condición deben coincidir con los del aplicador.');
     observaciones += notaCompacta('Verificar fecha inicio y fecha fin al momento de la carga.');
-    if (detalle) observaciones += notaCompacta('Existe detalle adicional en la solicitud que conviene revisar antes de cargar.');
+    if (!modalidad || (modalidad !== 'CLUB' && modalidad !== 'EVENTOS')) {
+        observaciones += notaCompacta('Los productos o lista de productos de la condición deben coincidir con los del aplicador.');
+    }
+    if (detalle) {
+        observaciones += notaCompacta('Existe detalle adicional en la solicitud que conviene revisar antes de cargar.');
+    }
 
     document.getElementById('estadoGeneral').className = estadoClase;
     document.getElementById('estadoGeneral').textContent = estadoTexto;
@@ -693,6 +804,7 @@ function generarGuia() {
 }
 
 function limpiarFormulario() {
+    document.getElementById('modalidad').value = '';
     document.getElementById('areaResponsable').value = '';
     document.getElementById('tipoDescuento').value = '';
     document.getElementById('unidadesPack').value = '';

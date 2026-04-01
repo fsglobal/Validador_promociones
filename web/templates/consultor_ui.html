@@ -374,14 +374,6 @@
     <section class="consultor-grid">
         <div class="card card-accent">
             <div class="card-header">Datos de la solicitud</div>
-            <div class="form-group">
-              <label for="tipoPromocion">Tipo de promoción</label>
-              <select id="tipoPromocion">
-                <option value="">No especificado</option>
-                <option value="EVENTO">EVENTOS</option>
-                <option value="CLUB">CLUB</option>
-              </select>
-            </div>
 
             <div class="form-grid">
                 <div class="field">
@@ -545,49 +537,7 @@ function actualizarCamposVisibles() {
         fieldDescPct.classList.add('hidden');
         fieldDescNom.classList.add('hidden');
     }
-
-    // ------------------------------------------------------------------
-    // ✅ COMPORTAMIENTO EVENTOS (NUEVO – NO ROMPE LO EXISTENTE)
-    // ------------------------------------------------------------------
-    const tipoPromoEl = document.getElementById('tipoPromocion');
-    const tipoPromo = tipoPromoEl ? tipoPromoEl.value : '';
-
-
-    if (tipoPromo === 'EVENTO') {
-
-        // Tipo descuento SIEMPRE porcentual
-        const tipoDescuento = document.getElementById('tipoDescuento');
-        if (tipoDescuento) {
-            tipoDescuento.value = 'PORCENTUAL';
-            tipoDescuento.readOnly = true;
-        }
-
-        // Unidades pack SIEMPRE 1
-        const unidadesPack = document.getElementById('unidadesPack');
-        if (unidadesPack) {
-            unidadesPack.value = 1;
-            unidadesPack.readOnly = true;
-        }
-
-        // Descuento porcentual visible y editable
-        fieldDescPct.classList.remove('hidden');
-        fieldDescNom.classList.add('hidden');
-        fieldPvpOferta.classList.add('hidden');
-
-    } else {
-        // ✅ Restaurar comportamiento normal
-        const tipoDescuento = document.getElementById('tipoDescuento');
-        const unidadesPack = document.getElementById('unidadesPack');
-
-    if (tipoDescuento) tipoDescuento.readOnly = false;
-    if (unidadesPack) unidadesPack.readOnly = false;
-
-    }
-
 }
-</script>
-``
-
 
 function filaMini(k, v) {
     return `<div class="mini-line"><div class="mini-key">${k}</div><div class="mini-val">${v || '-'}</div></div>`;

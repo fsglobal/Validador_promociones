@@ -405,6 +405,16 @@
             background: #fcfcfd;
         }
 
+
+        .origen-line {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .origen-line:last-child {
+            margin-bottom: 0;
+        }
+
         @media (max-width: 768px) {
             .busqueda-acciones .btn {
                 width: 100%;
@@ -564,16 +574,9 @@
                     {% endif %}
 
                     <div class="origen mb-2 mt-2">
-                        📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} |
-                        📦 <b>Export:</b> {{ r.export_origen | default('-') }}<br>
-                        👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} |
-                        🏢 <b>Área responsable:</b> {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }} |
-                        ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} |
-                        ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }} |
-                        🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}
-                        {% if r.msje_popup_hay %}
-                        | 💬 <b>ID MSJE -</b> {{ r.msje_popup_id }} <b>Fecha inicio</b> {{ r.msje_popup_fecha_inicio or '-' }} <b>Fecha fin</b> {{ r.msje_popup_fecha_fin or '-' }}
-                        {% endif %}
+                        <span class="origen-line">📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} | 📦 <b>Export:</b> {{ r.export_origen | default('-') }}</span>
+                        <span class="origen-line">👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} | 🏢 <b>Área responsable:</b> {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }} | ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} | ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }}</span>
+                        <span class="origen-line">🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}{% if r.msje_popup_hay %} | 💬 <b>ID MSJE -</b> {{ r.msje_popup_id }} <b>Fecha inicio</b> {{ r.msje_popup_fecha_inicio or '-' }} <b>Fecha fin</b> {{ r.msje_popup_fecha_fin or '-' }}{% endif %}</span>
                     </div>
 
                     <div class="resumen-box">
@@ -713,16 +716,9 @@
                     {% endif %}
 
                     <div class="origen mb-2 mt-2">
-                        📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} |
-                        📦 <b>Export:</b> {{ r.export_origen | default('-') }}<br>
-                        👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} |
-                        🏢 <b>Área responsable:</b> {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }} |
-                        ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} |
-                        ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }} |
-                        🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}
-                        {% if r.msje_popup_hay %}
-                        | 💬 <b>ID MSJE -</b> {{ r.msje_popup_id }} <b>Fecha inicio</b> {{ r.msje_popup_fecha_inicio or '-' }} <b>Fecha fin</b> {{ r.msje_popup_fecha_fin or '-' }}
-                        {% endif %}
+                        <span class="origen-line">📄 <b>Excel:</b> {{ r.excel_origen | default('-') }} | 📦 <b>Export:</b> {{ r.export_origen | default('-') }}</span>
+                        <span class="origen-line">👤 <b>Usuario creador:</b> {{ r.promo_info.creationUser | default('-') }} | 🏢 <b>Área responsable:</b> {{ r.promo_info.__area_responsable | default(r.promo_info.area_responsable | default('-')) }} | ✅ <b>Habilitada:</b> {{ 'Sí' if r.promo_info.enabled else 'No' }} | ⚔️ <b>Tipo competencia:</b> {{ r.promo_info.__tipo_competencia | default('-') }}</span>
+                        <span class="origen-line">🏷️ <b>Tipo descuento:</b> {{ r.promo_info.__tipo_descuento | default('-') }}{% if r.msje_popup_hay %} | 💬 <b>ID MSJE -</b> {{ r.msje_popup_id }} <b>Fecha inicio</b> {{ r.msje_popup_fecha_inicio or '-' }} <b>Fecha fin</b> {{ r.msje_popup_fecha_fin or '-' }}{% endif %}</span>
                     </div>
 
                     <div class="resumen-box">

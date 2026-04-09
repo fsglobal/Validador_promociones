@@ -1280,6 +1280,223 @@ def leer_hoja_eventos(path_excel):
 # VALIDACIÓN TRADICIONAL
 # ============================================================
 
+
+
+def extraer_id_msje_eventos_desde_grupo(grupo):
+    col_id_msje = buscar_columna(grupo, [
+        "ID MSJE",
+        "ID MENSAJE",
+        "MSJE",
+    ])
+    if not col_id_msje:
+        return None
+
+    valor = grupo[col_id_msje].iloc[0]
+    return normalizar_local(valor) if es_id_promocion_valido(valor) else None
+
+
+def validar_promocion_eventos(id_geo, grupo, promo, productos_excel=None, nombre_lista_excel="", listas_productos_export=None, promos_por_id=None):
+    detalles = []
+    ok = True
+    productos_excel = normalizar_lista_skus(productos_excel or [])
+    nombre_lista_excel = normalizar_texto(nombre_lista_excel)
+    listas_productos_export = listas_productos_export or {}
+
+    id_excel = normalizar_local(id_geo)
+    id_export = normalizar_local(promo["id"])
+    msje_popup_data = construir_msje_popup_data(id_excel)
+
+    if id_excel != id_export:
+        ok = False
+        agregar_detalle(detalles, "ERR", "ID", f"ID GEO Excel <span class='text-blue'>({id_excel})</span> es distinto al ID Export <span class='text-blue'>({id_export})</span>")
+    else:
+        agregar_detalle(detalles, "OK", "ID", f"ID GEO Excel <span class='text-blue'>({id_excel})</span> y Export coinciden")
+
+    col_num_camp = buscar_columna(grupo, ["N°CAM", "N° CAM", "N CAM", "N CAMPAÑA", "N° CAMPAÑA"])
+    if col_num_camp:
+        agregar_detalle(detalles, "INFO", "EVENTO", f"N° campaña Excel: <span class='text-blue'>({grupo[col_num_camp].iloc[0]})</span>")
+
+    col_marca = buscar_columna(grupo, ["MARCA"])
+    if col_marca:
+        marca = normalizar_texto(grupo[col_marca].iloc[0])
+        if marca:
+            agregar_detalle(detalles, "INFO", "EVENTO", f"Marca Excel: <span class='text-blue'>({marca})</span>")
+
+    col_fi = buscar_columna(grupo, ["AVEN", "FECHA DE INICIO EVENTO", "FECHA INICIO EVENTO", "FECHA INICIO"])
+    col_ff = buscar_columna(grupo, ["FEHA TERMINO EVENTO", "FECHA TERMINO EVENTO", "FECHA DE TERMINO EVENTO", "FECHA FIN EVENTO"])
+    fi_excel = normalizar_fecha_excel(grupo[col_fi].iloc[0]) if col_fi else None
+    ff_excel = normalizar_fecha_excel(grupo[col_ff].iloc[0]) if col_ff else None
+
+    if not col_fi:
+        ok = False
+        agregar_detalle(detalles, "ERR", "FECHAS", "No existe columna de Fecha Inicio en Excel de EVENTOS")
+    if not col_ff:
+        ok = False
+        agregar_detalle(detalles, "ERR", "FECHAS", "No existe columna de Fecha Fin en Excel de EVENTOS")
+    if col_fi and col_ff:
+        inicio_ok, fin_ok = evaluar_fechas(fi_excel, ff_excel, promo["startDate"], promo["endDate"], detalles)
+        if not inicio_ok or not fin_ok:
+            ok = False
+
+    col_desc = buscar_columna(grupo, ["DESCUENTO", "% DESCUENTO", "PORCENTAJE"])
+    excel_val = parsear_porcentaje_excel(grupo[col_desc].iloc[0]) if col_desc else None
+    export_val = promo.get("percentage") if promo.get("percentage") is not None else promo.get("applier_percentage")
+
+    if not col_desc:
+        ok = False
+        agregar_detalle(detalles, "ERR", "DESCUENTO", "No existe columna de descuento en Excel de EVENTOS")
+    elif excel_val is None:
+        ok = False
+        agregar_detalle(detalles, "ERR", "DESCUENTO", f"No se pudo interpretar descuento del Excel <span class='text-blue'>({grupo[col_desc].iloc[0]})</span>")
+    elif export_val is not None and floats_iguales(excel_val, export_val):
+        agregar_detalle(detalles, "OK", "DESCUENTO", f"Descuento porcentual Excel <span class='text-blue'>({excel_val*100:.0f}%)</span> coincide con Export <span class='text-blue'>({export_val*100:.0f}%)</span>")
+    else:
+        ok = False
+        agregar_detalle(detalles, "ERR", "DESCUENTO", f"Descuento porcentual Excel <span class='text-blue'>({excel_val*100:.0f}%)</span> no coincide con Export <span class='text-blue'>({(export_val or 0)*100:.0f}%)</span>")
+
+    listas_local_excel = sorted({
+        normalizar_texto(v)
+        for v in grupo.get("LISTA LOCAL", [])
+        if not es_vacio(v)
+    })
+
+    locales_excel = sorted({
+        normalizar_local(v)
+        for v in grupo.get("LOCAL", [])
+        if not es_vacio(v)
+    })
+
+    listas_local_export = sorted({
+        normalizar_texto(v)
+        for v in promo.get("localLists", [])
+        if not es_vacio(v)
+    })
+
+    locales_export = sorted({
+        normalizar_local(v)
+        for v in promo.get("locales", [])
+        if normalizar_local(v) not in {None, "9999"}
+    })
+
+    if listas_local_excel:
+        for lista in listas_local_excel:
+            if lista in listas_local_export:
+                agregar_detalle(detalles, "OK", "LOCALES", f"LISTA LOCAL <span class='text-blue'>({lista})</span> del Excel coincide con Export")
+            else:
+                ok = False
+                agregar_detalle(detalles, "ERR", "LOCALES", f"LISTA LOCAL <span class='text-blue'>({lista})</span> del Excel no coincide con Export")
+
+        locales_sin_lista = sorted({
+            normalizar_local(row.get("LOCAL"))
+            for _, row in grupo.iterrows()
+            if es_vacio(row.get("LISTA LOCAL")) and not es_vacio(row.get("LOCAL"))
+        })
+        for loc in locales_sin_lista:
+            if loc:
+                ok = False
+                agregar_detalle(detalles, "ERR", "LOCALES", f"LOCAL <span class='text-blue'>({loc})</span> no se encuentra asociado a LISTA LOCAL en el Excel")
+    else:
+        ok_l, det_l = validar_multivalor(locales_excel, locales_export, "LOCAL")
+        if not ok_l:
+            ok = False
+        for t, m in det_l:
+            agregar_detalle(detalles, t, "LOCALES", m)
+
+    nombre_lista_export = normalizar_texto(_primer_no_vacio(
+        (promo.get("condition_product_lists") or [None])[0],
+        (promo.get("applier_product_lists") or [None])[0],
+        (promo.get("productLists") or [None])[0],
+        "",
+    ))
+    condition_skus = normalizar_lista_skus(promo.get("condition_skus", []))
+    applier_skus = normalizar_lista_skus(promo.get("applier_skus", []))
+    applier_lists = [normalizar_texto(x) for x in promo.get("applier_product_lists", []) if normalizar_texto(x)]
+    applier_pct_nodo = promo.get("applier_percentage") if promo.get("applier_percentage") is not None else promo.get("percentage")
+
+    tipo_desc_raw = f"PORCENTUAL - {int(excel_val * 100):d}%" if excel_val is not None else "PORCENTUAL"
+    agregar_detalle(detalles, "INFO", "LEYENDA", construir_leyenda_excel_compat(
+        tipo_desc_raw=tipo_desc_raw,
+        productos_excel=productos_excel,
+        cantidad_excel=None,
+        porcentaje_excel=excel_val,
+        descuento_bruto_excel_q=None,
+        monto_pack_excel=None,
+        nombre_lista_excel=nombre_lista_excel,
+    ))
+    agregar_detalle(detalles, "INFO", "LEYENDA", construir_leyenda_condicion_compat(
+        condition_skus=condition_skus,
+        condition_quantity=promo.get("condition_quantity"),
+        nombre_lista_export=nombre_lista_export,
+    ))
+    agregar_detalle(detalles, "INFO", "LEYENDA", construir_leyenda_applier_compat(
+        tipo_desc="PORCENTUAL",
+        promo=promo,
+        applier_skus=applier_skus,
+        applier_product_lists=applier_lists,
+        porcentaje_excel=excel_val,
+        applier_pct_nodo=applier_pct_nodo,
+        applier_pct_tecnico=applier_pct_nodo,
+        descuento_bruto_excel_q=None,
+        monto_pack_excel=None,
+    ))
+
+    if nombre_lista_excel:
+        if nombre_lista_excel == nombre_lista_export:
+            agregar_detalle(detalles, "OK", "LISTA PRODUCTOS", f"Lista de productos Excel <span class='text-blue'>({nombre_lista_excel})</span> coincide con Export")
+        else:
+            ok = False
+            agregar_detalle(detalles, "ERR", "LISTA PRODUCTOS", f"Lista de productos Excel <span class='text-blue'>({nombre_lista_excel})</span> no coincide con Export <span class='text-blue'>({nombre_lista_export or '-'})</span>")
+    elif productos_excel:
+        if condition_skus == productos_excel:
+            agregar_detalle(detalles, "OK", "CONDICIÓN", "Los productos del Excel de EVENTOS coinciden con la condición del Export")
+        else:
+            faltan = sorted(productos_excel - condition_skus)
+            sobran = sorted(condition_skus - productos_excel)
+            if faltan or sobran:
+                ok = False
+                if faltan:
+                    agregar_detalle(detalles, "ERR", "CONDICIÓN", f"Faltan SKU en condición respecto al Excel de EVENTOS: <span class='text-blue'>({', '.join(faltan)})</span>")
+                if sobran:
+                    agregar_detalle(detalles, "ERR", "CONDICIÓN", f"Sobran SKU en condición respecto al Excel de EVENTOS: <span class='text-blue'>({', '.join(sobran)})</span>")
+
+    if not validar_applier_vs_condicion(detalles, promo, listas_productos_export):
+        ok = False
+
+    id_msje = extraer_id_msje_eventos_desde_grupo(grupo)
+    if id_msje:
+        promo_msje = promos_por_id.get(id_msje) if promos_por_id else None
+        msje_popup_data = construir_msje_popup_data(
+            id_padre=id_excel,
+            id_msje_asociado=id_msje,
+            promo_msje_asociada=promo_msje,
+            productos_excel=productos_excel,
+            nombre_lista_excel=nombre_lista_excel,
+        )
+        if not promo_msje:
+            ok = False
+            agregar_detalle(detalles, "ERR", "MSJE", f"ID MSJE informado en Excel <span class='text-blue'>({id_msje})</span> no existe en Export")
+        else:
+            agregar_detalle(detalles, "OK", "MSJE", f"ID MSJE informado en Excel <span class='text-blue'>({id_msje})</span> existe en Export")
+            if promo_msje.get("applier_type") == "MESSAGE":
+                agregar_detalle(detalles, "OK", "MSJE", "La promo asociada al ID MSJE viaja con MessageApplier")
+            else:
+                ok = False
+                agregar_detalle(detalles, "ERR", "MSJE", f"La promo asociada al ID MSJE <span class='text-blue'>({id_msje})</span> no viaja con MessageApplier")
+            if normalizar_texto(promo_msje.get("message_output")) == "SCREEN":
+                agregar_detalle(detalles, "OK", "MSJE", "Salida del mensaje correcta: <span class='text-blue'>(SCREEN)</span>")
+            else:
+                ok = False
+                agregar_detalle(detalles, "ERR", "MSJE", f"Salida del mensaje incorrecta. Export trae <span class='text-blue'>({promo_msje.get('message_output') or '-'})</span>")
+            if promo_msje.get("message_applier_name"):
+                agregar_detalle(detalles, "INFO", "MSJE", f"Nombre del mensaje detectado: <span class='text-blue'>({promo_msje.get('message_applier_name')})</span>")
+            if promo_msje.get("message_text"):
+                agregar_detalle(detalles, "INFO", "MSJE", f"Texto del mensaje: <span class='text-blue'>({promo_msje.get('message_text')})</span>")
+    else:
+        agregar_detalle(detalles, "INFO", "MSJE", "No lleva ID MSJE en Excel. No se valida mensaje y no es error")
+
+    return ok, detalles, msje_popup_data
+
+
 def validar_promocion_tradicional(id_geo, df_promo, promo_export, productos_excel, locales_excel, listas_local_excel):
     detalles = []
     ok = True
@@ -2220,17 +2437,17 @@ def obtener_rc():
 # FLUJO TRADICIONAL
 # ============================================================
 
-def ejecutar_flujo_tradicional(excel_files, rc_externo=None):
+def ejecutar_flujo_eventos(excel_files, rc_externo=None):
     df_eventos_total = pd.DataFrame()
     df_codigos_total = pd.DataFrame()
-    archivos_tradicional = []
+    archivos_eventos = []
     eventos_ok = False
 
     for file in excel_files:
         df_ev = leer_hoja_eventos(file)
-        if df_ev is not None:
+        if df_ev is not None and not df_ev.empty:
             eventos_ok = True
-            archivos_tradicional.append(os.path.splitext(os.path.basename(file))[0])
+            archivos_eventos.append(file)
             df_eventos_total = pd.concat([df_eventos_total, df_ev], ignore_index=True)
 
         try:
@@ -2244,18 +2461,23 @@ def ejecutar_flujo_tradicional(excel_files, rc_externo=None):
             pass
 
     if not eventos_ok:
-        return None, None, None, None
+        return None, pd.DataFrame(), None, []
 
     rc = rc_externo.upper().strip() if rc_externo is not None else obtener_rc()
-    print(Fore.CYAN + f"\n      FLUJO TRADICIONAL (USUARIO: {rc})")
+    print(Fore.CYAN + f"\n      FLUJO EVENTOS (USUARIO: {rc})")
     print(Fore.CYAN + " Archivos analizados:")
-    for a in archivos_tradicional:
-        print(Fore.CYAN + f"  - {a}")
+    for a in archivos_eventos:
+        print(Fore.CYAN + f"  - {os.path.splitext(os.path.basename(a))[0]}")
     print(Fore.CYAN + "========================================\n")
 
     df_eventos_total["ID GEO"] = df_eventos_total["ID GEO"].apply(normalizar_local)
-    df_usuario = df_eventos_total[df_eventos_total["RC"].astype(str).str.upper() == rc]
-    return df_usuario, df_codigos_total, rc, archivos_tradicional
+    df_usuario = df_eventos_total[df_eventos_total["RC"].astype(str).str.upper().str.strip() == rc].copy()
+    return df_usuario, df_codigos_total, rc, archivos_eventos
+
+
+def ejecutar_flujo_tradicional(excel_files, rc_externo=None):
+    """Compatibilidad hacia atrás: el flujo histórico estaba usando Excel de EVENTOS."""
+    return ejecutar_flujo_eventos(excel_files, rc_externo=rc_externo)
 
 
 def obtener_columna_id_geocom(df):

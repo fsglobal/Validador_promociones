@@ -179,6 +179,98 @@ def _formatear_numero_limpio(valor):
         return str(valor)
 
 
+def _detalle_a_tipo_msg(det):
+    if isinstance(det, tuple):
+        return det[0], det[1]
+    return det.get("tipo"), det.get("msg")
+
+
+def _detalle_plain(det):
+    _tipo, _msg = _detalle_a_tipo_msg(det)
+    return _strip_html(_msg)
+
+
+def _es_caso_especial_bycp_3x2(analisis, detalles):
+    tipo = str((analisis or {}).get("tipo_promocion", "")).upper()
+    area = str((analisis or {}).get("area_responsable", "")).upper()
+    if "PACK 3X2" not in tipo or area != "BYCP":
+        return False
+
+    plains = [_detalle_plain(d) for d in (detalles or [])]
+    tiene_percentage = any("PERCENTAGE" in p.upper() or "PERCENTAGEDISCOUNTAPPLIER" in p.upper() for p in plains)
+    tiene_cant3 = any("Cantidad: (3)" in p or "Cantidad (3)" in p or "cada 3" in p.lower() for p in plains)
+    tiene_cant1 = any("Cantidad: (1)" in p or "Cantidad (1)" in p for p in plains)
+    tiene_100 = any("%: (100" in p or "% nodo export: (1" in p or "percentage>1.0" in p.lower() or "(100.00)" in p for p in plains)
+    return tiene_percentage and tiene_cant3 and tiene_cant1 and tiene_100
+
+
+def _ajustar_detalles_caso_especial_bycp_3x2(detalles):
+    plains = [_detalle_plain(d) for d in (detalles or [])]
+
+    lista = "-"
+    for p in plains:
+        if p.startswith("[LEYENDA] Condición Export"):
+            lista = _extraer_entre_parentesis(p, "Lista") or _extraer_entre_parentesis(p, "SKU") or lista
+            if lista != "-":
+                break
+    if lista == "-":
+        for p in plains:
+            if p.startswith("[LEYENDA] Applier Export"):
+                lista = _extraer_entre_parentesis(p, "Lista") or _extraer_entre_parentesis(p, "SKU") or lista
+                if lista != "-":
+                    break
+
+    porcentaje = "100.00"
+    for p in plains:
+        if p.startswith("[LEYENDA] Applier Export"):
+            porcentaje = (
+                _extraer_entre_parentesis(p, "% nodo export")
+                or _extraer_entre_parentesis(p, "%")
+                or porcentaje
+            )
+            break
+
+    nuevos = []
+    # preservamos solo mensajes neutros/útiles y descartamos la lógica vieja de PACK
+    for d in (detalles or []):
+        tipo, msg = _detalle_a_tipo_msg(d)
+        plain = _strip_html(msg)
+        if plain.startswith("[COMPETENCIA]") or plain.startswith("[CONDICIÓN]") or plain.startswith("[APPLIER]"):
+            continue
+        if plain.startswith("[LEYENDA] Condición Export") or plain.startswith("[LEYENDA] Applier Export"):
+            continue
+        if plain.startswith("[LEYENDA] Excel → Tipo:") or plain.startswith("[LEYENDA] Excel -> Tipo:"):
+            msg = "[LEYENDA] Excel → Tipo: (PACK 3X2) Caso especial BYCP 3X2."
+            tipo = "OK"
+        nuevos.append((tipo, msg))
+
+    nuevos.append(("OK", "[COMPETENCIA] Caso especial BYCP 3X2: competencia por producto correcta."))
+    if lista != "-":
+        nuevos.append(("OK", f"[CONDICIÓN] Caso especial BYCP 3X2 válido. Lista: ({lista}) | Cantidad: (3)"))
+        nuevos.append(("OK", f"[LEYENDA] Condición Export → Tipo: (LISTA) Lista: ({lista}) Cantidad: (3)"))
+        nuevos.append(("OK", f"[APPLIER] Caso especial BYCP 3X2 válido. PercentageDiscountApplier | Lista: ({lista}) | Cantidad: (1) | %: ({porcentaje}) | Strategy: (1)"))
+        nuevos.append(("OK", f"[LEYENDA] Applier Export → Tipo: (PERCENTAGE) Lista: ({lista}) Cantidad: (1) % nodo export: ({porcentaje})"))
+    else:
+        nuevos.append(("OK", "[CONDICIÓN] Caso especial BYCP 3X2 válido. Cantidad: (3)"))
+        nuevos.append(("OK", "[APPLIER] Caso especial BYCP 3X2 válido. PercentageDiscountApplier | Cantidad: (1) | %: (100.00) | Strategy: (1)"))
+        nuevos.append(("OK", "[LEYENDA] Condición Export → Tipo: (LISTA) Cantidad: (3)"))
+        nuevos.append(("OK", "[LEYENDA] Applier Export → Tipo: (PERCENTAGE) Cantidad: (1) % nodo export: (100.00)"))
+
+    return nuevos
+
+
+def _forzar_analisis_caso_especial_bycp_3x2(analisis):
+    a = dict(analisis or {})
+    a["tipo_promocion"] = "PACK 3X2"
+    a["estado_condicion"] = "Coinciden"
+    a["estado_applier"] = "Coinciden"
+    a["mensaje_principal"] = "Coinciden"
+    a["aviso_principal"] = ""
+    if str(a.get("area_responsable", "")).upper() == "BYCP":
+        a["resumen_aplicador"] = "Caso especial BYCP 3X2 | % 100 | Cantidad: 1 | Strategy: menor"
+    return a
+
+
 def _formatear_porcentaje_limpio(valor):
     return "-" if not valor or valor == "-" else valor
 
@@ -638,6 +730,59 @@ def construir_resultado_web(id_geo, excel_origen, export_origen, promo_info, det
 
 
 
+
+
+def _crear_resultado_extra_export(id_geo, promo_info):
+    detalle = [{
+        "tipo": "ERR",
+        "msg": "Promoción presente en Export pero no encontrada en Excel.",
+    }]
+    analisis = {
+        "mensaje_principal": "No coinciden",
+        "aviso_principal": "",
+        "estado_id": "No coinciden",
+        "estado_facturar": "No evaluado",
+        "estado_fechas": "No evaluado",
+        "estado_condicion": "No evaluado",
+        "estado_applier": "No evaluado",
+        "fecha_inicio_ok": None,
+        "fecha_fin_ok": None,
+        "tipo_promocion": promo_info.get("__tipo_descuento", "-") or "-",
+        "resumen_condicion": "-",
+        "resumen_aplicador": "-",
+        "restriccion_dias": "-",
+        "restriccion_dias_estado": "No evaluado",
+    }
+    return construir_resultado_web(
+        id_geo=id_geo,
+        excel_origen="No solicitado en Excel",
+        export_origen=promo_info.get("__export_origen", "-"),
+        promo_info=promo_info,
+        detalles=detalle,
+        analisis=analisis,
+    )
+
+
+def _obtener_ids_solicitados_excel(df_completar_total, df_eventos_usuario):
+    ids = set()
+
+    if df_completar_total is not None and not df_completar_total.empty:
+        col_id_geo = next((c for c in df_completar_total.columns if "GEOCOM" in str(c).upper()), None)
+        if col_id_geo:
+            for valor in df_completar_total[col_id_geo].tolist():
+                pid = normalizar_local(str(valor).split(".")[0])
+                if pid:
+                    ids.add(pid)
+
+    if df_eventos_usuario is not None and not getattr(df_eventos_usuario, "empty", True):
+        if "ID GEO" in df_eventos_usuario.columns:
+            for valor in df_eventos_usuario["ID GEO"].tolist():
+                pid = normalizar_local(str(valor).split(".")[0])
+                if pid:
+                    ids.add(pid)
+
+    return ids
+
 def _copiar_resultados_para_descarga(resultados):
     limpios = []
     for r in resultados:
@@ -1031,6 +1176,77 @@ def construir_indices_export(export_files):
     return promo_info_por_id, promos_por_id, listas_productos_export
 
 
+
+
+def _detectar_columna_id_geocom(df):
+    for c in df.columns:
+        if "GEOCOM" in str(c).upper():
+            return c
+    return None
+
+
+def _detectar_columna_id_lista_cliente(df):
+    for c in df.columns:
+        nombre = str(c).upper().strip()
+        if "ID LISTA CLIENTE" in nombre or nombre == "AG":
+            return c
+    return None
+
+
+def _es_excel_club(nombre_archivo):
+    return "CLUB" in str(nombre_archivo or "").upper()
+
+
+def _expandir_filas_club_con_id_lista_cliente(df, nombre_archivo):
+    """
+    Para archivos CLUB, agrega filas duplicadas usando el valor de
+    'ID Lista Cliente' como ID GEO a validar, cuando corresponda.
+    Esto permite validar también el clon de convenios sin alterar
+    el comportamiento del resto de campañas.
+    """
+    if df is None or df.empty or not _es_excel_club(nombre_archivo):
+        return df
+
+    col_id_geo = _detectar_columna_id_geocom(df)
+    col_id_lista_cliente = _detectar_columna_id_lista_cliente(df)
+
+    if not col_id_geo or not col_id_lista_cliente:
+        return df
+
+    filas_extra = []
+
+    for _, row in df.iterrows():
+        id_geo_base = normalizar_local(str(row.get(col_id_geo)).split(".")[0])
+        id_lista_cliente = normalizar_local(str(row.get(col_id_lista_cliente)).split(".")[0])
+
+        if not id_lista_cliente:
+            continue
+
+        if id_lista_cliente == id_geo_base:
+            continue
+
+        nueva = row.copy()
+        nueva[col_id_geo] = id_lista_cliente
+        nueva["__id_fuente"] = "ID Lista Cliente"
+        filas_extra.append(nueva)
+
+    if not filas_extra:
+        return df
+
+    df_base = df.copy()
+    if "__id_fuente" not in df_base.columns:
+        df_base["__id_fuente"] = "ID Geocom"
+
+    df_extra = df_base.iloc[0:0].copy()
+    df_extra = df_extra.reindex(columns=df_base.columns)
+
+    for fila in filas_extra:
+        fila_dict = {col: fila[col] if col in fila.index else None for col in df_base.columns}
+        df_extra.loc[len(df_extra)] = fila_dict
+
+    return pd.concat([df_base, df_extra], ignore_index=True)
+
+
 def construir_mapa_area_responsable(excel_files):
     mapa = {}
     for file in excel_files:
@@ -1072,6 +1288,7 @@ def procesar():
 
     resultados_tradicional = []
     resultados_completar = []
+    df_eventos_usuario = None
 
     promo_info_por_id, promos_por_id, listas_productos_export = construir_indices_export(export_files)
     mapa_area_responsable = construir_mapa_area_responsable(excel_files)
@@ -1197,7 +1414,11 @@ def procesar():
     for file in excel_files:
         df_c = leer_hoja_completar(file)
         if df_c is not None and not df_c.empty:
-            df_c["__excel_origen"] = os.path.basename(file)
+            nombre_excel = os.path.basename(file)
+            df_c = _expandir_filas_club_con_id_lista_cliente(df_c, nombre_excel)
+            df_c["__excel_origen"] = nombre_excel
+            if "__id_fuente" not in df_c.columns:
+                df_c["__id_fuente"] = "ID Geocom"
             df_completar_total = pd.concat([df_completar_total, df_c], ignore_index=True)
 
     if not df_completar_total.empty:
@@ -1228,6 +1449,9 @@ def procesar():
                 retornar_msje_data=True,
             )
             analisis = analizar_detalles(detalles)
+            if _es_caso_especial_bycp_3x2(analisis, detalles):
+                detalles = _ajustar_detalles_caso_especial_bycp_3x2(detalles)
+                analisis = _forzar_analisis_caso_especial_bycp_3x2(analizar_detalles(detalles))
             info["__tipo_descuento"] = _tipo_descuento_no_wrap(analisis["tipo_promocion"] or promo.get("__tipo_descuento", "-"))
             info["__area_responsable"] = analisis.get("area_responsable", info.get("__area_responsable", "-"))
 
@@ -1241,6 +1465,14 @@ def procesar():
                 msje_popup=msje_popup,
             )
             resultados_completar.append(resultado_principal)
+
+    ids_solicitados_excel = _obtener_ids_solicitados_excel(df_completar_total, df_eventos_usuario)
+    ids_export = set(promo_info_por_id.keys())
+    ids_extra_export = sorted(ids_export - ids_solicitados_excel)
+
+    for id_extra in ids_extra_export:
+        info_extra = dict(promo_info_por_id.get(id_extra, {}) or {})
+        resultados_completar.append(_crear_resultado_extra_export(id_extra, info_extra))
 
     todos_los_resultados = resultados_tradicional + resultados_completar
     total_promos = len(todos_los_resultados)

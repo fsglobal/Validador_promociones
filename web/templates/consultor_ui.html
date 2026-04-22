@@ -4,1497 +4,1089 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultor de Carga</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-page: #eceff3;
-            --bg-card: #f7f8fa;
-            --bg-soft: #eef1f4;
-            --text-main: #2f3a45;
-            --text-muted: #66727f;
-            --title-main: #1f4f82;
-            --border-soft: #d9e0e7;
-            --shadow-soft: 0 6px 18px rgba(31, 41, 55, 0.08);
-            --shadow-hover: 0 10px 22px rgba(31, 41, 55, 0.12);
-            --ok-bg: #dcefe5;
-            --ok-text: #115c39;
-            --warn-bg: #fff2c9;
-            --warn-text: #7a5b00;
-            --primary-btn-1: #1f5f99;
-            --primary-btn-2: #2f7bbb;
-            --legacy-green-1: #d8ead3;
-            --legacy-green-2: #b9d4b7;
-            --legacy-green-3: #8db98b;
-            --legacy-line: #cfe2cf;
-            --legacy-text: #006f73;
-            --legacy-bg: #efefef;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: var(--bg-page);
-            margin: 0;
-            padding: 0;
-            color: var(--text-main);
-            font-size: 0.95rem;
-        }
-
-        @keyframes fadeInSoft {
-            0% { opacity: 0; transform: translateY(18px) scale(0.985); }
-            60% { opacity: 1; transform: translateY(-2px) scale(1.005); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .contenedor {
-            max-width: 1280px;
-            margin: 28px auto;
-            padding: 0 20px 28px;
-        }
-
-        .titulo {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: var(--title-main);
-        }
-
-        .subtitulo {
-            color: var(--text-muted);
-            margin-bottom: 26px;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .consultor-grid {
-            display: grid;
-            grid-template-columns: 1fr 0.92fr;
-            gap: 24px;
-            align-items: start;
-        }
-
-        .left-column {
-            display: grid;
-            gap: 18px;
-            align-items: start;
-        }
-
-        .consultor-bottom {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-top: 24px;
-            align-items: start;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid var(--border-soft);
-            padding: 18px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            opacity: 0;
-            animation: fadeInSoft 0.55s forwards;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .card-accent {
-            border-left: 5px solid #198754;
-        }
-
-        .card-header {
-            font-weight: 700;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--title-main);
-            font-size: 1rem;
-        }
-
-        .card p {
-            color: #43515e;
-            line-height: 1.45;
-            margin-top: 0;
-            margin-bottom: 14px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
-        }
-
-        .field.hidden {
-            display: none;
-        }
-
-        .field label {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cfd7df;
-            border-radius: 10px;
-            font-size: 14px;
-            box-sizing: border-box;
-            background: #f9fafb;
-            color: var(--text-main);
-            font-family: 'Roboto', sans-serif;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #7fb0df;
-            box-shadow: 0 0 0 0.18rem rgba(127, 176, 223, 0.18);
-            background: #fcfcfd;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 110px;
-        }
-
-        .help {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 18px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
-            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 16px rgba(31, 41, 55, 0.14);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-btn-1), var(--primary-btn-2));
-            color: #fff;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1c568d, #2a71ad);
-        }
-
-        .btn-secondary {
-            background: #79848f;
-            color: #fff;
-        }
-
-        .btn-secondary:hover {
-            background: #68737d;
+        :root{
+            --verde:#1f7a4f;
+            --verde-2:#2d9b63;
+            --verde-soft:#eaf6ef;
+            --borde:#d9e6dd;
+            --gris-fondo:#f5f7f8;
+            --texto:#203028;
+            --muted:#5e6f65;
+            --card:#ffffff;
+            --sombra:0 8px 24px rgba(18, 52, 33, .08);
+            --warn:#fff4d6;
+            --warn-b:#ecd48a;
+            --err:#fde8e8;
+            --err-b:#efb0b0;
+            --ok:#e8f6ec;
+            --ok-b:#a7d4b1;
         }
 
-        .actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 18px;
+        *{ box-sizing:border-box; }
+        body{
+            margin:0;
+            font-family:Arial, Helvetica, sans-serif;
+            background:var(--gris-fondo);
+            color:var(--texto);
         }
 
-        .soft-box {
-            margin-top: 16px;
-            background: var(--bg-soft);
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border-soft);
-            color: #44515e;
-            line-height: 1.45;
-            font-size: 0.92rem;
+        .wrap{
+            max-width:1450px;
+            margin:0 auto;
+            padding:24px;
         }
 
-        .status {
-            display: inline-block;
-            padding: 8px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            background: #e8eef5;
-            color: var(--title-main);
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:16px;
+            margin-bottom:18px;
         }
 
-        .status.ok {
-            background: var(--ok-bg);
-            color: var(--ok-text);
+        .topbar h1{
+            margin:0;
+            font-size:28px;
+            color:var(--verde);
         }
 
-        .status.warning {
-            background: var(--warn-bg);
-            color: var(--warn-text);
+        .topbar p{
+            margin:6px 0 0 0;
+            color:var(--muted);
+            font-size:14px;
         }
 
-        .guide-compact {
-            background: var(--bg-soft);
-            border: 1px solid var(--border-soft);
-            border-radius: 10px;
-            padding: 14px;
+        .toolbar{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
         }
 
-        .mini-section {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #dde4eb;
+        .btn{
+            border:none;
+            border-radius:12px;
+            padding:12px 16px;
+            cursor:pointer;
+            font-weight:700;
+            transition:.2s ease;
         }
 
-        .mini-section:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
+        .btn-primary{
+            background:var(--verde);
+            color:#fff;
         }
 
-        .mini-section h3 {
-            margin: 0 0 8px;
-            font-size: 0.98rem;
-            color: var(--title-main);
-        }
-
-        .mini-lines {
-            display: grid;
-            gap: 6px;
-        }
-
-        .mini-line {
-            display: grid;
-            grid-template-columns: 135px 1fr;
-            gap: 10px;
-            padding: 7px 9px;
-            border-radius: 9px;
-            background: #f9fafb;
-            border: 1px solid #dfe5eb;
-        }
-
-        .mini-key {
-            font-weight: 700;
-            color: #44515e;
-            font-size: 12px;
-        }
-
-        .mini-val {
-            color: var(--text-main);
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .compact-note {
-            padding: 8px 10px;
-            border-radius: 9px;
-            background: #f9fafb;
-            border: 1px solid #dfe5eb;
-            color: #44515e;
-            line-height: 1.4;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
+        .btn-primary:hover{ background:var(--verde-2); }
 
-        .checklist-box,
-        .reminder-box {
-            margin-top: 16px;
-            background: var(--bg-soft);
-            border: 1px solid var(--border-soft);
-            border-radius: 10px;
-            padding: 14px;
+        .btn-secondary{
+            background:#ecf0ed;
+            color:var(--texto);
         }
 
-        .checklist-box h3,
-        .reminder-box h3 {
-            margin: 0 0 10px;
-            font-size: 1rem;
-            color: var(--title-main);
-        }
+        .btn-secondary:hover{ background:#dfe8e2; }
 
-        .checklist-box ul,
-        .reminder-box ul,
-        .reminder-box ol {
-            margin: 0;
-            padding-left: 18px;
-            color: #44515e;
-            line-height: 1.55;
+        .btn-link{
+            background:#fff;
+            color:var(--verde);
+            border:1px solid var(--borde);
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
         }
 
-        .reminder-box li,
-        .checklist-box li {
-            margin-bottom: 8px;
+        .grid{
+            display:grid;
+            grid-template-columns: 470px 1fr;
+            gap:20px;
         }
 
-        /* ============================================================
-           BLOQUE NUEVO: VISTA PREVIA DEL SISTEMA
-           ============================================================ */
-        .preview-card {
-            padding-bottom: 16px;
+        .card{
+            background:var(--card);
+            border:1px solid var(--borde);
+            border-radius:20px;
+            box-shadow:var(--sombra);
         }
 
-        .preview-subtitle {
-            color: var(--text-muted);
-            margin-bottom: 14px;
+        .card-header{
+            padding:18px 20px 12px 20px;
+            border-bottom:1px solid #edf2ee;
         }
 
-        .preview-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
+        .card-header h2{
+            margin:0;
+            font-size:20px;
+            color:var(--verde);
         }
 
-        .preview-tab {
-            padding: 8px 14px;
-            border: 1px solid #b9c6d4;
-            border-radius: 9px;
-            background: #f7fbff;
-            color: #365679;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.18s ease;
+        .card-header p{
+            margin:8px 0 0 0;
+            color:var(--muted);
+            font-size:14px;
         }
 
-        .preview-tab.active {
-            background: linear-gradient(180deg, #d8ead3, #bad6b8);
-            color: #0d5c5d;
-            border-color: #9fb89f;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        .card-body{
+            padding:18px 20px 20px 20px;
         }
 
-        .preview-shell {
-            background: #eef1f4;
-            border: 1px solid #d7dde4;
-            border-radius: 12px;
-            padding: 14px;
-            overflow-x: auto;
+        .form-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:14px;
         }
 
-        .legacy-screen {
-            background: var(--legacy-bg);
-            border: 1px solid #bfbfbf;
-            min-height: 360px;
-            min-width: 740px;
-            color: var(--legacy-text);
-            font-family: Arial, Helvetica, sans-serif;
-            padding-bottom: 14px;
+        .field{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
         }
 
-        .legacy-top-tabs,
-        .legacy-inner-tabs,
-        .legacy-app-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px;
-            padding: 0 10px;
-        }
+        .field.full{ grid-column:1 / -1; }
 
-        .legacy-top-tabs {
-            padding-top: 4px;
+        label{
+            font-size:13px;
+            font-weight:700;
+            color:#3d5447;
         }
 
-        .legacy-tab,
-        .legacy-subtab {
-            font-size: 12px;
-            color: #006f73;
-            padding: 8px 16px 7px;
-            border: 1px solid #b9c7b9;
-            background: linear-gradient(180deg, #f3fbf1, #c8ddc6 55%, #b5cfb2);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
-            line-height: 1.1;
+        input, select, textarea{
+            width:100%;
+            border:1px solid #cfdcd3;
+            border-radius:12px;
+            padding:11px 12px;
+            font-size:14px;
+            background:#fff;
+            color:var(--texto);
         }
 
-        .legacy-tab.active,
-        .legacy-subtab.active {
-            background: linear-gradient(180deg, #eaf7e7, #d0e6ce 52%, #c3dbbf);
-            font-weight: 700;
+        textarea{
+            min-height:96px;
+            resize:vertical;
         }
 
-        .legacy-pane {
-            margin: 6px 10px 0;
-            border: 1px solid #bfbfbf;
-            background: #efefef;
-            padding: 12px;
+        input:focus, select:focus, textarea:focus{
+            outline:none;
+            border-color:var(--verde-2);
+            box-shadow:0 0 0 3px rgba(45,155,99,.12);
         }
 
-        .legacy-basic-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 34px;
-            padding: 24px 20px 8px;
+        .hint{
+            font-size:12px;
+            color:var(--muted);
+            line-height:1.4;
         }
 
-        .legacy-basic-col {
-            display: grid;
-            gap: 12px;
+        .inline-checks{
+            display:flex;
+            gap:16px;
+            flex-wrap:wrap;
+            align-items:center;
+            min-height:44px;
+            padding:10px 12px;
+            border:1px solid #cfdcd3;
+            border-radius:12px;
+            background:#fff;
         }
 
-        .legacy-row {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            align-items: center;
-            gap: 10px;
-            font-size: 11px;
+        .inline-checks label{
+            font-weight:600;
+            font-size:14px;
+            display:flex;
+            align-items:center;
+            gap:7px;
+            cursor:pointer;
         }
 
-        .legacy-row .fieldbox,
-        .legacy-row .textarea,
-        .legacy-row .selectbox,
-        .legacy-row .smallbox {
-            border: 1px solid #9fa7bb;
-            background: #f7f7f7;
-            min-height: 24px;
-            display: flex;
-            align-items: center;
-            padding: 0 6px;
-            box-sizing: border-box;
-            color: #006f73;
+        .inline-checks input{
+            width:auto;
+            margin:0;
         }
 
-        .legacy-row .textarea {
-            min-height: 80px;
-            align-items: flex-start;
-            padding-top: 8px;
+        .status-line{
+            margin-top:14px;
+            padding:12px 14px;
+            border-radius:14px;
+            background:#f8fbf9;
+            border:1px dashed #d3e2d8;
+            color:#4a6457;
+            font-size:13px;
         }
 
-        .legacy-row .smallbox {
-            width: 74px;
+        .backend-off{
+            margin-bottom:16px;
+            padding:14px 16px;
+            border-radius:14px;
+            background:var(--err);
+            border:1px solid var(--err-b);
+            color:#7c2f2f;
+            font-weight:700;
         }
 
-        .legacy-row .checkbox {
-            width: 18px;
-            height: 18px;
-            border: 1px solid #6b8db8;
-            background: #1366d1;
-            border-radius: 3px;
-            position: relative;
+        .preview-stack{
+            display:grid;
+            gap:18px;
         }
 
-        .legacy-row .checkbox::after {
-            content: '✓';
-            position: absolute;
-            top: -2px;
-            left: 3px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 700;
+        .summary-grid{
+            display:grid;
+            grid-template-columns:repeat(4, minmax(0,1fr));
+            gap:12px;
         }
 
-        .legacy-period-box {
-            margin: 16px 18px 0;
-            padding: 24px 28px 16px;
-            border: 1px solid #bfbfbf;
-            min-height: 250px;
-            position: relative;
+        .mini{
+            background:#f8fbf9;
+            border:1px solid #e2ece6;
+            border-radius:16px;
+            padding:14px;
         }
 
-        .legacy-floating-title {
-            position: absolute;
-            top: -14px;
-            left: 12px;
-            border: 1px solid #b9c7b9;
-            background: linear-gradient(180deg, #f3fbf1, #c8ddc6 55%, #b5cfb2);
-            padding: 6px 20px;
-            font-size: 12px;
-            font-weight: 700;
+        .mini .k{
+            font-size:12px;
+            color:var(--muted);
+            margin-bottom:6px;
+            text-transform:uppercase;
+            letter-spacing:.4px;
         }
 
-        .legacy-time-row {
-            display: grid;
-            grid-template-columns: 110px 120px;
-            gap: 14px;
-            align-items: center;
-            margin: 14px 0;
-            font-size: 11px;
+        .mini .v{
+            font-size:15px;
+            font-weight:700;
+            line-height:1.35;
         }
 
-        .legacy-date {
-            border: 1px solid #9fa7bb;
-            background: #fff;
-            padding: 4px 8px;
-            min-height: 20px;
+        .tabs{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-bottom:14px;
         }
 
-        .legacy-days {
-            margin-top: 54px;
-            border: 1px solid #bfbfbf;
-            min-height: 74px;
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 11px;
+        .tab-btn{
+            border:1px solid #dbe6df;
+            background:#fff;
+            color:#355144;
+            border-radius:999px;
+            padding:10px 14px;
+            font-weight:700;
+            cursor:pointer;
         }
 
-        .legacy-day {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .tab-btn.active{
+            background:var(--verde);
+            color:#fff;
+            border-color:var(--verde);
         }
 
-        .tiny-check {
-            width: 14px;
-            height: 14px;
-            border: 1px solid #6b8db8;
-            background: #1366d1;
-            border-radius: 3px;
-            display: inline-block;
+        .tab-panel{
+            display:none;
         }
 
-        .legacy-conditions-pane {
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            gap: 14px;
-            min-height: 300px;
+        .tab-panel.active{
+            display:block;
         }
 
-        .legacy-left-tree {
-            padding: 16px 10px 8px;
-            font-size: 11px;
+        .panel-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
         }
 
-        .legacy-tree-item {
-            margin: 7px 0;
+        .info-box{
+            border:1px solid #e1ebe5;
+            border-radius:16px;
+            padding:14px;
+            background:#fbfdfb;
         }
 
-        .legacy-tree-sub {
-            margin-left: 24px;
+        .info-box h3{
+            margin:0 0 10px 0;
+            font-size:15px;
+            color:var(--verde);
         }
 
-        .legacy-main-area {
-            padding: 10px 10px 0 0;
-            font-size: 11px;
+        .kv{
+            display:grid;
+            grid-template-columns:200px 1fr;
+            gap:8px 12px;
         }
 
-        .legacy-filter-bar {
-            display: grid;
-            grid-template-columns: 90px 32px 220px 140px 140px 120px 152px;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 12px;
+        .kv .kk{
+            color:var(--muted);
+            font-size:13px;
+            font-weight:700;
         }
 
-        .legacy-input, .legacy-button, .legacy-inline-box {
-            border: 1px solid #9fa7bb;
-            background: #f8f8f8;
-            min-height: 26px;
-            box-sizing: border-box;
-            padding: 4px 8px;
-            display: flex;
-            align-items: center;
+        .kv .vv{
+            font-size:14px;
+            line-height:1.45;
+            word-break:break-word;
         }
 
-        .legacy-button {
-            justify-content: center;
-            border-radius: 6px;
+        .pill{
+            display:inline-block;
+            padding:5px 10px;
+            border-radius:999px;
+            background:var(--verde-soft);
+            color:var(--verde);
+            font-weight:700;
+            font-size:12px;
+            border:1px solid #cfe7d9;
         }
 
-        .legacy-conditions-list {
-            display: grid;
-            gap: 10px;
-            margin-top: 8px;
+        .pill.highlight{
+            background:#dff4e7;
+            border-color:#9fd2b0;
+            color:#15653f;
         }
 
-        .legacy-cond-row {
-            display: grid;
-            grid-template-columns: 140px 110px 70px 1fr 30px;
-            gap: 10px;
-            align-items: center;
-            color: #006f73;
+        .list{
+            margin:0;
+            padding-left:18px;
         }
 
-        .legacy-delete {
-            font-size: 20px;
-            text-align: center;
-            color: #444;
+        .list li{
+            margin:7px 0;
+            line-height:1.45;
         }
 
-        .legacy-folder-head {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
+        .alert-wrap{
+            display:grid;
+            gap:10px;
         }
 
-        .legacy-app-pane {
-            margin: 4px 10px 0;
-            border: 1px solid #bfbfbf;
-            background: #efefef;
-            padding: 0 0 10px;
+        .alert{
+            border-radius:14px;
+            padding:12px 14px;
+            border:1px solid #e0e7e2;
+            background:#fafcfb;
+            font-size:14px;
+            line-height:1.45;
         }
 
-        .legacy-app-body {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 18px;
-            padding: 14px;
+        .alert.ok{
+            background:var(--ok);
+            border-color:var(--ok-b);
         }
 
-        .legacy-app-left {
-            min-height: 250px;
+        .alert.warn{
+            background:var(--warn);
+            border-color:var(--warn-b);
         }
 
-        .legacy-app-left .legacy-rowline {
-            display: grid;
-            grid-template-columns: 88px 100px;
-            gap: 16px;
-            margin: 10px 0;
-            align-items: center;
-            font-size: 11px;
+        .alert.err{
+            background:var(--err);
+            border-color:var(--err-b);
         }
 
-        .legacy-box {
-            border: 1px solid #bfbfbf;
-            padding: 10px 12px;
-            min-height: 88px;
-            margin-bottom: 8px;
-            font-size: 11px;
+        .guide-block{
+            display:grid;
+            gap:14px;
         }
 
-        .legacy-box .box-row {
-            display: grid;
-            grid-template-columns: 90px 22px 1fr;
-            gap: 8px;
-            align-items: center;
-            margin: 8px 0;
+        .section-title{
+            margin:0 0 8px 0;
+            font-size:18px;
+            color:var(--verde);
         }
 
-        .legacy-bottom-filter {
-            display: grid;
-            grid-template-columns: 68px 26px 180px 70px 120px 118px;
-            gap: 8px;
-            align-items: center;
-            margin-top: 20px;
-            font-size: 11px;
+        .muted{
+            color:var(--muted);
+            font-size:14px;
         }
 
-        .legacy-selected-product {
-            margin-top: 16px;
-            display: grid;
-            gap: 8px;
-            font-size: 11px;
+        .empty{
+            color:var(--muted);
+            background:#fbfcfc;
+            border:1px dashed #d9e4de;
+            border-radius:16px;
+            padding:16px;
         }
 
-        .legacy-camino {
-            padding: 0 0 10px;
+        .checklist-table{
+            width:100%;
+            border-collapse:collapse;
         }
 
-        .legacy-camino-header {
-            text-align: center;
-            font-weight: 700;
-            color: #006f73;
-            border-top: 2px solid #9f9f9f;
-            border-bottom: 1px solid #c8c8c8;
-            padding: 10px 0 8px;
-            background: #f5f5f5;
-            margin-bottom: 22px;
+        .checklist-table th,
+        .checklist-table td{
+            border-bottom:1px solid #edf2ee;
+            padding:12px 10px;
+            vertical-align:top;
+            text-align:left;
+            font-size:14px;
         }
 
-        .legacy-camino-section {
-            margin: 0 56px 18px;
-            background: #efefef;
+        .checklist-table th{
+            color:#486152;
+            font-size:13px;
+            text-transform:uppercase;
+            letter-spacing:.3px;
         }
 
-        .legacy-camino-title {
-            text-align: center;
-            font-weight: 700;
-            background: #dbdbdb;
-            padding: 6px 0;
-            margin-bottom: 8px;
+        .notes ul{
+            margin:0;
+            padding-left:18px;
         }
 
-        .legacy-camino-group {
-            margin: 10px 0 18px;
-            padding: 0 16px;
+        .notes li{
+            margin:8px 0;
+            line-height:1.45;
         }
 
-        .legacy-camino-link {
-            color: #38a62f;
-            text-decoration: underline;
-            margin-bottom: 8px;
-            display: inline-block;
+        .loading{
+            display:none;
+            align-items:center;
+            gap:10px;
+            color:var(--verde);
+            font-weight:700;
         }
 
-        .legacy-camino-row {
-            display: grid;
-            grid-template-columns: 110px 80px 1fr;
-            gap: 12px;
-            margin: 10px 0;
-            align-items: center;
+        .dots{
+            display:flex;
+            gap:6px;
         }
 
-        .preview-empty {
-            color: #54687e;
-            font-size: 13px;
-            padding: 14px;
-            border: 1px dashed #c9d5e0;
-            border-radius: 10px;
-            background: #f9fbfd;
+        .dot{
+            width:9px;
+            height:9px;
+            border-radius:50%;
+            background:var(--verde);
+            animation:bounce 1.2s infinite ease-in-out;
         }
 
-        @media (max-width: 1180px) {
-            .legacy-screen {
-                min-width: 680px;
-            }
+        .dot:nth-child(2){ animation-delay:.15s; }
+        .dot:nth-child(3){ animation-delay:.3s; }
 
-            .legacy-filter-bar {
-                grid-template-columns: 78px 28px 180px 116px 116px 110px 136px;
-            }
+        @keyframes bounce{
+            0%, 80%, 100% { transform:scale(.7); opacity:.55; }
+            40% { transform:scale(1.15); opacity:1; }
         }
 
-        @media (max-width: 960px) {
-            .consultor-grid,
-            .consultor-bottom {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 1180px){
+            .grid{ grid-template-columns:1fr; }
+            .summary-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
         }
-
-        @media (max-width: 640px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .mini-line {
-                grid-template-columns: 1fr;
-            }
-
-            .titulo {
-                font-size: 1.7rem;
-            }
 
-            .subtitulo {
-                font-size: 0.95rem;
-            }
+        @media (max-width: 700px){
+            .form-grid, .panel-grid, .summary-grid{ grid-template-columns:1fr; }
+            .kv{ grid-template-columns:1fr; }
+            .topbar{ flex-direction:column; align-items:flex-start; }
         }
     </style>
 </head>
 <body>
-<div class="contenedor">
-    <div class="titulo">Consultor de Carga</div>
-    <div class="subtitulo">Usa esta pantalla como apoyo para saber cómo configurar una promoción antes de crearla. Arriba tienes el flujo principal y abajo los recordatorios operativos.</div>
-
-    <section class="consultor-grid">
-        <div class="left-column">
-            <div class="card card-accent">
-                <div class="card-header">Datos de la solicitud</div>
-
-                <div class="form-grid">
-                    <div class="field">
-                        <label for="modalidad">Modalidad</label>
-                        <select id="modalidad" onchange="actualizarCamposVisibles()">
-                            <option value="">Seleccionar</option>
-                            <option value="CLUB">CLUB</option>
-                            <option value="EVENTOS">EVENTOS</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="areaResponsable">Área responsable</label>
-                        <select id="areaResponsable">
-                            <option value="">Seleccionar</option>
-                            <option value="BYCP">BYCP</option>
-                            <option value="FARMA">Farma</option>
-                            <option value="BIENESTAR">Bienestar</option>
-                            <option value="MSJE">MSJE</option>
-                            <option value="DERMO">Dermo</option>
-                            <option value="FIDELIZACION">FIDELIZACION</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="tipoDescuento">Tipo de descuento</label>
-                        <select id="tipoDescuento" onchange="actualizarCamposVisibles()">
-                            <option value="">Seleccionar</option>
-                            <option value="NOMINAL">Nominal</option>
-                            <option value="PACK_NOMINAL">Pack nominal</option>
-                            <option value="PORCENTUAL">Porcentual</option>
-                            <option value="PACK">Pack</option>
-                            <option value="SEGUNDA_UNIDAD">2da unidad</option>
-                            <option value="MSJE">Mensaje</option>
-                        </select>
-                    </div>
-
-                    <div class="field" id="fieldUnidadesPack">
-                        <label for="unidadesPack">#Unidades Pack</label>
-                        <input id="unidadesPack" type="number" min="1" step="1" placeholder="Ej: 1, 2, 3">
-                    </div>
-
-                    <div class="field" id="fieldPvpOferta">
-                        <label for="pvpOfertaPack">PVP Oferta Pack</label>
-                        <input id="pvpOfertaPack" type="number" min="0" step="0.01" placeholder="Ej: 8990 o 2490">
-                        <div class="help">Usa el valor comercial visible en el Excel cuando corresponda.</div>
-                    </div>
-
-                    <div class="field hidden" id="fieldDescuentoPorcentual">
-                        <label for="descuentoPorcentual">Descuento porcentual</label>
-                        <input id="descuentoPorcentual" type="text" placeholder="Ej: 30%">
-                    </div>
-
-                    <div class="field" id="fieldDescuentoNominal">
-                        <label for="descuentoNominal">Descuento nominal</label>
-                        <input id="descuentoNominal" type="number" min="0" step="0.01" placeholder="Ej: 4000, 1980, 890">
-                    </div>
-
-                    <div class="field full">
-                        <label for="detalleSolicitud">Detalle / observación de la solicitud</label>
-                        <textarea id="detalleSolicitud" placeholder="Pega aquí notas del correo o cualquier detalle relevante de la promoción."></textarea>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button class="btn btn-primary" type="button" onclick="generarGuia()">Generar guía de carga</button>
-                    <button class="btn btn-secondary" type="button" onclick="limpiarFormulario()">Limpiar</button>
-                </div>
-
-                <div class="soft-box">
-                    Esta versión ya contempla una lógica base para <strong>CLUB</strong> y <strong>EVENTOS</strong>, manteniendo abierta la selección del tipo de descuento para futuras variantes.
-                </div>
-            </div>
-
-            <!-- ============================================================
-                 BLOQUE NUEVO: VISTA PREVIA DEL SISTEMA
-                 ============================================================ -->
-            <div class="card preview-card">
-                <div class="card-header">Vista previa del sistema</div>
-                <div class="preview-subtitle">Referencia visual según la configuración seleccionada. Este bloque es adicional y no reemplaza la guía textual.</div>
-
-                <div class="preview-tabs">
-                    <button class="preview-tab active" type="button" data-preview="basico" onclick="cambiarVistaPreview('basico')">Básico</button>
-                    <button class="preview-tab" type="button" data-preview="tiempo" onclick="cambiarVistaPreview('tiempo')">Tiempo</button>
-                    <button class="preview-tab" type="button" data-preview="condiciones" onclick="cambiarVistaPreview('condiciones')">Condiciones</button>
-                    <button class="preview-tab" type="button" data-preview="aplicadores" onclick="cambiarVistaPreview('aplicadores')">Aplicadores</button>
-                    <button class="preview-tab" type="button" data-preview="camino" onclick="cambiarVistaPreview('camino')">Camino</button>
-                </div>
-
-                <div class="preview-shell">
-                    <div id="previewRender" class="preview-empty">Completa los datos de la izquierda y presiona “Generar guía de carga”.</div>
-                </div>
-            </div>
+<div class="wrap">
+    <div class="topbar">
+        <div>
+            <h1>Consultor de Carga</h1>
+            <p>Usa esta pantalla como apoyo para saber cómo configurar una promoción antes de crearla en GEO.</p>
         </div>
-
-        <div class="card">
-            <div class="card-header">Guía sugerida</div>
-
-            <div id="estadoGeneral" class="status">Esperando datos para generar guía</div>
-
-            <div class="guide-compact">
-                <div class="mini-section">
-                    <h3>Básico</h3>
-                    <div id="bloqueBasico" class="mini-lines"></div>
-                </div>
-
-                <div class="mini-section">
-                    <h3>Condiciones</h3>
-                    <div id="bloqueCondiciones" class="mini-lines"></div>
-                </div>
-
-                <div class="mini-section">
-                    <h3>Aplicadores</h3>
-                    <div id="bloqueAplicadores" class="mini-lines"></div>
-                </div>
-
-                <div class="mini-section">
-                    <h3>Camino esperado</h3>
-                    <div id="bloqueCamino"></div>
-                </div>
-
-                <div class="mini-section">
-                    <h3>Observaciones</h3>
-                    <div id="bloqueObservaciones"></div>
-                </div>
-            </div>
-
-            <div class="checklist-box">
-                <h3>Resumen de carga sugerida</h3>
-                <ul id="checklistResumen">
-                    <li>Completa los datos de la izquierda y presiona “Generar guía de carga”.</li>
-                </ul>
-            </div>
+        <div class="toolbar">
+            <a class="btn btn-link" href="/">Volver al validador</a>
         </div>
-    </section>
+    </div>
 
-    <section class="consultor-bottom">
-        <div class="card">
-            <div class="card-header">Notas importantes</div>
-            <div class="reminder-box">
-                <ul>
-                    <li>Los productos o la lista de productos de la <strong>condición</strong> deben coincidir con los del <strong>aplicador</strong>.</li>
-                    <li>Verificar <strong>fecha inicio</strong> y <strong>fecha fin</strong> al momento de la carga.</li>
-                    <li>En <strong>EVENTOS</strong> revisar siempre los <strong>locales</strong> y los <strong>días específicos</strong> de aplicación.</li>
-                    <li>En <strong>CLUB</strong> revisar si la solicitud aplica todos los días o en un tramo específico, por ejemplo <strong>L-J</strong>.</li>
-                </ul>
+    {% if not consultor_backend_ok %}
+    <div class="backend-off">
+        El backend del consultor no está disponible. Revisa la importación de los módulos del consultor antes de generar la guía.
+    </div>
+    {% endif %}
+
+    <div class="grid">
+        <section class="card">
+            <div class="card-header">
+                <h2>Datos de la solicitud</h2>
+                <p>Completa los datos clave y genera la guía de carga. La lógica del consultor se resuelve desde backend.</p>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">Guía de carga</div>
-            <div class="reminder-box">
-                <ol>
-                    <li><strong>Nueva promoción</strong> &gt; seleccionar <strong>Área</strong>, <strong>Tipo de promoción</strong> y <strong>Competencia</strong> &gt; verificar el check en <strong>Habilitada</strong>.</li>
-                    <li><strong>Pestaña Tiempo</strong> &gt; seleccionar <strong>fecha inicio</strong>, <strong>fecha fin</strong> y días cuando la solicitud lo requiera.</li>
-                    <li><strong>Pestaña Condiciones</strong> &gt; seleccionar <strong>Tipo = Boleta</strong> y agregar filtros de documento según la lógica de la modalidad.</li>
-                    <li>Agregar <strong>producto</strong> o <strong>lista de productos</strong> en condición.</li>
-                    <li><strong>Aplicadores</strong> &gt; seleccionar la pestaña según el descuento: <strong>Monto a producto</strong>, <strong>Porcentaje a producto</strong> o <strong>Precio fijo a producto</strong>.</li>
-                    <li>Revisar que el <strong>producto o lista</strong> del aplicador coincida exactamente con la condición.</li>
-                    <li>Definir <strong>cantidad</strong> y <strong>estrategia</strong> según la mecánica esperada.</li>
-                </ol>
-            </div>
-        </div>
-    </section>
-</div>
-
-<script>
-let previewActual = 'basico';
-let ultimaConfigPreview = null;
-
-function actualizarCamposVisibles() {
-    const tipo = document.getElementById('tipoDescuento').value;
-    const fieldUnidadesPack = document.getElementById('fieldUnidadesPack');
-    const fieldPvpOferta = document.getElementById('fieldPvpOferta');
-    const fieldDescPct = document.getElementById('fieldDescuentoPorcentual');
-    const fieldDescNom = document.getElementById('fieldDescuentoNominal');
-
-    [fieldUnidadesPack, fieldPvpOferta, fieldDescPct, fieldDescNom].forEach(el => el.classList.remove('hidden'));
-
-    if (tipo === 'NOMINAL') {
-        fieldDescPct.classList.add('hidden');
-    } else if (tipo === 'PACK_NOMINAL') {
-        fieldDescPct.classList.add('hidden');
-    } else if (tipo === 'PORCENTUAL') {
-        fieldPvpOferta.classList.add('hidden');
-        fieldDescNom.classList.add('hidden');
-    } else if (tipo === 'PACK') {
-        fieldDescPct.classList.add('hidden');
-        fieldDescNom.classList.add('hidden');
-    } else if (tipo === 'SEGUNDA_UNIDAD') {
-        fieldDescNom.classList.add('hidden');
-    } else if (tipo === 'MSJE') {
-        fieldUnidadesPack.classList.add('hidden');
-        fieldPvpOferta.classList.add('hidden');
-        fieldDescPct.classList.add('hidden');
-        fieldDescNom.classList.add('hidden');
-    }
-}
-
-function filaMini(k, v) {
-    return `<div class="mini-line"><div class="mini-key">${k}</div><div class="mini-val">${v || '-'}</div></div>`;
-}
-
-function notaCompacta(texto) {
-    return `<div class="compact-note">${texto}</div>`;
-}
-
-function setHTML(id, html) {
-    document.getElementById(id).innerHTML = html;
-}
-
-function escaparHTML(valor) {
-    return String(valor || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-function recolectarContexto() {
-    const modalidad = document.getElementById('modalidad').value || 'NORMAL';
-    const tipo = document.getElementById('tipoDescuento').value || '';
-    const unidades = Number(document.getElementById('unidadesPack').value || 0);
-    const pvpOferta = document.getElementById('pvpOfertaPack').value || '';
-    const descuentoPct = document.getElementById('descuentoPorcentual').value || '';
-    const descuentoNom = document.getElementById('descuentoNominal').value || '';
-    const detalle = document.getElementById('detalleSolicitud').value || '';
-
-    let area = document.getElementById('areaResponsable').value || '-';
-    if (modalidad === 'CLUB') area = 'FIDELIZACION';
-
-    let competencia = 'Revisar';
-    if (modalidad === 'CLUB' || modalidad === 'EVENTOS') competencia = 'Compite por producto';
-    else if (area === 'BYCP') competencia = 'Compite por promoción';
-    else if (area === 'FARMA' || area === 'BIENESTAR' || area === 'FIDELIZACION' || area === 'DERMO') competencia = 'Compite por producto';
-    else if (area === 'MSJE') competencia = 'Revisar según mensaje';
-
-    let aplicadorTab = 'Revisar';
-    if (tipo === 'PORCENTUAL' || tipo === 'SEGUNDA_UNIDAD') aplicadorTab = 'Porcentaje a producto';
-    else if (tipo === 'PACK_NOMINAL') aplicadorTab = 'Monto a producto';
-    else if (tipo === 'NOMINAL' && unidades <= 1) aplicadorTab = 'Precio fijo a producto';
-    else if (tipo === 'NOMINAL') aplicadorTab = 'Monto a producto';
-    else if (tipo === 'PACK') aplicadorTab = 'Monto a producto';
-    else if (tipo === 'MSJE') aplicadorTab = 'Mensaje';
-    else if (modalidad === 'EVENTOS') aplicadorTab = 'Porcentaje a producto';
-
-    let porcentajeVisible = descuentoPct || (modalidad === 'EVENTOS' ? '25.0' : '20.0');
-    let montoVisible = descuentoNom || pvpOferta || '10890.0';
-    let cantidadAplicador = '0.0';
-    let porUnidad = false;
-    let estrategia = 'Menor';
-
-    if (tipo === 'PACK_NOMINAL') {
-        cantidadAplicador = '1.0';
-        porUnidad = true;
-    } else if (tipo === 'NOMINAL' && unidades <= 1) {
-        cantidadAplicador = '1.0';
-        porUnidad = true;
-    } else if (tipo === 'PORCENTUAL' || modalidad === 'EVENTOS' || tipo === 'SEGUNDA_UNIDAD') {
-        cantidadAplicador = '0.0';
-    }
-
-    const usaLista = detalle.toUpperCase().includes('LISTA') || modalidad === 'CLUB' || modalidad === 'EVENTOS';
-    const productoCampo = usaLista ? 'Lista' : 'EAN Principal';
-    const productoValor = usaLista
-        ? (modalidad === 'CLUB' ? 'FS-CLUB P-W01' : modalidad === 'EVENTOS' ? 'FS-AVENE04' : 'LISTA_SEGUN_SOLICITUD')
-        : '550490';
-
-    const documentoBase = [{ campo: 'Tipo', operador: '=', valor: 'Boleta' }];
-    if (modalidad === 'CLUB') {
-        documentoBase.push({ campo: 'No Convenio seleccionado', operador: 'mayor', valor: '0' });
-        documentoBase.push({ campo: 'No Lista Locales', operador: '=', valor: 'EXC_LOCALES' });
-    } else if (modalidad === 'EVENTOS') {
-        documentoBase.push({ campo: 'Local', operador: '=', valor: '9999' });
-        documentoBase.push({ campo: 'Local', operador: '=', valor: '1191' });
-    } else {
-        documentoBase.push({ campo: 'No Lista Locales', operador: '=', valor: 'EXC_LOCALES' });
-    }
-
-    const condicionesExtra = [];
-    if (modalidad === 'CLUB') {
-        condicionesExtra.push({ grupo: 'Cliente', campo: 'Inscripto', operador: '=', valor: 'true' });
-    }
-
-    return {
-        modalidad,
-        area,
-        tipo,
-        unidades,
-        pvpOferta,
-        descuentoPct,
-        descuentoNom,
-        detalle,
-        competencia,
-        aplicadorTab,
-        porcentajeVisible,
-        montoVisible,
-        cantidadAplicador,
-        porUnidad,
-        estrategia,
-        productoCampo,
-        productoValor,
-        documentoBase,
-        condicionesExtra
-    };
-}
-
-function generarGuia() {
-    const cfg = recolectarContexto();
-    ultimaConfigPreview = cfg;
-
-    let estadoClase = 'status ok';
-    let estadoTexto = 'Guía generada';
-    let basico = '';
-    let condiciones = '';
-    let aplicadores = '';
-    let observaciones = '';
-    let camino = '';
-    let checklist = [];
-
-    if (cfg.area === '-' || !cfg.tipo) {
-        estadoClase = 'status warning';
-        estadoTexto = 'Faltan datos clave';
-        observaciones += notaCompacta('Debes indicar al menos Área responsable y Tipo de descuento.');
-    }
-
-    basico += filaMini('Modalidad', cfg.modalidad === 'NORMAL' ? 'Normal' : cfg.modalidad);
-    basico += filaMini('Área', cfg.area);
-    basico += filaMini('Tipo promoción', '1000 - Venta');
-    basico += filaMini('Competencia', cfg.competencia);
-    basico += filaMini('Habilitada', 'Sí');
-
-    condiciones += filaMini('Tipo', 'Boleta');
-    if (cfg.modalidad === 'EVENTOS') {
-        condiciones += filaMini('Locales', 'Asignados según solicitud');
-    } else {
-        condiciones += filaMini('Lista locales', 'No EXC_LOCALES');
-    }
-    if (cfg.modalidad === 'CLUB') {
-        condiciones += filaMini('Cliente', 'Inscripto = true');
-        condiciones += filaMini('Convenio', 'No Convenio seleccionado > 0');
-    }
-    condiciones += filaMini(cfg.productoCampo, cfg.productoValor);
-    if (cfg.unidades > 0) condiciones += filaMini('Cantidad', 'cada ' + cfg.unidades);
-
-    if (cfg.aplicadorTab === 'Porcentaje a producto') {
-        aplicadores += filaMini('Pestaña', cfg.aplicadorTab);
-        aplicadores += filaMini('Porcentaje', cfg.porcentajeVisible || '-');
-        aplicadores += filaMini('Cantidad', cfg.cantidadAplicador);
-        aplicadores += filaMini('Estrategia', cfg.estrategia);
-        camino += notaCompacta(`Aplicador porcentual esperado con porcentaje = ${cfg.porcentajeVisible || '-'}.`);
-    } else if (cfg.aplicadorTab === 'Precio fijo a producto') {
-        aplicadores += filaMini('Pestaña', cfg.aplicadorTab);
-        aplicadores += filaMini('Monto', cfg.montoVisible || '-');
-        aplicadores += filaMini('Por unidad', cfg.porUnidad ? 'Sí' : 'No');
-        aplicadores += filaMini('Cantidad', cfg.cantidadAplicador);
-        aplicadores += filaMini('Estrategia', cfg.estrategia);
-        camino += notaCompacta(`Fija precio a cada producto, monto = ${cfg.montoVisible || '-'}.`);
-    } else if (cfg.aplicadorTab === 'Monto a producto') {
-        aplicadores += filaMini('Pestaña', cfg.aplicadorTab);
-        aplicadores += filaMini('Monto', cfg.montoVisible || '-');
-        aplicadores += filaMini('Por unidad', cfg.porUnidad ? 'Sí' : 'No');
-        aplicadores += filaMini('Cantidad', cfg.cantidadAplicador);
-        aplicadores += filaMini('Estrategia', cfg.estrategia);
-        camino += notaCompacta(`Aplicador por monto esperado = ${cfg.montoVisible || '-'}.`);
-    } else if (cfg.aplicadorTab === 'Mensaje') {
-        aplicadores += filaMini('Pestaña', 'Mensaje');
-        aplicadores += filaMini('Salida', 'SCREEN');
-        camino += notaCompacta('Mensaje esperado en pantalla.');
-    } else {
-        aplicadores += filaMini('Pestaña', 'Revisar');
-        camino += notaCompacta('No hay una regla cerrada para esta combinación todavía.');
-    }
-
-    if (cfg.modalidad === 'CLUB') {
-        observaciones += notaCompacta('CLUB: considerar promo asociada CNV, clon y revisión de días de aplicación.');
-        checklist.push('Básico > Área = FIDELIZACION, Tipo de promoción = 1000 - Venta, Competencia = Compite por producto.');
-        checklist.push('Condiciones > Tipo = Boleta, No Convenio seleccionado > 0 y No Lista Locales = EXC_LOCALES.');
-        checklist.push('Condiciones > Cliente > Inscripto = true.');
-        checklist.push('Producto o lista del aplicador debe coincidir exactamente con condición.');
-        checklist.push('Aplicador > Cantidad = 1 y Estrategia = Menor cuando corresponda.');
-    } else if (cfg.modalidad === 'EVENTOS') {
-        observaciones += notaCompacta('EVENTOS: revisar locales asignados, fechas y días de aplicación.');
-        checklist.push('Tiempo > definir fecha inicio, fecha fin y días específicos.');
-        checklist.push('Condiciones > Tipo = Boleta y cargar locales asignados en Documento.');
-        checklist.push('Producto o lista del aplicador debe coincidir exactamente con condición.');
-        checklist.push('Aplicador > usar la pestaña según el descuento, usualmente Porcentaje a producto.');
-    } else {
-        checklist.push('Básico > seleccionar Área, Tipo de promoción 1000 - Venta y Competencia.');
-        checklist.push('Condiciones > Tipo = Boleta y No Lista Locales = EXC_LOCALES.');
-        checklist.push('Aplicadores > usar la pestaña según el tipo de descuento.');
-        checklist.push('Revisar que producto o lista coincidan entre condición y aplicador.');
-    }
-
-    observaciones += notaCompacta('Los productos o lista de productos de la condición deben coincidir con los del aplicador.');
-    observaciones += notaCompacta('Verificar fecha inicio y fecha fin al momento de la carga.');
-    if (cfg.detalle) observaciones += notaCompacta('Existe detalle adicional en la solicitud que conviene revisar antes de cargar.');
-
-    document.getElementById('estadoGeneral').className = estadoClase;
-    document.getElementById('estadoGeneral').textContent = estadoTexto;
-
-    setHTML('bloqueBasico', basico);
-    setHTML('bloqueCondiciones', condiciones);
-    setHTML('bloqueAplicadores', aplicadores);
-    setHTML('bloqueCamino', camino);
-    setHTML('bloqueObservaciones', observaciones);
-    document.getElementById('checklistResumen').innerHTML = checklist.length ? checklist.map(x => `<li>${x}</li>`).join('') : '<li>Sin checklist generado.</li>';
-
-    renderPreview();
-}
-
-function cambiarVistaPreview(vista) {
-    previewActual = vista;
-    document.querySelectorAll('.preview-tab').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.preview === vista);
-    });
-    renderPreview();
-}
-
-function renderPreview() {
-    const contenedor = document.getElementById('previewRender');
-    if (!ultimaConfigPreview) {
-        contenedor.className = 'preview-empty';
-        contenedor.innerHTML = 'Completa los datos de la izquierda y presiona “Generar guía de carga”.';
-        return;
-    }
-
-    contenedor.className = '';
-    if (previewActual === 'basico') contenedor.innerHTML = renderBasicoPreview(ultimaConfigPreview);
-    else if (previewActual === 'tiempo') contenedor.innerHTML = renderTiempoPreview(ultimaConfigPreview);
-    else if (previewActual === 'condiciones') contenedor.innerHTML = renderCondicionesPreview(ultimaConfigPreview);
-    else if (previewActual === 'aplicadores') contenedor.innerHTML = renderAplicadoresPreview(ultimaConfigPreview);
-    else contenedor.innerHTML = renderCaminoPreview(ultimaConfigPreview);
-}
-
-function tabsSuperiores(activa) {
-    const tabs = [
-        { key: 'basico', label: 'Básico' },
-        { key: 'tiempo', label: 'Tiempo' },
-        { key: 'documentos', label: 'Documentos' },
-        { key: 'condiciones', label: 'Condiciones' },
-        { key: 'aplicadores', label: 'Aplicadores' },
-        { key: 'liquidaciones', label: 'Liquidaciones' },
-        { key: 'caminos', label: 'Caminos' },
-        { key: 'topes', label: 'Topes' }
-    ];
-    return `<div class="legacy-top-tabs">${tabs.map(t => `<div class="legacy-tab ${t.key === activa ? 'active' : ''}">${t.label}</div>`).join('')}</div>`;
-}
-
-function renderBasicoPreview(cfg) {
-    const grupo = cfg.modalidad === 'CLUB' ? 'CLUB_NECESIDAD' : '-- Seleccione --';
-    const descripcion = cfg.modalidad === 'CLUB'
-        ? '20% DCTO EN PROD. SELECCIONADOS'
-        : cfg.modalidad === 'EVENTOS'
-            ? 'PROMO EVENTO SEGÚN SOLICITUD'
-            : 'PROMOCIÓN SEGÚN CONFIGURACIÓN';
-
-    return `
-        <div class="legacy-screen">
-            ${tabsSuperiores('básico')}
-            <div class="legacy-pane">
-                <div class="legacy-basic-grid">
-                    <div class="legacy-basic-col">
-                        <div class="legacy-row"><div>Id:</div><div class="fieldbox">${cfg.modalidad === 'EVENTOS' ? '516849' : '517288'}</div></div>
-                        <div class="legacy-row"><div>Nombre:</div><div class="fieldbox">${cfg.modalidad === 'CLUB' ? 'CLUB PLAN W L-J' : 'PROMO CONSULTOR'}</div></div>
-                        <div class="legacy-row"><div>Nombre general:</div><div class="fieldbox">${cfg.modalidad === 'CLUB' ? 'DCTO EXCLUSIVO CLUB' : 'DESCUENTO CARGA'}</div></div>
-                        <div class="legacy-row"><div>Prioridad:</div><div class="fieldbox">0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 999999</div></div>
-                        <div class="legacy-row"><div>Área:</div><div class="selectbox">${escaparHTML(cfg.area)}</div></div>
-                        <div class="legacy-row"><div>Category:</div><div class="selectbox">${cfg.modalidad === 'CLUB' ? 'IVAN QUEZADA' : 'SEGÚN SOLICITUD'}</div></div>
-                        <div class="legacy-row"><div>Competencia:</div><div class="selectbox">${escaparHTML(cfg.competencia)}</div></div>
-                        <div class="legacy-row"><div>Usuario creador:</div><div>FERNANDO</div></div>
-                        <div class="legacy-row"><div>Promoción Top:</div><div></div></div>
-                        <div class="legacy-row"><div>Ignora bloqueo de convenios.</div><div></div></div>
-                        <div class="legacy-row"><div>Grupos:</div><div class="selectbox">${grupo}</div></div>
-                    </div>
-                    <div class="legacy-basic-col">
-                        <div class="legacy-row"><div>Id alternativo:</div><div class="fieldbox">${cfg.modalidad === 'CLUB' ? '517288' : cfg.modalidad === 'EVENTOS' ? '516849' : 'SIN DEFINIR'}</div></div>
-                        <div class="legacy-row"><div>Descripción:</div><div class="textarea">${descripcion}</div></div>
-                        <div class="legacy-row"><div>Tipo de promoción:</div><div class="selectbox">1000-Venta</div></div>
-                        <div class="legacy-row"><div>Campaña:</div><div class="fieldbox"></div></div>
-                        <div class="legacy-row"><div>Habilitada:</div><div class="checkbox"></div></div>
-                        <div class="legacy-row"><div>Usuario modificación:</div><div></div></div>
-                        <div class="legacy-row"><div>Descuento explícito:</div><div class="checkbox"></div></div>
-                        <div class="legacy-row"><div>Mostrar imagen:</div><div class="checkbox"></div></div>
-                        <div class="legacy-row"><div>Imagen:</div><div class="fieldbox"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-}
-
-function renderTiempoPreview(cfg) {
-    const mostrarCompleto = cfg.modalidad === 'EVENTOS';
-    return `
-        <div class="legacy-screen">
-            ${tabsSuperiores('tiempo')}
-            <div class="legacy-period-box">
-                <div class="legacy-floating-title">Período</div>
-                <div class="legacy-time-row"><div>Tipo de período</div><div class="legacy-input">Fijo</div></div>
-                <div class="legacy-time-row"><div>Ingrese Fecha Comienzo</div><div class="legacy-date">01/04/2026</div></div>
-                <div class="legacy-time-row"><div>Ingrese Fecha Fin</div><div class="legacy-date">01/04/2026</div></div>
-                <div class="legacy-days">
-                    ${mostrarCompleto ? `
-                        <div class="legacy-day">L <span class="tiny-check"></span></div>
-                        <div class="legacy-day">M <span class="tiny-check"></span></div>
-                        <div class="legacy-day">M <span class="tiny-check"></span></div>
-                        <div class="legacy-day">J <span class="tiny-check"></span></div>
-                        <div class="legacy-day">V <span class="tiny-check"></span></div>
-                        <div class="legacy-day">S <span class="tiny-check"></span></div>
-                        <div class="legacy-day">D <span class="tiny-check"></span></div>
-                        <div class="legacy-button" style="width:auto;">Quitar todos los Días</div>
-                    ` : 'La pestaña Tiempo se vuelve especialmente crítica en EVENTOS. En promos normales o CLUB sirve como referencia visual.'}
-                </div>
-            </div>
-        </div>`;
-}
-
-function renderCondicionesPreview(cfg) {
-    const filas = [...cfg.documentoBase.map(item => ({ ...item, grupo: 'Documento' })), ...cfg.condicionesExtra, { grupo: 'Producto', campo: cfg.productoCampo, operador: '=', valor: cfg.productoValor }];
-
-    return `
-        <div class="legacy-screen">
-            ${tabsSuperiores('condiciones')}
-            <div class="legacy-pane legacy-conditions-pane">
-                <div class="legacy-left-tree">
-                    <div class="legacy-folder-head">📂 <strong>Documento</strong></div>
-                    <div class="legacy-tree-sub">
-                        ${cfg.modalidad === 'CLUB' ? '<div class="legacy-tree-item">📄 Cliente</div>' : ''}
-                        <div class="legacy-tree-item">📄 Producto</div>
-                        <div class="legacy-tree-item">📄 Pago</div>
-                        <div class="legacy-tree-item">📄 Acceso</div>
-                        ${cfg.modalidad === 'CLUB' ? '<div class="legacy-tree-item">📄 Convenios Cliente</div>' : ''}
-                    </div>
-                </div>
-                <div class="legacy-main-area">
-                    <div class="legacy-filter-bar">
-                        <div>Negación</div>
-                        <div class="legacy-inline-box"></div>
-                        <div class="legacy-input">${cfg.modalidad === 'EVENTOS' ? 'Pos' : cfg.modalidad === 'CLUB' ? 'Pos' : 'EAN Principal'}</div>
-                        <div class="legacy-input">=</div>
-                        <div class="legacy-input"></div>
-                        <div class="legacy-button">Agregar Filtro</div>
-                        <div class="legacy-button">Agregar Condición</div>
-                    </div>
-                    <div class="legacy-conditions-list">
-                        ${filas.map(f => `
-                            <div class="legacy-cond-row">
-                                <div>${f.grupo}</div>
-                                <div>${f.campo}</div>
-                                <div>${f.operador}</div>
-                                <div>${f.valor}</div>
-                                <div class="legacy-delete">🗑️</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>`;
-}
-
-function renderAplicadoresPreview(cfg) {
-    const subtabs = ['Monto a producto', 'Porcentaje a producto', 'Precio fijo a producto', 'Monto a Forma de Pago', 'Porcentaje a Forma de Pago', 'Precio Fijo a Forma de Pago'];
-    const subtabsHTML = `<div class="legacy-app-tabs">${subtabs.map(t => `<div class="legacy-subtab ${t === cfg.aplicadorTab ? 'active' : ''}">${t}</div>`).join('')}</div>`;
-
-    const valorLabel = cfg.aplicadorTab === 'Porcentaje a producto' ? 'Porcentaje:' : 'Monto';
-    const valorMostrado = cfg.aplicadorTab === 'Porcentaje a producto' ? cfg.porcentajeVisible : cfg.montoVisible;
-    const porUnidadBloque = cfg.aplicadorTab === 'Porcentaje a producto' ? '' : `
-        <div class="legacy-rowline">
-            <div>Por Unidad</div>
-            <div class="checkbox" style="background:${cfg.porUnidad ? '#1366d1' : '#fff'}; border-color:#6b8db8;">${cfg.porUnidad ? '' : ''}</div>
-        </div>`;
-
-    return `
-        <div class="legacy-screen">
-            ${tabsSuperiores('aplicadores')}
-            <div class="legacy-inner-tabs">
-                ${['Descuento', 'Descuentos de packs', 'Mensaje', 'Puntos', 'Sorteo', 'Autoliquidables', 'Volante', 'Inscripción', 'Decisiones de campaña', 'Inscripción a Grupo de Loyalty', 'Prog. de Salud', 'Mensaje en Login']
-                    .map(t => `<div class="legacy-subtab ${t === 'Descuento' || (cfg.aplicadorTab === 'Mensaje' && t === 'Mensaje') ? 'active' : ''}">${t}</div>`).join('')}
-            </div>
-            <div class="legacy-app-pane">
-                ${subtabsHTML}
-                <div class="legacy-app-body">
-                    <div class="legacy-app-left">
-                        <div class="legacy-rowline"><div>${valorLabel}</div><div class="legacy-input">${escaparHTML(valorMostrado || '')}</div></div>
-                        ${porUnidadBloque}
-
-                        <div class="legacy-bottom-filter">
-                            <div>Negación</div>
-                            <div class="legacy-inline-box"></div>
-                            <div class="legacy-input">${cfg.productoCampo}</div>
-                            <div class="legacy-input">=</div>
-                            <div class="legacy-input"></div>
-                            <div class="legacy-button">Agregar Filtro</div>
+            <div class="card-body">
+                <form id="consultorForm">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="modalidad">Modalidad</label>
+                            <select id="modalidad" name="modalidad">
+                                <option value="MASIVA">MASIVA</option>
+                                <option value="CLUB">CLUB</option>
+                            </select>
                         </div>
 
-                        <div class="legacy-selected-product">
-                            <div><strong>Producto</strong></div>
-                            <div>${cfg.productoCampo} &nbsp;&nbsp;&nbsp; = &nbsp;&nbsp;&nbsp; ${escaparHTML(cfg.productoValor)}</div>
+                        <div class="field" id="submodoClubField" style="display:none;">
+                            <label for="submodo_club">Modo CLUB</label>
+                            <select id="submodo_club" name="submodo_club">
+                                <option value="ORIGINAL">ORIGINAL</option>
+                                <option value="CLON">CLON</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="area_funcional">Área funcional</label>
+                            <select id="area_funcional" name="area_funcional">
+                                {% for area in consultor_catalogos.areas_funcionales %}
+                                <option value="{{ area }}">{{ area }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="tipo_descuento">Tipo de descuento</label>
+                            <select id="tipo_descuento" name="tipo_descuento">
+                                {% for tipo in consultor_catalogos.tipos_descuento %}
+                                <option value="{{ tipo }}">{{ tipo.replace('_', ' ') }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="unidades_pack"># Unidades pack</label>
+                            <input id="unidades_pack" name="unidades_pack" type="number" min="1" step="1" value="2">
+                        </div>
+
+                        <div class="field">
+                            <label for="pvp_oferta_pack">PVP Oferta Pack</label>
+                            <input id="pvp_oferta_pack" name="pvp_oferta_pack" type="text" placeholder="Ej: 10990">
+                        </div>
+
+                        <div class="field">
+                            <label for="descuento_pack_nominal_bruto">Descuento Pack Nominal Bruto</label>
+                            <input id="descuento_pack_nominal_bruto" name="descuento_pack_nominal_bruto" type="text" placeholder="Ej: 21990">
+                        </div>
+
+                        <div class="field">
+                            <label for="descuento_porcentual">Descuento porcentual</label>
+                            <input id="descuento_porcentual" name="descuento_porcentual" type="text" placeholder="Ej: 40">
+                        </div>
+
+                        <div class="field">
+                            <label for="fecha_inicio">Fecha inicio</label>
+                            <input id="fecha_inicio" name="fecha_inicio" type="date">
+                        </div>
+
+                        <div class="field">
+                            <label for="fecha_fin">Fecha fin</label>
+                            <input id="fecha_fin" name="fecha_fin" type="date">
+                        </div>
+
+                        <div class="field full">
+                            <label for="productos_o_lista">Productos o lista</label>
+                            <input id="productos_o_lista" name="productos_o_lista" type="text" placeholder="Ej: Lista: CLUB_EJEMPLO o SKU: 12345, 67890">
+                            <div class="hint">La condición y el aplicador deben apuntar a los mismos productos o la misma lista.</div>
+                        </div>
+
+                        <div class="field full">
+                            <label for="detalle_solicitud">Detalle / observación de la solicitud</label>
+                            <textarea id="detalle_solicitud" name="detalle_solicitud" placeholder="Anotaciones internas para la persona que está revisando la carga."></textarea>
+                        </div>
+
+                        <div class="field full">
+                            <label>Opciones complementarias</label>
+                            <div class="inline-checks">
+                                <label><input type="checkbox" id="habilitada" name="habilitada" checked> Habilitada</label>
+                                <label><input type="checkbox" id="modalidad_eventos" name="modalidad_eventos"> Tratar como EVENTOS</label>
+                                <label><input type="checkbox" id="usa_mensaje" name="usa_mensaje"> Considerar mensaje asociado</label>
+                            </div>
+                            <div class="hint">En EVENTOS se debe contemplar el uso de locales asignados y días específicos.</div>
+                        </div>
+                    </div>
+
+                    <div class="toolbar" style="margin-top:18px;">
+                        <button type="submit" class="btn btn-primary" {% if not consultor_backend_ok %}disabled{% endif %}>Generar guía de carga</button>
+                        <button type="button" id="btnLimpiar" class="btn btn-secondary">Limpiar</button>
+                    </div>
+
+                    <div class="status-line" id="estadoFormulario">
+                        Completa los datos y presiona <strong>Generar guía de carga</strong>.
+                    </div>
+
+                    <div class="loading" id="loadingBox" style="margin-top:14px;">
+                        <span>Generando vista previa…</span>
+                        <div class="dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="preview-stack">
+            <section class="card">
+                <div class="card-header">
+                    <h2>Resumen de carga sugerida</h2>
+                    <p>Referencia rápida de la configuración esperada según la lógica consolidada del consultor.</p>
+                </div>
+                <div class="card-body">
+                    <div class="summary-grid">
+                        <div class="mini">
+                            <div class="k">Tipo descuento</div>
+                            <div class="v" id="summaryTipo">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Área GEO final</div>
+                            <div class="v" id="summaryArea">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Competencia</div>
+                            <div class="v" id="summaryCompetencia">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Aplicador GEO</div>
+                            <div class="v" id="summaryAplicador">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Grupo GEO</div>
+                            <div class="v" id="summaryGrupo">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Valor de referencia</div>
+                            <div class="v" id="summaryValor">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Requiere mensaje</div>
+                            <div class="v" id="summaryMensaje">-</div>
+                        </div>
+                        <div class="mini">
+                            <div class="k">Cálculo</div>
+                            <div class="v" id="summaryCalculo">-</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>Vista previa del sistema</h2>
+                    <p>Este bloque visual acompaña la guía textual. La pestaña activa se resalta para simular el recorrido de carga.</p>
+                </div>
+                <div class="card-body">
+                    <div class="tabs">
+                        <button class="tab-btn active" type="button" data-tab="basico">Básico</button>
+                        <button class="tab-btn" type="button" data-tab="tiempo">Tiempo</button>
+                        <button class="tab-btn" type="button" data-tab="condiciones">Condiciones</button>
+                        <button class="tab-btn" type="button" data-tab="aplicadores">Aplicadores</button>
+                        <button class="tab-btn" type="button" data-tab="camino">Camino</button>
+                    </div>
+
+                    <div id="panel-basico" class="tab-panel active">
+                        <div class="panel-grid">
+                            <div class="info-box">
+                                <h3>Configuración Básica</h3>
+                                <div class="kv" id="basicoKv"></div>
+                            </div>
+                            <div class="info-box">
+                                <h3>Observaciones</h3>
+                                <ul class="list" id="basicoObs">
+                                    <li class="muted">Esperando datos para generar guía.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="panel-tiempo" class="tab-panel">
+                        <div class="panel-grid">
+                            <div class="info-box">
+                                <h3>Tiempo</h3>
+                                <div class="kv" id="tiempoKv"></div>
+                            </div>
+                            <div class="info-box">
+                                <h3>Notas de Tiempo</h3>
+                                <ul class="list" id="tiempoObs">
+                                    <li class="muted">Esperando datos para generar guía.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="panel-condiciones" class="tab-panel">
+                        <div class="panel-grid">
+                            <div class="info-box">
+                                <h3>Condiciones</h3>
+                                <div class="kv" id="condicionesKv"></div>
+                            </div>
+                            <div class="info-box">
+                                <h3>Notas de Condiciones</h3>
+                                <ul class="list" id="condicionesObs">
+                                    <li class="muted">Esperando datos para generar guía.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="panel-aplicadores" class="tab-panel">
+                        <div class="panel-grid">
+                            <div class="info-box">
+                                <h3>Aplicadores</h3>
+                                <div class="kv" id="aplicadoresKv"></div>
+                            </div>
+                            <div class="info-box">
+                                <h3>Notas de Aplicadores</h3>
+                                <ul class="list" id="aplicadoresObs">
+                                    <li class="muted">Esperando datos para generar guía.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="panel-camino" class="tab-panel">
+                        <div class="info-box">
+                            <h3>Camino esperado</h3>
+                            <ol class="list" id="caminoList">
+                                <li class="muted">Completa los datos de la izquierda y presiona “Generar guía de carga”.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>Guía sugerida y alertas</h2>
+                    <p>Salida textual del motor del consultor para apoyar la carga y la revisión final.</p>
+                </div>
+                <div class="card-body guide-block">
+                    <div>
+                        <h3 class="section-title">Alertas</h3>
+                        <div class="alert-wrap" id="alertasWrap">
+                            <div class="alert">Esperando datos para generar guía.</div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="legacy-box">
-                            <div class="box-row"><div>Cantidad:</div><div class="legacy-inline-box"></div><div class="legacy-input">${cfg.cantidadAplicador}</div></div>
-                            <div class="box-row"><div>Estrategia:</div><div></div><div class="legacy-input">${cfg.estrategia}</div></div>
-                        </div>
-                        <div class="legacy-box">
-                            <div class="box-row"><div>Cant. a cada producto</div><div class="legacy-inline-box"></div><div></div></div>
-                            <div class="box-row"><div>Cant. mínima</div><div></div><div class="legacy-input">0.0</div></div>
-                            <div class="box-row"><div>Cant. Beneficio</div><div></div><div class="legacy-input">0.0</div></div>
-                        </div>
-                        <div class="legacy-button">Agregar Aplicador</div>
+                        <h3 class="section-title">Checklist final</h3>
+                        <div class="empty" id="checklistEmpty">Aún no hay checklist generado.</div>
+                        <table class="checklist-table" id="checklistTable" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Control</th>
+                                    <th>Valor esperado</th>
+                                    <th>Detalle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="checklistBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="notes">
+                        <h3 class="section-title">Notas importantes</h3>
+                        <ul>
+                            <li>Los productos o la lista de productos de la condición deben coincidir con los del aplicador.</li>
+                            <li>Verificar fecha inicio y fecha fin al momento de la carga.</li>
+                            <li>En EVENTOS revisar siempre los locales y los días específicos de aplicación.</li>
+                            <li>En CLUB revisar si la solicitud aplica todos los días o en un tramo específico, por ejemplo L-J.</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-        </div>`;
+            </section>
+        </section>
+    </div>
+</div>
+
+<script>
+const backendOk = {{ 'true' if consultor_backend_ok else 'false' }};
+const requiereMensajeTipos = {{ consultor_requiere_mensaje_tipos|tojson }};
+const consultorTextos = {{ consultor_textos|tojson }};
+
+const form = document.getElementById('consultorForm');
+const modalidadEl = document.getElementById('modalidad');
+const submodoClubField = document.getElementById('submodoClubField');
+const tipoEl = document.getElementById('tipo_descuento');
+const estadoFormulario = document.getElementById('estadoFormulario');
+const loadingBox = document.getElementById('loadingBox');
+const btnLimpiar = document.getElementById('btnLimpiar');
+
+function mostrarSubmodoClub() {
+    submodoClubField.style.display = modalidadEl.value === 'CLUB' ? '' : 'none';
 }
 
-function renderCaminoPreview(cfg) {
-    const documentoHTML = cfg.documentoBase.map(item => `
-        <div class="legacy-camino-row">
-            <div>${item.campo}</div>
-            <div>${item.operador}</div>
-            <div>${item.valor}</div>
-        </div>
-    `).join('');
-
-    const extraClub = cfg.modalidad === 'CLUB' ? `
-        <div class="legacy-camino-group">
-            <div class="legacy-camino-link">Cliente</div>
-            <div class="legacy-camino-row"><div>Inscripto</div><div>=</div><div>true</div></div>
-        </div>` : '';
-
-    const aplicadorTitulo = cfg.aplicadorTab === 'Porcentaje a producto'
-        ? `Descuento a todos los productos por porcentaje = ${cfg.porcentajeVisible} %.`
-        : cfg.aplicadorTab === 'Precio fijo a producto'
-            ? `Fija precio a cada producto, monto = ${cfg.montoVisible}.`
-            : `Descuento a todos los productos por monto = ${cfg.montoVisible}.`;
-
-    return `
-        <div class="legacy-screen legacy-camino">
-            <div class="legacy-camino-header">Camino por defecto</div>
-            <div class="legacy-camino-section">
-                <div class="legacy-camino-title">Condiciones</div>
-                <div class="legacy-camino-group">
-                    <div class="legacy-camino-link">Documento</div>
-                    ${documentoHTML}
-                </div>
-                ${extraClub}
-                <div class="legacy-camino-group">
-                    <div class="legacy-camino-link">Producto</div>
-                    <div class="legacy-camino-row"><div>${cfg.productoCampo}</div><div>=</div><div>${escaparHTML(cfg.productoValor)}</div></div>
-                </div>
-                <div class="legacy-camino-title">Aplicadores</div>
-                <div class="legacy-camino-group">
-                    <div class="legacy-camino-link">${aplicadorTitulo}</div>
-                    <div class="legacy-camino-row"><div>${cfg.productoCampo}</div><div>=</div><div>${escaparHTML(cfg.productoValor)}</div></div>
-                </div>
-            </div>
-        </div>`;
+function syncMensajeSugerido() {
+    const tipo = tipoEl.value;
+    const usaMensaje = document.getElementById('usa_mensaje');
+    if (requiereMensajeTipos.includes(tipo)) {
+        usaMensaje.checked = true;
+    }
 }
 
-function limpiarFormulario() {
-    document.getElementById('modalidad').value = '';
-    document.getElementById('areaResponsable').value = '';
-    document.getElementById('tipoDescuento').value = '';
-    document.getElementById('unidadesPack').value = '';
-    document.getElementById('pvpOfertaPack').value = '';
-    document.getElementById('descuentoPorcentual').value = '';
-    document.getElementById('descuentoNominal').value = '';
-    document.getElementById('detalleSolicitud').value = '';
-
-    document.getElementById('estadoGeneral').className = 'status';
-    document.getElementById('estadoGeneral').textContent = 'Esperando datos para generar guía';
-
-    setHTML('bloqueBasico', '');
-    setHTML('bloqueCondiciones', '');
-    setHTML('bloqueAplicadores', '');
-    setHTML('bloqueCamino', '');
-    setHTML('bloqueObservaciones', '');
-    document.getElementById('checklistResumen').innerHTML = '<li>Completa los datos de la izquierda y presiona “Generar guía de carga”.</li>';
-
-    ultimaConfigPreview = null;
-    cambiarVistaPreview('basico');
-    actualizarCamposVisibles();
+function activarTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `panel-${tabName}`);
+    });
 }
 
-actualizarCamposVisibles();
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => activarTab(btn.dataset.tab));
+});
+
+function textOrDash(v) {
+    if (v === null || v === undefined || v === '') return '-';
+    if (typeof v === 'boolean') return v ? 'Sí' : 'No';
+    return String(v);
+}
+
+function fillKv(containerId, pairs) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    pairs.forEach(([k, v, highlight]) => {
+        const kk = document.createElement('div');
+        kk.className = 'kk';
+        kk.textContent = k;
+
+        const vv = document.createElement('div');
+        vv.className = 'vv';
+        if (highlight) {
+            const span = document.createElement('span');
+            span.className = 'pill highlight';
+            span.textContent = textOrDash(v);
+            vv.appendChild(span);
+        } else {
+            vv.textContent = textOrDash(v);
+        }
+
+        container.appendChild(kk);
+        container.appendChild(vv);
+    });
+}
+
+function fillList(containerId, items) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (!items || !items.length) {
+        const li = document.createElement('li');
+        li.className = 'muted';
+        li.textContent = 'Sin observaciones.';
+        container.appendChild(li);
+        return;
+    }
+    items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = textOrDash(item);
+        container.appendChild(li);
+    });
+}
+
+function fillCamino(items) {
+    const container = document.getElementById('caminoList');
+    container.innerHTML = '';
+    if (!items || !items.length) {
+        const li = document.createElement('li');
+        li.className = 'muted';
+        li.textContent = 'Sin pasos disponibles.';
+        container.appendChild(li);
+        return;
+    }
+    items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = textOrDash(item);
+        container.appendChild(li);
+    });
+}
+
+function fillAlertas(items) {
+    const container = document.getElementById('alertasWrap');
+    container.innerHTML = '';
+    if (!items || !items.length) {
+        const div = document.createElement('div');
+        div.className = 'alert';
+        div.textContent = 'Sin alertas.';
+        container.appendChild(div);
+        return;
+    }
+
+    items.forEach((item, idx) => {
+        const div = document.createElement('div');
+        let klass = 'alert';
+        if (String(item).toUpperCase().includes('OBLIGATORIA')) klass += ' ok';
+        else if (idx === 0) klass += ' warn';
+        div.className = klass;
+        div.textContent = textOrDash(item);
+        container.appendChild(div);
+    });
+}
+
+function fillChecklist(items) {
+    const empty = document.getElementById('checklistEmpty');
+    const table = document.getElementById('checklistTable');
+    const body = document.getElementById('checklistBody');
+    body.innerHTML = '';
+
+    if (!items || !items.length) {
+        empty.style.display = 'block';
+        table.style.display = 'none';
+        return;
+    }
+
+    empty.style.display = 'none';
+    table.style.display = 'table';
+
+    items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${textOrDash(item.titulo)}</strong></td>
+            <td>${textOrDash(item.valor)}</td>
+            <td>${textOrDash(item.detalle)}</td>
+        `;
+        body.appendChild(tr);
+    });
+}
+
+function renderConsulta(data) {
+    const resumen = data.resumen || {};
+    const preview = data.preview || {};
+    const basico = preview.basico || {};
+    const tiempo = preview.tiempo || {};
+    const condiciones = preview.condiciones || {};
+    const aplicadores = preview.aplicadores || {};
+
+    document.getElementById('summaryTipo').textContent = textOrDash(data.entrada_normalizada?.tipo_descuento);
+    document.getElementById('summaryArea').textContent = textOrDash(resumen.area_geo_final);
+    document.getElementById('summaryCompetencia').textContent = textOrDash(resumen.competencia);
+    document.getElementById('summaryAplicador').textContent = textOrDash(resumen.aplicador_geo);
+    document.getElementById('summaryGrupo').textContent = textOrDash(resumen.grupo_geo);
+    document.getElementById('summaryValor').textContent = textOrDash(resumen.valor_referencia);
+    document.getElementById('summaryMensaje').textContent = resumen.requiere_mensaje ? 'Sí' : 'No';
+    document.getElementById('summaryCalculo').textContent = textOrDash(resumen.detalle_calculo);
+
+    fillKv('basicoKv', [
+        ['Modalidad', basico.modalidad],
+        ['Modo CLUB', basico.submodo_club],
+        ['Área funcional', basico.area_funcional],
+        ['Área GEO final', basico.area_geo_final, basico.area_geo_final === consultorTextos.area_geo_club],
+        ['Grupo GEO', basico.grupo_geo, basico.grupo_geo === consultorTextos.grupo_club],
+        ['Competencia', basico.competencia],
+        ['Nombre general', basico.nombre_general],
+        ['Habilitada', basico.habilitada],
+    ]);
+    fillList('basicoObs', basico.observaciones);
+
+    fillKv('tiempoKv', [
+        ['Fecha inicio', tiempo.fecha_inicio],
+        ['Fecha fin', tiempo.fecha_fin],
+        ['Usa fechas', tiempo.usa_fechas],
+        ['Usa días específicos', tiempo.usa_dias_especificos],
+    ]);
+    fillList('tiempoObs', tiempo.observaciones);
+
+    fillKv('condicionesKv', [
+        ['Tipo', condiciones.tipo],
+        ['Cantidad cada', condiciones.cantidad_cada],
+        ['Productos / lista', condiciones.productos_o_lista],
+        ['Regla de locales', condiciones.locales_regla, condiciones.locales_regla === 'EXC_LOCALES'],
+        ['Incluye convenios', condiciones.incluye_convenios],
+    ]);
+    fillList('condicionesObs', condiciones.observaciones);
+
+    fillKv('aplicadoresKv', [
+        ['Tipo aplicador', aplicadores.tipo],
+        ['Origen valor', aplicadores.origen_valor],
+        ['Divide valor', aplicadores.divide_valor],
+        ['Fórmula división', aplicadores.formula_division],
+        ['Valor original', aplicadores.valor_original],
+        ['Valor final', aplicadores.valor_final],
+        ['Cantidad', aplicadores.cantidad],
+        ['Estrategia', aplicadores.estrategia],
+        ['Por unidad', aplicadores.por_unidad],
+    ]);
+    fillList('aplicadoresObs', [
+        ...(aplicadores.observaciones || []),
+        aplicadores.detalle_calculo
+    ].filter(Boolean));
+
+    fillCamino(preview.camino || []);
+    fillAlertas(data.alertas || []);
+    fillChecklist(data.checklist || []);
+
+    estadoFormulario.innerHTML = 'Guía generada correctamente. Revisa la pestaña <strong>Camino</strong> y el <strong>Checklist final</strong> antes de cargar.';
+}
+
+function collectPayload() {
+    const fd = new FormData(form);
+    return {
+        modalidad: fd.get('modalidad'),
+        submodo_club: fd.get('submodo_club'),
+        area_funcional: fd.get('area_funcional'),
+        tipo_descuento: fd.get('tipo_descuento'),
+        unidades_pack: fd.get('unidades_pack'),
+        pvp_oferta_pack: fd.get('pvp_oferta_pack'),
+        descuento_pack_nominal_bruto: fd.get('descuento_pack_nominal_bruto'),
+        descuento_porcentual: fd.get('descuento_porcentual'),
+        fecha_inicio: fd.get('fecha_inicio'),
+        fecha_fin: fd.get('fecha_fin'),
+        productos_o_lista: fd.get('productos_o_lista'),
+        detalle_solicitud: fd.get('detalle_solicitud'),
+        habilitada: document.getElementById('habilitada').checked,
+        modalidad_eventos: document.getElementById('modalidad_eventos').checked,
+        usa_mensaje: document.getElementById('usa_mensaje').checked
+    };
+}
+
+async function generarConsulta(event) {
+    event.preventDefault();
+    if (!backendOk) return;
+
+    loadingBox.style.display = 'flex';
+    estadoFormulario.textContent = 'Resolviendo guía de carga…';
+
+    try {
+        const res = await fetch('/consultor/preview', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(collectPayload())
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+            throw new Error(data.error || 'No se pudo generar la guía.');
+        }
+
+        const payload = data.resultado || data;
+        renderConsulta(payload);
+    } catch (err) {
+        estadoFormulario.textContent = `Error: ${err.message}`;
+        fillAlertas([`No se pudo generar la guía: ${err.message}`]);
+    } finally {
+        loadingBox.style.display = 'none';
+    }
+}
+
+function limpiarConsultor() {
+    form.reset();
+    document.getElementById('habilitada').checked = true;
+    activarTab('basico');
+    mostrarSubmodoClub();
+    syncMensajeSugerido();
+
+    document.getElementById('summaryTipo').textContent = '-';
+    document.getElementById('summaryArea').textContent = '-';
+    document.getElementById('summaryCompetencia').textContent = '-';
+    document.getElementById('summaryAplicador').textContent = '-';
+    document.getElementById('summaryGrupo').textContent = '-';
+    document.getElementById('summaryValor').textContent = '-';
+    document.getElementById('summaryMensaje').textContent = '-';
+    document.getElementById('summaryCalculo').textContent = '-';
+
+    ['basicoKv', 'tiempoKv', 'condicionesKv', 'aplicadoresKv'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+    });
+
+    fillList('basicoObs', []);
+    fillList('tiempoObs', []);
+    fillList('condicionesObs', []);
+    fillList('aplicadoresObs', []);
+    fillCamino([]);
+    fillAlertas([]);
+    fillChecklist([]);
+    estadoFormulario.innerHTML = 'Completa los datos y presiona <strong>Generar guía de carga</strong>.';
+}
+
+modalidadEl.addEventListener('change', mostrarSubmodoClub);
+tipoEl.addEventListener('change', syncMensajeSugerido);
+btnLimpiar.addEventListener('click', limpiarConsultor);
+form.addEventListener('submit', generarConsulta);
+
+mostrarSubmodoClub();
+syncMensajeSugerido();
 </script>
 </body>
 </html>

@@ -506,6 +506,7 @@
                             <select id="modalidad" name="modalidad">
                                 <option value="MASIVA">MASIVA</option>
                                 <option value="CLUB">CLUB</option>
+                                <option value="EVENTOS">EVENTOS</option>
                             </select>
                         </div>
 
@@ -580,10 +581,9 @@
                             <label>Opciones complementarias</label>
                             <div class="inline-checks">
                                 <label><input type="checkbox" id="habilitada" name="habilitada" checked> Habilitada</label>
-                                <label><input type="checkbox" id="modalidad_eventos" name="modalidad_eventos"> Tratar como EVENTOS</label>
-                                <label><input type="checkbox" id="usa_mensaje" name="usa_mensaje"> Considerar mensaje asociado</label>
+                                                                <label><input type="checkbox" id="usa_mensaje" name="usa_mensaje"> Considerar mensaje asociado</label>
                             </div>
-                            <div class="hint">En EVENTOS se debe contemplar el uso de locales asignados y días específicos.</div>
+                            <div class="hint">Si eliges modalidad EVENTOS, el consultor aplicará locales asignados y revisión de días específicos.</div>
                         </div>
                     </div>
 
@@ -795,6 +795,20 @@ const btnLimpiar = document.getElementById('btnLimpiar');
 
 function mostrarSubmodoClub() {
     submodoClubField.style.display = modalidadEl.value === 'CLUB' ? '' : 'none';
+}
+
+
+function syncTipoEspecial() {
+    const tipo = tipoEl.value;
+    const unidades = document.getElementById('unidades_pack');
+    if (tipo === 'PACK_ESPECIAL_BYCP') {
+        unidades.value = 3;
+        unidades.readOnly = true;
+        unidades.style.background = '#f3f6f4';
+    } else {
+        unidades.readOnly = false;
+        unidades.style.background = '#fff';
+    }
 }
 
 function syncMensajeSugerido() {
@@ -1015,7 +1029,6 @@ function collectPayload() {
         productos_o_lista: fd.get('productos_o_lista'),
         detalle_solicitud: fd.get('detalle_solicitud'),
         habilitada: document.getElementById('habilitada').checked,
-        modalidad_eventos: document.getElementById('modalidad_eventos').checked,
         usa_mensaje: document.getElementById('usa_mensaje').checked
     };
 }
@@ -1056,6 +1069,7 @@ function limpiarConsultor() {
     activarTab('basico');
     mostrarSubmodoClub();
     syncMensajeSugerido();
+    syncTipoEspecial();
 
     document.getElementById('summaryTipo').textContent = '-';
     document.getElementById('summaryArea').textContent = '-';
@@ -1081,12 +1095,13 @@ function limpiarConsultor() {
 }
 
 modalidadEl.addEventListener('change', mostrarSubmodoClub);
-tipoEl.addEventListener('change', syncMensajeSugerido);
+tipoEl.addEventListener('change', () => { syncMensajeSugerido(); syncTipoEspecial(); });
 btnLimpiar.addEventListener('click', limpiarConsultor);
 form.addEventListener('submit', generarConsulta);
 
 mostrarSubmodoClub();
 syncMensajeSugerido();
+syncTipoEspecial();
 </script>
 </body>
 </html>

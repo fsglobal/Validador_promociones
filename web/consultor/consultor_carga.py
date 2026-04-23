@@ -21,9 +21,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
-from .reglas_consultor import (
+from reglas_consultor import (
     MODALIDAD_CLUB,
     MODALIDAD_MASIVA,
+    MODALIDAD_EVENTOS,
     SUBMODO_CLON,
     SUBMODO_ORIGINAL,
     AREA_BYCP,
@@ -34,7 +35,7 @@ from .reglas_consultor import (
     TIPO_PACK_NOMINAL,
     TIPO_PACK_PRECIO_FIJO,
     TIPO_PORCENTUAL,
-    TIPO_BYCP_3X2_ESPECIAL,
+    TIPO_PACK_ESPECIAL_BYCP,
     resolver_regla,
 )
 
@@ -48,6 +49,7 @@ ALIASES_MODALIDAD = {
     "MASSIVA": MODALIDAD_MASIVA,
     "NORMAL": MODALIDAD_MASIVA,
     "CLUB": MODALIDAD_CLUB,
+    "EVENTOS": MODALIDAD_EVENTOS,
 }
 
 ALIASES_SUBMODO = {
@@ -74,10 +76,12 @@ ALIASES_TIPO = {
     "PACK NOMINAL A PRECIO FIJO": TIPO_PACK_PRECIO_FIJO,
     "PACK PRECIO FIJO": TIPO_PACK_PRECIO_FIJO,
     "PACK_NOMINAL_PRECIO_FIJO": TIPO_PACK_PRECIO_FIJO,
-    "BYCP 3X2 ESPECIAL": TIPO_BYCP_3X2_ESPECIAL,
-    "BYCP_3X2_ESPECIAL": TIPO_BYCP_3X2_ESPECIAL,
-    "3X2 BYCP": TIPO_BYCP_3X2_ESPECIAL,
-    "BYCP 3X2": TIPO_BYCP_3X2_ESPECIAL,
+    "PACK ESPECIAL BYCP": TIPO_PACK_ESPECIAL_BYCP,
+    "PACK_ESPECIAL_BYCP": TIPO_PACK_ESPECIAL_BYCP,
+    "BYCP 3X2 ESPECIAL": TIPO_PACK_ESPECIAL_BYCP,
+    "BYCP_3X2_ESPECIAL": TIPO_PACK_ESPECIAL_BYCP,
+    "3X2 BYCP": TIPO_PACK_ESPECIAL_BYCP,
+    "BYCP 3X2": TIPO_PACK_ESPECIAL_BYCP,
 }
 
 
@@ -128,6 +132,9 @@ def normalizar_entrada(payload: dict[str, Any]) -> dict[str, Any]:
     if isinstance(habilitada, str):
         habilitada = habilitada.strip().lower() in {"1", "true", "si", "sí", "yes", "on"}
 
+    if tipo_descuento == TIPO_PACK_ESPECIAL_BYCP:
+        unidades_pack = 3
+
     normalizado = {
         "modalidad": modalidad,
         "submodo_club": submodo_club,
@@ -142,7 +149,6 @@ def normalizar_entrada(payload: dict[str, Any]) -> dict[str, Any]:
         "fecha_fin": payload.get("fecha_fin"),
         "productos_o_lista": payload.get("productos_o_lista"),
         "usa_mensaje": payload.get("usa_mensaje"),
-        "modalidad_eventos": bool(payload.get("modalidad_eventos", False)),
     }
     return normalizado
 
@@ -193,7 +199,7 @@ def _calcular_valor_aplicador(data: dict[str, Any], regla: dict[str, Any]) -> di
         valor_original = _safe_float(data.get("descuento_pack_nominal_bruto"))
     elif origen == "Descuento Porcentual":
         valor_original = _safe_float(data.get("descuento_porcentual"))
-        if data.get("tipo_descuento") == TIPO_BYCP_3X2_ESPECIAL and valor_original is None:
+        if data.get("tipo_descuento") == TIPO_PACK_ESPECIAL_BYCP and valor_original is None:
             valor_original = 100.0
     else:
         valor_original = None
@@ -231,7 +237,7 @@ def construir_tiempo(data: dict[str, Any], regla: dict[str, Any]) -> dict[str, A
     tiempo["fecha_inicio"] = data.get("fecha_inicio")
     tiempo["fecha_fin"] = data.get("fecha_fin")
 
-    if data.get("modalidad_eventos"):
+    if data.get("modalidad") == MODALIDAD_EVENTOS:
         tiempo["usa_dias_especificos"] = True
         tiempo["observaciones"].append(
             "En EVENTOS se deben revisar fechas y días específicos."
@@ -246,7 +252,7 @@ def construir_condiciones(data: dict[str, Any], regla: dict[str, Any]) -> dict[s
     if data.get("productos_o_lista"):
         condiciones["productos_o_lista"] = data["productos_o_lista"]
 
-    if data.get("modalidad_eventos"):
+    if data.get("modalidad") == MODALIDAD_EVENTOS:
         condiciones["locales_regla"] = "Locales asignados"
         condiciones["observaciones"].append(
             "En EVENTOS usar locales asignados en lugar de EXC_LOCALES."
@@ -281,7 +287,7 @@ def construir_camino(data: dict[str, Any], regla: dict[str, Any]) -> list[str]:
                 "En CLUB CLON, usar el ID clon en ID Lista Cliente y colocar el ID original en ID Alternativo."
             )
 
-    if data.get("modalidad_eventos"):
+    if data.get("modalidad") == MODALIDAD_EVENTOS:
         pasos.append("Como es EVENTOS, revisar también días y locales asignados.")
 
     pasos.append("Antes de guardar, verificar que condición y aplicador usen la misma lista o productos.")
@@ -306,8 +312,11 @@ def construir_alertas(data: dict[str, Any], regla: dict[str, Any]) -> list[str]:
     if data.get("modalidad") == MODALIDAD_CLUB:
         alertas.append("En CLUB, el área GEO final no es el área funcional: siempre va FIDELIZACION.")
 
-    if tipo_descuento == TIPO_BYCP_3X2_ESPECIAL:
-        alertas.append("Caso especial BYCP 3x2: no tratar como pack a precio fijo.")
+    if data.get("modalidad") == MODALIDAD_EVENTOS:
+        alertas.append("En EVENTOS usar locales asignados y revisar fechas/días específicos.")
+
+    if tipo_descuento == TIPO_PACK_ESPECIAL_BYCP:
+        alertas.append("PACK ESPECIAL BYCP: no tratar como pack a precio fijo.")
         alertas.append("Usar condición cantidad 3, aplicador porcentaje 100 a 1 unidad y strategy menor.")
         alertas.append("Competencia por producto porque el beneficio cae sobre el producto de menor valor.")
 
@@ -424,8 +433,8 @@ def construir_guia_textual(payload: dict[str, Any]) -> str:
     lineas.append(f"Área GEO final: {resumen['area_geo_final']}")
     lineas.append(f"Competencia: {resumen['competencia']}")
     lineas.append(f"Aplicador GEO: {resumen['aplicador_geo']}")
-    if consulta['entrada_normalizada']['tipo_descuento'] == TIPO_BYCP_3X2_ESPECIAL:
-        lineas.append("Caso especial: BYCP 3x2 no se interpreta como pack a precio fijo.")
+    if consulta['entrada_normalizada']['tipo_descuento'] == TIPO_PACK_ESPECIAL_BYCP:
+        lineas.append("Caso especial: PACK ESPECIAL BYCP se interpreta como 3x2 fijo.")
     lineas.append("")
 
     lineas.append("BÁSICO")

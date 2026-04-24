@@ -891,6 +891,45 @@ def validar_applier_vs_condicion(detalles, promo, listas_productos_export):
     return ok
 
 
+def validar_estructura_promocion(detalles, promo):
+    """
+    Valida errores estructurales simples del armado en GEO.
+    No reemplaza la validación funcional existente; solo agrega alertas claras
+    cuando la promo trae más de una condición de productos o más de un aplicador.
+    """
+    ok = True
+
+    try:
+        product_condition_count = int(promo.get("__product_condition_count") or 0)
+    except Exception:
+        product_condition_count = 0
+
+    try:
+        applier_count = int(promo.get("__applier_count") or 0)
+    except Exception:
+        applier_count = 0
+
+    if product_condition_count > 1:
+        ok = False
+        agregar_detalle(
+            detalles,
+            "ERR",
+            "ESTRUCTURA",
+            "Doble condición de productos detectada. Revisar configuración en GEO."
+        )
+
+    if applier_count > 1:
+        ok = False
+        agregar_detalle(
+            detalles,
+            "ERR",
+            "ESTRUCTURA",
+            "Doble aplicador detectado. Revisar configuración en GEO."
+        )
+
+    return ok
+
+
 # ============================================================
 # FECHAS
 # ============================================================
@@ -1113,6 +1152,8 @@ def parsear_promos(tree, export_name=None):
             "condition_quantity": None,
             "condition_item_quantity": None,
             "condition_product_lists": [],
+            "__product_condition_count": 0,
+            "__applier_count": 0,
             "fixAmount": None,
             "percentage": None,
             "applier_type": None,
@@ -1127,6 +1168,27 @@ def parsear_promos(tree, export_name=None):
             "message_output": None,
             "message_text": None,
         }
+
+        # Conteos estructurales directos de GEO.
+        # Se cuentan solo condiciones reales del bloque <conditions> y aplicadores directos
+        # del bloque <appliers>, evitando mezclar productCondition del aplicador.
+        product_condition_count = 0
+        for conditions_node in promo.findall(".//conditions"):
+            for condition_node in list(conditions_node):
+                if clean(condition_node.tag) != "Condition":
+                    continue
+                element_id = normalizar_texto(get_text(condition_node, "elementID"))
+                if element_id == "PRODUCTLINE":
+                    product_condition_count += 1
+
+        applier_count = 0
+        for appliers_node in promo.findall(".//appliers"):
+            for applier_node in list(appliers_node):
+                if clean(applier_node.tag).endswith("Applier"):
+                    applier_count += 1
+
+        d["__product_condition_count"] = product_condition_count
+        d["__applier_count"] = applier_count
 
         for flt in promo.findall(f".//{FILTER}"):
             field = get_text(flt, "fieldID")
@@ -1377,6 +1439,9 @@ def validar_promocion_eventos(id_geo, grupo, promo, productos_excel=None, nombre
     else:
         agregar_detalle(detalles, "OK", "ID", f"ID GEO Excel <span class='text-blue'>({id_excel})</span> y Export coinciden")
 
+    if not validar_estructura_promocion(detalles, promo):
+        ok = False
+
     col_num_camp = buscar_columna(grupo, ["N°CAM", "N° CAM", "N CAM", "N CAMPAÑA", "N° CAMPAÑA"])
     if col_num_camp:
         agregar_detalle(detalles, "INFO", "EVENTO", f"N° campaña Excel: <span class='text-blue'>({grupo[col_num_camp].iloc[0]})</span>")
@@ -1574,6 +1639,9 @@ def validar_promocion_tradicional(id_geo, df_promo, promo_export, productos_exce
         agregar_detalle(detalles, "ERR", "ID", f"ID GEO Excel <span class='text-blue'>({id_excel})</span> es distinto al ID Export <span class='text-blue'>({id_export})</span>")
     else:
         agregar_detalle(detalles, "OK", "ID", f"ID GEO Excel <span class='text-blue'>({id_excel})</span> y Export coinciden")
+
+    if not validar_estructura_promocion(detalles, promo_export):
+        ok = False
 
     fi_excel = normalizar_fecha_excel(df_promo["FECHA DE INICIO EVENTO"].iloc[0])
     ff_excel = normalizar_fecha_excel(df_promo["FECHA TERMINO EVENTO"].iloc[0])
@@ -1902,6 +1970,9 @@ def validar_promocion_completar(id_geo, grupo, promo, listas_productos_export, m
         agregar_detalle(detalles, "ERR", "ID", f"ID Geocom Excel <span class='text-blue'>({id_excel})</span> es distinto al ID Export <span class='text-blue'>({id_export})</span>")
     else:
         agregar_detalle(detalles, "OK", "ID", f"ID Geocom Excel y Export coinciden <span class='text-blue'>({id_excel})</span>")
+
+    if not validar_estructura_promocion(detalles, promo):
+        ok = False
 
     col_fact = buscar_columna(grupo, ["ID A FACTURAR", "ID a Facturar", "ID FACTURAR"])
     id_fact = normalizar_local(grupo[col_fact].iloc[0]) if col_fact else None
